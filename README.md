@@ -11,5 +11,6 @@ https://julienbayle.studio/PythonLiveAPI_documentation/Live10.1.xml
 ## UPDATED on 07th October 2019
 
 ===> **NO support given, ONLY source files !**
+===> **Don't contact Ableton for support about this repository**
 
 Please enjoy.
