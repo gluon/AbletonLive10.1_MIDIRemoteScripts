@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SceneComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SceneComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .ClipSlotComponent import ClipSlotComponent, find_nearest_color
 from .CompoundComponent import CompoundComponent
@@ -16,7 +11,7 @@ class SceneComponent(CompoundComponent):
     """
     clip_slot_component_type = ClipSlotComponent
 
-    def __init__(self, num_slots=0, tracks_to_use_callback=nop, *a, **k):
+    def __init__(self, num_slots = 0, tracks_to_use_callback = nop, *a, **k):
         assert num_slots >= 0
         assert callable(tracks_to_use_callback)
         super(SceneComponent, self).__init__(*a, **k)
@@ -37,7 +32,6 @@ class SceneComponent(CompoundComponent):
         self._track_offset = 0
         self._select_button = None
         self._delete_button = None
-        return
 
     def on_track_list_changed(self):
         self.update()
@@ -79,12 +73,10 @@ class SceneComponent(CompoundComponent):
     def set_color_palette(self, palette):
         self._scene_value = None
         self._color_palette = palette
-        return
 
     def set_color_table(self, table):
         self._scene_value = None
         self._color_table = table
-        return
 
     def clip_slot(self, index):
         return self._clip_slots[index]
@@ -122,9 +114,8 @@ class SceneComponent(CompoundComponent):
             self._update_launch_button()
         else:
             self._update_requests += 1
-        return
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _launch_value(self, value):
         if self.is_enabled():
             if self._select_button and self._select_button.is_pressed() and value:
@@ -134,14 +125,12 @@ class SceneComponent(CompoundComponent):
                     self._do_delete_scene(self._scene)
                 else:
                     self._do_launch_scene(value)
-        return
 
     def _do_select_scene(self, scene_for_overrides):
         if self._scene != None:
             view = self.song().view
             if view.selected_scene != self._scene:
                 view.selected_scene = self._scene
-        return
 
     def _do_delete_scene(self, scene_for_overrides):
         try:
@@ -162,17 +151,15 @@ class SceneComponent(CompoundComponent):
         if launched and self.song().select_on_launch:
             self.song().view.selected_scene = self._scene
 
-    @subject_slot('is_triggered')
+    @subject_slot(u'is_triggered')
     def _on_is_triggered_changed(self):
         assert self._scene != None
         self._update_launch_button()
-        return
 
-    @subject_slot('color')
+    @subject_slot(u'color')
     def _on_scene_color_changed(self):
         assert self._scene != None
         self._update_launch_button()
-        return
 
     def _color_value(self, color):
         value = None
@@ -198,7 +185,6 @@ class SceneComponent(CompoundComponent):
                 self._launch_button.send_value(value_to_send)
             else:
                 self._launch_button.set_light(value_to_send)
-        return
 
     def _create_clip_slot(self):
         return self.clip_slot_component_type()

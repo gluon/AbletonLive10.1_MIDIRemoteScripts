@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl_Classic/MainDisplay.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl_Classic/MainDisplay.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .MackieControlComponent import *
 
@@ -18,9 +13,9 @@ class MainDisplay(MackieControlComponent):
 
     def destroy(self):
         NUM_CHARS_PER_DISPLAY_LINE = 54
-        upper_message = ('Ableton Live').center(NUM_CHARS_PER_DISPLAY_LINE)
+        upper_message = u'Ableton Live'.center(NUM_CHARS_PER_DISPLAY_LINE)
         self.send_display_string(upper_message, 0, 0)
-        lower_message = ('Device is offline').center(NUM_CHARS_PER_DISPLAY_LINE)
+        lower_message = u'Device is offline'.center(NUM_CHARS_PER_DISPLAY_LINE)
         self.send_display_string(lower_message, 1, 0)
         MackieControlComponent.destroy(self)
 
@@ -51,8 +46,13 @@ class MainDisplay(MackieControlComponent):
                 device_type = SYSEX_DEVICE_TYPE_XT
             else:
                 device_type = SYSEX_DEVICE_TYPE
-            display_sysex = (
-             240, 0, 0, 102, device_type, 18, offset) + tuple(message_string) + (247, )
+            display_sysex = (240,
+             0,
+             0,
+             102,
+             device_type,
+             18,
+             offset) + tuple(message_string) + (247,)
             self.send_midi(display_sysex)
 
     def refresh_state(self):

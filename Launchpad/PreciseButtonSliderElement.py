@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/PreciseButtonSliderElement.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/PreciseButtonSliderElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonSliderElement import ButtonSliderElement
 from _Framework.InputControlElement import *
@@ -34,13 +29,12 @@ class PreciseButtonSliderElement(ButtonSliderElement):
         assert isinstance(map, (tuple, type(None)))
         assert len(map) == len(self._buttons)
         self._value_map = map
-        return
 
     def send_value(self, value):
-        assert self._disabled or value != None
-        assert isinstance(value, int)
-        if not value in range(128):
-            raise AssertionError
+        if not self._disabled:
+            assert value != None
+            assert isinstance(value, int)
+            assert value in range(128)
             if value != self._last_sent_value:
                 if self._mode == SLIDER_MODE_SINGLE:
                     ButtonSliderElement.send_value(self, value)
@@ -51,14 +45,12 @@ class PreciseButtonSliderElement(ButtonSliderElement):
                 else:
                     assert False
                 self._last_sent_value = value
-        return
 
     def connect_to(self, parameter):
         ButtonSliderElement.connect_to(self, parameter)
         if self._parameter_to_map_to != None:
             self._last_sent_value = -1
             self._on_parameter_changed()
-        return
 
     def release_parameter(self):
         old_param = self._parameter_to_map_to
@@ -67,15 +59,11 @@ class PreciseButtonSliderElement(ButtonSliderElement):
             for button in self._buttons:
                 button.reset()
 
-        return
-
     def reset(self):
         if not self._disabled and self._buttons != None:
             for button in self._buttons:
                 if button != None:
                     button.reset()
-
-        return
 
     def _send_value_volume(self, value):
         index_to_light = -1
@@ -131,7 +119,6 @@ class PreciseButtonSliderElement(ButtonSliderElement):
             if self._parameter_to_map_to != None and self._parameter_to_map_to.is_enabled:
                 self._parameter_to_map_to.value = self._value_map[index_of_sender]
             self.notify_value(value)
-        return
 
     def _on_parameter_changed(self):
         assert self._parameter_to_map_to != None
@@ -152,4 +139,3 @@ class PreciseButtonSliderElement(ButtonSliderElement):
         else:
             midi_value = int(127 * abs(param_value - self._parameter_to_map_to.min) / param_range)
         self.send_value(midi_value)
-        return

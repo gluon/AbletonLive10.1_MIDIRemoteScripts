@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/LV2MixerController.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/LV2MixerController.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .ParamMap import ParamMap
@@ -11,10 +6,9 @@ from .FaderfoxMixerController import FaderfoxMixerController
 from .consts import *
 
 class LV2MixerController(FaderfoxMixerController):
-    u"""Mixer parameters of LX2"""
     __module__ = __name__
-    __filter_funcs__ = [
-     'update_display', 'log']
+    __doc__ = u'Mixer parameters of LX2'
+    __filter_funcs__ = [u'update_display', u'log']
 
     def __init__(self, parent):
         LV2MixerController.realinit(self, parent)
@@ -26,10 +20,16 @@ class LV2MixerController(FaderfoxMixerController):
         self.tracks_with_listener = []
 
     def reset_status_cache(self):
-        self.status_cache = {'mute': [ -1 for i in range(0, 12) ], 'solo': [ -1 for i in range(0, 12) ], 'arm': [ -1 for i in range(0, 12) ], 'current_monitoring_state': [ -1 for i in range(0, 12) ], 'master': {'solo': -1, 'mute': -1, 
-                      'arm': -1}, 
-           'master_note': {'solo': MASTER_SOLO_NOTE, 'mute': MASTER_MUTE_NOTE, 
-                           'arm': MASTER_ARM_NOTE}}
+        self.status_cache = {u'mute': [ -1 for i in range(0, 12) ],
+         u'solo': [ -1 for i in range(0, 12) ],
+         u'arm': [ -1 for i in range(0, 12) ],
+         u'current_monitoring_state': [ -1 for i in range(0, 12) ],
+         u'master': {u'solo': -1,
+                     u'mute': -1,
+                     u'arm': -1},
+         u'master_note': {u'solo': MASTER_SOLO_NOTE,
+                          u'mute': MASTER_MUTE_NOTE,
+                          u'arm': MASTER_ARM_NOTE}}
         self.set_tracks_arm_status()
         self.set_tracks_mute_status()
         self.set_tracks_solo_status()
@@ -42,7 +42,7 @@ class LV2MixerController(FaderfoxMixerController):
                     track.remove_arm_listener(self.on_track_arm_changed)
                 track.remove_mute_listener(self.on_track_mute_changed)
                 track.remove_solo_listener(self.on_track_solo_changed)
-                if hasattr(track, 'current_monitoring_state'):
+                if hasattr(track, u'current_monitoring_state'):
                     track.remove_current_monitoring_state_listener(self.on_track_monitoring_changed)
 
         self.tracks_with_listener = []
@@ -62,10 +62,10 @@ class LV2MixerController(FaderfoxMixerController):
         if channel == CHANNEL_SETUP2 and note_no == MASTER_TRACK_SELECT_NOTE:
             self.set_selected_track(self.parent.song().master_track)
         if channel == TRACK_CHANNEL_SETUP2 and status == NOTEON_STATUS:
-            self.handle_status_note(note_no, MUTE_NOTES, 'mute')
-            self.handle_status_note(note_no, ARM_NOTES, 'arm')
-            self.handle_status_note(note_no, SOLO_NOTES, 'solo')
-            self.handle_status_note(note_no, MONITOR_NOTES, 'monitor')
+            self.handle_status_note(note_no, MUTE_NOTES, u'mute')
+            self.handle_status_note(note_no, ARM_NOTES, u'arm')
+            self.handle_status_note(note_no, SOLO_NOTES, u'solo')
+            self.handle_status_note(note_no, MONITOR_NOTES, u'monitor')
 
     def on_tracks_added_or_deleted(self):
         self.reset_status_cache()
@@ -80,9 +80,9 @@ class LV2MixerController(FaderfoxMixerController):
                     track.add_arm_listener(self.on_track_arm_changed)
                 track.add_mute_listener(self.on_track_mute_changed)
                 track.add_solo_listener(self.on_track_solo_changed)
-                if hasattr(track, 'current_monitoring_state'):
+                if hasattr(track, u'current_monitoring_state'):
                     track.add_current_monitoring_state_listener(self.on_track_monitoring_changed)
-                    self.log('added track %s to monitoring')
+                    self.log(u'added track %s to monitoring')
                 self.tracks_with_listener += [track]
 
         FaderfoxMixerController.map_track_params(self, script_handle, midi_map_handle)
@@ -90,11 +90,9 @@ class LV2MixerController(FaderfoxMixerController):
 
     def send_track_status_midi(self, status, note):
         if status:
-            self.parent.send_midi((TRACK_CHANNEL_SETUP2 + NOTEON_STATUS,
-             note, STATUS_ON))
+            self.parent.send_midi((TRACK_CHANNEL_SETUP2 + NOTEON_STATUS, note, STATUS_ON))
         else:
-            self.parent.send_midi((TRACK_CHANNEL_SETUP2 + NOTEOFF_STATUS,
-             note, STATUS_OFF2))
+            self.parent.send_midi((TRACK_CHANNEL_SETUP2 + NOTEOFF_STATUS, note, STATUS_OFF2))
 
     def set_tracks_status(self, attr, notes):
         tracks = tuple(self.parent.song().tracks) + tuple(self.parent.song().return_tracks)
@@ -104,30 +102,30 @@ class LV2MixerController(FaderfoxMixerController):
                 track = tracks[idx]
                 if not hasattr(track, attr):
                     continue
-                if not track.can_be_armed and attr == 'arm':
+                if not track.can_be_armed and attr == u'arm':
                     continue
                 status = track.__getattribute__(attr)
-                if attr == 'mute':
+                if attr == u'mute':
                     status = not status
-                if attr == 'current_monitoring_state':
-                    self.log('current monitoring state of %s : %s' % (track, status))
+                if attr == u'current_monitoring_state':
+                    self.log(u'current monitoring state of %s : %s' % (track, status))
                     status = status != 2
-                    self.log('status is now %s' % track.monitoring_states.OFF)
+                    self.log(u'status is now %s' % track.monitoring_states.OFF)
             if self.status_cache[attr][idx] != status:
                 self.send_track_status_midi(status, notes[idx])
                 self.status_cache[attr][idx] = status
 
     def set_tracks_mute_status(self):
-        self.set_tracks_status('mute', MUTE_NOTES)
+        self.set_tracks_status(u'mute', MUTE_NOTES)
 
     def set_tracks_arm_status(self):
-        self.set_tracks_status('arm', ARM_NOTES)
+        self.set_tracks_status(u'arm', ARM_NOTES)
 
     def set_tracks_solo_status(self):
-        self.set_tracks_status('solo', SOLO_NOTES)
+        self.set_tracks_status(u'solo', SOLO_NOTES)
 
     def set_tracks_monitoring_status(self):
-        self.set_tracks_status('current_monitoring_state', MONITOR_NOTES)
+        self.set_tracks_status(u'current_monitoring_state', MONITOR_NOTES)
 
     def on_track_arm_changed(self):
         self.set_tracks_arm_status()
@@ -139,5 +137,5 @@ class LV2MixerController(FaderfoxMixerController):
         self.set_tracks_solo_status()
 
     def on_track_monitoring_changed(self):
-        self.log('monitoring state changed')
+        self.log(u'monitoring state changed')
         self.set_tracks_monitoring_status()

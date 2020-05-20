@@ -1,19 +1,15 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/push2_model.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/push2_model.py
 from __future__ import absolute_import, print_function, unicode_literals
 from pprint import pformat
-import logging, json
+import logging
+import json
 from .model import RootModel
 from .model.generation import generate_mrs_model, ModelUpdateNotifier
 logger = logging.getLogger(__name__)
 
 class Sender(object):
 
-    def __init__(self, message_sink=None, process_connected=None, *a, **k):
+    def __init__(self, message_sink = None, process_connected = None, *a, **k):
         super(Sender, self).__init__(*a, **k)
         assert message_sink is not None
         self._message_sink = message_sink
@@ -23,34 +19,32 @@ class Sender(object):
         self._attribute_paths = []
         self._structural_change = False
         self.notifier = ModelUpdateNotifier(delegate=self)
-        return
 
     def structural_change(self, path):
         self._attribute_paths.append((path, None))
         self._structural_change = True
-        return
 
     def attribute_changed(self, path, value):
         self._attribute_paths.append((path, value))
 
-    def send(self, root_model, send_all=False):
+    def send(self, root_model, send_all = False):
 
         def send_data(data):
-            if data['command'] == 'full-model-update':
-                data['fingerprint'] = root_model.__fingerprint__
+            if data[u'command'] == u'full-model-update':
+                data[u'fingerprint'] = root_model.__fingerprint__
             raw = json.dumps(data)
             self._message_sink(raw)
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug('Model sent: %s', pformat(data))
+                logger.debug(u'Model sent: %s', pformat(data))
 
         if send_all:
-            send_data(dict(command='full-model-update', payload=root_model.to_json()))
+            send_data(dict(command=u'full-model-update', payload=root_model.to_json()))
         elif self._structural_change:
-            root_keys = set(path[0][0] for path in self._attribute_paths)
-            data = dict(command='full-model-update', payload=root_model.to_json(root_keys))
+            root_keys = set((path[0][0] for path in self._attribute_paths))
+            data = dict(command=u'full-model-update', payload=root_model.to_json(root_keys))
             send_data(data)
         elif self._attribute_paths:
-            data = dict(command='path-model-update', payload=self._attribute_paths)
+            data = dict(command=u'path-model-update', payload=self._attribute_paths)
             send_data(data)
         self._attribute_paths = []
         self._structural_change = False
@@ -58,19 +52,17 @@ class Sender(object):
 
 class Root(generate_mrs_model(RootModel)):
 
-    def __init__(self, sender=None, *a, **k):
+    def __init__(self, sender = None, *a, **k):
         self._sender = sender
         if sender is not None:
-            k['notifier'] = sender.notifier
+            k[u'notifier'] = sender.notifier
         super(Root, self).__init__(*a, **k)
-        return
 
-    def commit_changes(self, send_all=False):
+    def commit_changes(self, send_all = False):
         if self._sender is not None:
             self._sender.send(self, send_all)
-        return
 
-    def to_json(self, root_keys=None):
+    def to_json(self, root_keys = None):
         if root_keys is None:
             return super(Root, self).to_json()
         else:
@@ -79,4 +71,3 @@ class Root(generate_mrs_model(RootModel)):
                 res[key] = self.data[key].to_json()
 
             return res
-            return

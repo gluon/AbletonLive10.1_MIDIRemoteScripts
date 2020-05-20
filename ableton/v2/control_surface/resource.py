@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/resource.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/resource.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ..base import Proxy, index_if, nop, first, NamedTuple
@@ -26,10 +21,10 @@ class Resource(object):
 class CompoundResource(Resource):
     u"""
     A resource that composes two resources, making sure that both
-    grabs have to be successfull for the compound to be adquired.
+    grabs have to be successful for the compound to be acquired.
     """
 
-    def __init__(self, first_resource=None, second_resource=None, *a, **k):
+    def __init__(self, first_resource = None, second_resource = None, *a, **k):
         super(CompoundResource, self).__init__(*a, **k)
         self._first_resource = first_resource
         self._second_resource = second_resource
@@ -72,17 +67,16 @@ class ExclusiveResource(Resource):
     someone else already.
     """
 
-    def __init__(self, on_received_callback=None, on_lost_callback=None, *a, **k):
+    def __init__(self, on_received_callback = None, on_lost_callback = None, *a, **k):
         super(ExclusiveResource, self).__init__(*a, **k)
         self._owner = None
         if on_received_callback:
             self.on_received = on_received_callback
         if on_lost_callback:
             self.on_lost = on_lost_callback
-        return
 
     def grab(self, client, *a, **k):
-        assert client is not None, 'Someone has to adquire resource'
+        assert client is not None, u'Someone has to acquire resource'
         if self._owner == None:
             self.on_received(client, *a, **k)
             self._owner = client
@@ -94,17 +88,16 @@ class ExclusiveResource(Resource):
             self._owner = None
             self.on_lost(client)
             return True
-        else:
-            return False
+        return False
 
     def get_owner(self):
         return self._owner
 
     def on_received(self, client, *a, **k):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
 
 class SharedResource(Resource):
@@ -112,7 +105,7 @@ class SharedResource(Resource):
     A resource that has no owner and will always be grabbed.
     """
 
-    def __init__(self, on_received_callback=None, on_lost_callback=None, *a, **k):
+    def __init__(self, on_received_callback = None, on_lost_callback = None, *a, **k):
         super(SharedResource, self).__init__(*a, **k)
         if on_received_callback:
             self.on_received = on_received_callback
@@ -121,7 +114,7 @@ class SharedResource(Resource):
         self._clients = set()
 
     def grab(self, client, *a, **k):
-        assert client is not None, 'Someone has to adquire resource'
+        assert client is not None, u'Someone has to acquire resource'
         self.on_received(client, *a, **k)
         self._clients.add(client)
         return True
@@ -138,13 +131,13 @@ class SharedResource(Resource):
         return False
 
     def get_owner(self):
-        assert False, 'Shared resource has no owner'
+        assert False, u'Shared resource has no owner'
 
     def on_received(self, client, *a, **k):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
 
 class StackingResource(Resource):
@@ -154,21 +147,21 @@ class StackingResource(Resource):
     arrival, this is, a new client attempting to grab will produce the
     former owner to be released.  However, when the current owner
     released ownership will be passed back to the last owner.
-
+    
     This, clients are organised in a stack, where grabbing puts the
     client at the top, and releasing removes from wherever the client
     is in the stack.  Because ownership can change even a client does
     not release, a client should not use the resource based on the
     result of the grab() method but instead use whatever indirect API
     the concrete resource provides to assign ownership.
-
+    
     Clients of a stacking resource can be prioritised to prevent
     preemption from a client with less priority. (For example, a modal
     dialog should not loose focus because of a normal window
     appearing.)
     """
 
-    def __init__(self, on_received_callback=None, on_lost_callback=None, *a, **k):
+    def __init__(self, on_received_callback = None, on_lost_callback = None, *a, **k):
         super(StackingResource, self).__init__(*a, **k)
         self._clients = []
         self._owners = set()
@@ -177,7 +170,7 @@ class StackingResource(Resource):
         if on_lost_callback:
             self.on_lost = on_lost_callback
 
-    def grab(self, client, priority=None):
+    def grab(self, client, priority = None):
         assert client is not None
         if priority is None:
             priority = DEFAULT_PRIORITY
@@ -229,13 +222,13 @@ class StackingResource(Resource):
 
     def _actual_owners(self):
         if self._clients:
-            return [self._clients[(-1)][0]]
+            return [self._clients[-1][0]]
         return []
 
     @property
     def max_priority(self):
         if self._clients:
-            return self._clients[(-1)][1]
+            return self._clients[-1][1]
         return DEFAULT_PRIORITY
 
     @property
@@ -256,10 +249,10 @@ class StackingResource(Resource):
         return self._owners
 
     def on_received(self, client):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplementedError('Override or pass callback')
+        raise NotImplementedError(u'Override or pass callback')
 
     def release_stacked(self):
         clients = self.clients
@@ -277,8 +270,7 @@ class PrioritizedResource(StackingResource):
 
     def _actual_owners(self):
         max_priority = self.max_priority
-        return [ client for client, priority in self._clients if priority == max_priority
-               ]
+        return [ client for client, priority in self._clients if priority == max_priority ]
 
 
 class ClientWrapper(NamedTuple):
@@ -293,21 +285,21 @@ class ProxyResource(Proxy):
     the proxied resource requirements.
     """
 
-    def __init__(self, proxied_resource=None, client_wrapper=ClientWrapper(), *a, **k):
+    def __init__(self, proxied_resource = None, client_wrapper = ClientWrapper(), *a, **k):
         assert proxied_resource
         super(ProxyResource, self).__init__(proxied_object=proxied_resource, *a, **k)
         self._client_wrapper = client_wrapper
 
     def grab(self, client, *a, **k):
-        self.__getattr__('grab')(self._client_wrapper.wrap(client), *a, **k)
+        self.__getattr__(u'grab')(self._client_wrapper.wrap(client), *a, **k)
 
     def release(self, client, *a, **k):
-        self.__getattr__('release')(self._client_wrapper.wrap(client), *a, **k)
+        self.__getattr__(u'release')(self._client_wrapper.wrap(client), *a, **k)
 
     @property
     def owner(self):
-        return self._client_wrapper.unwrap(self.__getattr__('owner'))
+        return self._client_wrapper.unwrap(self.__getattr__(u'owner'))
 
     @property
     def owners(self):
-        return map(self._client_wrapper.unwrap, self.__getattr__('owners'))
+        return map(self._client_wrapper.unwrap, self.__getattr__(u'owners'))

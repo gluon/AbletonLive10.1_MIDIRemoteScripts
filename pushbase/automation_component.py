@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/automation_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/automation_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import clamp, task, liveobj_valid
@@ -49,14 +44,14 @@ class AutomationComponent(DeviceParameterComponent):
 
     @property
     def parameters(self):
-        return map(lambda info: info.parameter if info else None, self._parameter_infos_to_use())
+        return map(lambda info: (info.parameter if info else None), self._parameter_infos_to_use())
 
     @property
     def parameter_infos(self):
         return self._parameter_infos_to_use()
 
     def _parameter_infos_to_use(self):
-        return map(lambda info: info if self.parameter_is_automateable(info.parameter if info else None) else None, self._parameter_provider.parameters)
+        return map(lambda info: (info if self.parameter_is_automateable(info.parameter if info else None) else None), self._parameter_provider.parameters)
 
     @property
     def can_automate_parameters(self):
@@ -77,9 +72,9 @@ class AutomationComponent(DeviceParameterComponent):
 
     def parameter_to_string(self, parameter):
         if not parameter:
-            return ''
+            return u''
         if len(self._selected_time) == 0:
-            return '-'
+            return u'-'
         return parameter.str_for_value(self.parameter_to_value(parameter))
 
     def parameter_to_value(self, parameter):
@@ -87,7 +82,8 @@ class AutomationComponent(DeviceParameterComponent):
             envelope = self._clip.automation_envelope(parameter)
             if liveobj_valid(envelope):
                 return self._value_at_time(envelope, self.selected_time[0])
-            return parameter.value
+            else:
+                return parameter.value
         return 0.0
 
     def _value_at_time(self, envelope, time_range):
@@ -144,8 +140,6 @@ class AutomationComponent(DeviceParameterComponent):
                     step_parameter_floats.append(value)
 
                 self._parameter_floats.append(step_parameter_floats)
-
-        return
 
     def _insert_step(self, time_range, time_index, param_index, envelope, value):
         param = self._parameter_for_index(self.parameters, param_index)

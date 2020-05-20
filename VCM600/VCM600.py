@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/VCM600/VCM600.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/VCM600/VCM600.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurface import ControlSurface
@@ -53,17 +48,13 @@ class VCM600(ControlSurface):
             strip = mixer.channel_strip(track)
             strip.set_volume_control(SliderElement(MIDI_CC_TYPE, track, 23))
             strip.set_pan_control(EncoderElement(MIDI_CC_TYPE, track, 10, Live.MidiMap.MapMode.absolute))
-            strip.set_send_controls((
-             EncoderElement(MIDI_CC_TYPE, track, 19, Live.MidiMap.MapMode.absolute),
-             EncoderElement(MIDI_CC_TYPE, track, 20, Live.MidiMap.MapMode.absolute)))
+            strip.set_send_controls((EncoderElement(MIDI_CC_TYPE, track, 19, Live.MidiMap.MapMode.absolute), EncoderElement(MIDI_CC_TYPE, track, 20, Live.MidiMap.MapMode.absolute)))
             strip.set_solo_button(ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 64))
             strip.set_mute_button(ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 63))
             strip.set_crossfade_toggle(ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 65))
             eq = mixer.track_eq(track)
-            eq.set_gain_controls(tuple([ EncoderElement(MIDI_CC_TYPE, track, 18 - index, Live.MidiMap.MapMode.absolute) for index in range(3)
-                                       ]))
-            eq.set_cut_buttons(tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 62 - index) for index in range(3)
-                                     ]))
+            eq.set_gain_controls(tuple([ EncoderElement(MIDI_CC_TYPE, track, 18 - index, Live.MidiMap.MapMode.absolute) for index in range(3) ]))
+            eq.set_cut_buttons(tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 62 - index) for index in range(3) ]))
             filter = mixer.track_filter(track)
             filter.set_filter_controls(EncoderElement(MIDI_CC_TYPE, track, 22, Live.MidiMap.MapMode.absolute), EncoderElement(MIDI_CC_TYPE, track, 21, Live.MidiMap.MapMode.absolute))
 
@@ -108,6 +99,4 @@ class VCM600(ControlSurface):
     def _setup_view_control(self):
         is_momentary = True
         view = ViewTogglerComponent(NUM_TRACKS)
-        view.set_buttons(tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 67) for track in range(NUM_TRACKS)
-                               ]), tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 66) for track in range(NUM_TRACKS)
-                                         ]))
+        view.set_buttons(tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 67) for track in range(NUM_TRACKS) ]), tuple([ ButtonElement(is_momentary, MIDI_NOTE_TYPE, track, 66) for track in range(NUM_TRACKS) ]))

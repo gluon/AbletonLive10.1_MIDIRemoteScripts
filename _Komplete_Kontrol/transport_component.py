@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Komplete_Kontrol/transport_component.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Komplete_Kontrol/transport_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens
 from ableton.v2.control_surface.components import TransportComponent as TransportComponentBase
@@ -11,7 +6,7 @@ from ableton.v2.control_surface.components import ToggleComponent
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl
 
 class TransportComponent(TransportComponentBase):
-    play_button = ButtonControl(color='Transport.PlayOff')
+    play_button = ButtonControl(color=u'Transport.PlayOff')
     jump_encoder = EncoderControl()
     loop_start_encoder = EncoderControl()
 
@@ -19,7 +14,7 @@ class TransportComponent(TransportComponentBase):
         super(TransportComponent, self).__init__(*a, **k)
         self.__on_signature_numerator_changed.subject = self.song
         self.__on_signature_denominator_changed.subject = self.song
-        self._session_record_toggle = ToggleComponent('session_record', self.song, parent=self)
+        self._session_record_toggle = ToggleComponent(u'session_record', self.song, parent=self)
         self._calculate_distance_to_move()
 
     def set_play_button(self, button):
@@ -40,11 +35,11 @@ class TransportComponent(TransportComponentBase):
     def loop_start_encoder(self, value, _):
         self.song.loop_start = max(0.0, self.song.loop_start + value * self._distance_to_move)
 
-    @listens('signature_numerator')
+    @listens(u'signature_numerator')
     def __on_signature_numerator_changed(self):
         self._calculate_distance_to_move()
 
-    @listens('signature_denominator')
+    @listens(u'signature_denominator')
     def __on_signature_denominator_changed(self):
         self._calculate_distance_to_move()
 
@@ -53,7 +48,7 @@ class TransportComponent(TransportComponentBase):
 
     def _update_button_states(self):
         super(TransportComponent, self)._update_button_states()
-        self.play_button.color = self._play_toggle.toggled_color if self._play_toggle.is_toggled else self._play_toggle.untoggled_color
+        self.play_button.color = u'Transport.PlayOn' if self.song.is_playing else u'Transport.PlayOff'
 
     def _update_stop_button_color(self):
-        self._stop_button.color = self._play_toggle.untoggled_color if self._play_toggle.is_toggled else self._play_toggle.toggled_color
+        self.stop_button.color = u'Transport.PlayOff' if self.song.is_playing else u'Transport.PlayOn'

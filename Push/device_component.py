@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/device_component.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/device_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface import ParameterInfo
@@ -12,7 +7,7 @@ from ableton.v2.control_surface.control import ButtonControl
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
 
 def is_wavetable(device):
-    return liveobj_valid(device) and device.class_name == 'InstrumentVector'
+    return liveobj_valid(device) and device.class_name == u'InstrumentVector'
 
 
 class DeviceComponent(DeviceComponentBase):

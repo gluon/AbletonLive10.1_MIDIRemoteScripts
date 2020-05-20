@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxHelper.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxHelper.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .ParamMap import Callable
@@ -11,8 +6,8 @@ from .Devices import *
 from .Params import *
 
 class FaderfoxHelper:
-    u"""General Live helper"""
     __module__ = __name__
+    __doc__ = u'General Live helper'
 
     def __init__(self, parent):
         self.parent = parent
@@ -55,7 +50,6 @@ class FaderfoxHelper:
                 else:
                     self.stop_track(track_idx)
                     return 0
-        return
 
     def stop_track(self, track_idx):
         if track_idx < len(self.song().tracks):
@@ -63,9 +57,9 @@ class FaderfoxHelper:
             clip_idx = self.track_playing_slot_idx(track)
             if clip_idx >= 0:
                 track.clip_slots[clip_idx].clip.stop()
-                return (
-                 track_idx, clip_idx)
-            return (None, None)
+                return (track_idx, clip_idx)
+            else:
+                return (None, None)
         return (None, None)
 
     def is_track_playing(self, track):
@@ -85,11 +79,11 @@ class FaderfoxHelper:
         return -1
 
     def switch_monitor_track(self, track):
-        if hasattr(track, 'current_monitoring_state'):
+        if hasattr(track, u'current_monitoring_state'):
             track.current_monitoring_state = (track.current_monitoring_state + 1) % len(track.monitoring_states.values)
 
     def switch_crossfader_ab(self, track):
-        if hasattr(track.mixer_device, 'crossfade_assign'):
+        if hasattr(track.mixer_device, u'crossfade_assign'):
             track.mixer_device.crossfade_assign = (track.mixer_device.crossfade_assign - 1) % len(track.mixer_device.crossfade_assignments.values)
 
     def toggle_track_attribute(self, track, attr):
@@ -130,10 +124,10 @@ class FaderfoxHelper:
         tracks = tuple(self.song().tracks) + tuple(self.song().return_tracks)
         if idx < len(tracks):
             return tracks[idx]
+        elif self.is_master_track_selected():
+            new_idx = min(15, len(tracks) - 1)
+            return self.get_track(new_idx)
         else:
-            if self.is_master_track_selected():
-                new_idx = min(15, len(tracks) - 1)
-                return self.get_track(new_idx)
             return self.song().master_track
 
     def selected_track_idx(self):
@@ -146,17 +140,17 @@ class FaderfoxHelper:
         return tuple_idx(tuple(self.song().tracks) + tuple(self.song().return_tracks), self.song().view.selected_track)
 
     def device_name(self, device):
-        if hasattr(device, 'class_name'):
+        if hasattr(device, u'class_name'):
             return device.class_name
+        elif FIVETOSIX_DICT.has_key(device.name):
+            return FIVETOSIX_DICT[device.name]
         else:
-            if FIVETOSIX_DICT.has_key(device.name):
-                return FIVETOSIX_DICT[device.name]
             return device.name
 
     def track_find_last_eq(self, track):
 
         def is_eq(device):
-            return self.device_name(device) == 'Eq8' or self.device_name(device) == 'FilterEQ3'
+            return self.device_name(device) == u'Eq8' or self.device_name(device) == u'FilterEQ3'
 
         result = None
         for device in track.devices:
@@ -166,38 +160,40 @@ class FaderfoxHelper:
         return result
 
     def eq_params(self, eq):
-        if self.device_name(eq) == 'Eq8':
-            return [ self.get_parameter_by_name(eq, name) for name in [
-             '3 Gain A', '4 Gain A', '5 Gain A', '6 Gain A']
-                   ]
+        if self.device_name(eq) == u'Eq8':
+            return [ self.get_parameter_by_name(eq, name) for name in [u'3 Gain A',
+             u'4 Gain A',
+             u'5 Gain A',
+             u'6 Gain A'] ]
+        elif self.device_name(eq) == u'FilterEQ3':
+            return [ self.get_parameter_by_name(eq, name) for name in [u'GainLo',
+             u'GainMid',
+             u'GainHi',
+             u''] ]
         else:
-            if self.device_name(eq) == 'FilterEQ3':
-                return [ self.get_parameter_by_name(eq, name) for name in [
-                 'GainLo', 'GainMid', 'GainHi', '']
-                       ]
-            else:
-                return [
-                 None, None, None, None]
-
-            return
+            return [None,
+             None,
+             None,
+             None]
 
     def device_is_plugin(self, device):
         return self.device_name(device) in (u'AuPluginDevice', u'PluginDevice')
 
     def current_q_step(self):
-        q_map = {Live.Song.Quantization.q_no_q: 0.03125, Live.Song.Quantization.q_8_bars: 32.0, 
-           Live.Song.Quantization.q_4_bars: 16.0, 
-           Live.Song.Quantization.q_2_bars: 8.0, 
-           Live.Song.Quantization.q_bar: 4.0, 
-           Live.Song.Quantization.q_half: 2.0, 
-           Live.Song.Quantization.q_half_triplet: 1.0 + 1.0 / 3, 
-           Live.Song.Quantization.q_quarter: 1.0, 
-           Live.Song.Quantization.q_quarter_triplet: 2 * (1.0 / 3), 
-           Live.Song.Quantization.q_eight: 0.5, 
-           Live.Song.Quantization.q_eight_triplet: 1.0 / 3, 
-           Live.Song.Quantization.q_sixtenth: 0.25, 
-           Live.Song.Quantization.q_sixtenth_triplet: 1.0 / 6, 
-           Live.Song.Quantization.q_thirtytwoth: 0.125}
+        q_map = {Live.Song.Quantization.q_no_q: 0.03125,
+         Live.Song.Quantization.q_8_bars: 32.0,
+         Live.Song.Quantization.q_4_bars: 16.0,
+         Live.Song.Quantization.q_2_bars: 8.0,
+         Live.Song.Quantization.q_bar: 4.0,
+         Live.Song.Quantization.q_half: 2.0,
+         Live.Song.Quantization.q_half_triplet: 1.0 + 1.0 / 3,
+         Live.Song.Quantization.q_quarter: 1.0,
+         Live.Song.Quantization.q_quarter_triplet: 2 * (1.0 / 3),
+         Live.Song.Quantization.q_eight: 0.5,
+         Live.Song.Quantization.q_eight_triplet: 1.0 / 3,
+         Live.Song.Quantization.q_sixtenth: 0.25,
+         Live.Song.Quantization.q_sixtenth_triplet: 1.0 / 6,
+         Live.Song.Quantization.q_thirtytwoth: 0.125}
         return q_map[self.song().clip_trigger_quantization]
 
     def number_of_parameter_banks(self, device):
@@ -214,7 +210,7 @@ class FaderfoxHelper:
 
     def get_parameter_by_name(self, device, name):
         for i in device.parameters:
-            if hasattr(i, 'original_name'):
+            if hasattr(i, u'original_name'):
                 if i.original_name == name:
                     return i
             else:
@@ -223,5 +219,3 @@ class FaderfoxHelper:
                     name = FIVETOSIX_PARAMS_DICT[device_name][name]
                 if i.name == name:
                     return i
-
-        return

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/Launchpad.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/Launchpad.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurface import ControlSurface
@@ -13,8 +8,7 @@ from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from .ConfigurableButtonElement import ConfigurableButtonElement
 from .MainSelectorComponent import MainSelectorComponent
 SIDE_NOTES = (8, 24, 40, 56, 72, 88, 104, 120)
-DRUM_NOTES = (41, 42, 43, 44, 45, 46, 47, 57, 58, 59, 60, 61, 62, 63, 73, 74, 75, 76,
-              77, 78, 79, 89, 90, 91, 92, 93, 94, 95, 105, 106, 107)
+DRUM_NOTES = (41, 42, 43, 44, 45, 46, 47, 57, 58, 59, 60, 61, 62, 63, 73, 74, 75, 76, 77, 78, 79, 89, 90, 91, 92, 93, 94, 95, 105, 106, 107)
 
 class Launchpad(ControlSurface):
     u""" Script for Novation's Launchpad Controller """
@@ -25,50 +19,48 @@ class Launchpad(ControlSurface):
             self._suppress_send_midi = True
             self._suppress_session_highlight = True
             is_momentary = True
-            self._suggested_input_port = 'Launchpad'
-            self._suggested_output_port = 'Launchpad'
+            self._suggested_input_port = u'Launchpad'
+            self._suggested_output_port = u'Launchpad'
             self._control_is_with_automap = False
             self._user_byte_write_button = ButtonElement(is_momentary, MIDI_CC_TYPE, 0, 16)
-            self._user_byte_write_button.name = 'User_Byte_Button'
+            self._user_byte_write_button.name = u'User_Byte_Button'
             self._user_byte_write_button.send_value(1)
             self._user_byte_write_button.add_value_listener(self._user_byte_value)
             self._wrote_user_byte = False
             self._challenge = Live.Application.get_random_int(0, 400000000) & 2139062143
             matrix = ButtonMatrixElement()
-            matrix.name = 'Button_Matrix'
+            matrix.name = u'Button_Matrix'
             for row in range(8):
                 button_row = []
                 for column in range(8):
                     button = ConfigurableButtonElement(is_momentary, MIDI_NOTE_TYPE, 0, row * 16 + column)
-                    button.name = str(column) + '_Clip_' + str(row) + '_Button'
+                    button.name = str(column) + u'_Clip_' + str(row) + u'_Button'
                     button_row.append(button)
 
                 matrix.add_row(tuple(button_row))
 
             self._config_button = ButtonElement(is_momentary, MIDI_CC_TYPE, 0, 0, optimized_send_midi=False)
             self._config_button.add_value_listener(self._config_value)
-            top_buttons = [ ConfigurableButtonElement(is_momentary, MIDI_CC_TYPE, 0, 104 + index) for index in range(8)
-                          ]
-            side_buttons = [ ConfigurableButtonElement(is_momentary, MIDI_NOTE_TYPE, 0, SIDE_NOTES[index]) for index in range(8)
-                           ]
-            top_buttons[0].name = 'Bank_Select_Up_Button'
-            top_buttons[1].name = 'Bank_Select_Down_Button'
-            top_buttons[2].name = 'Bank_Select_Left_Button'
-            top_buttons[3].name = 'Bank_Select_Right_Button'
-            top_buttons[4].name = 'Session_Button'
-            top_buttons[5].name = 'User1_Button'
-            top_buttons[6].name = 'User2_Button'
-            top_buttons[7].name = 'Mixer_Button'
-            side_buttons[0].name = 'Vol_Button'
-            side_buttons[1].name = 'Pan_Button'
-            side_buttons[2].name = 'SndA_Button'
-            side_buttons[3].name = 'SndB_Button'
-            side_buttons[4].name = 'Stop_Button'
-            side_buttons[5].name = 'Trk_On_Button'
-            side_buttons[6].name = 'Solo_Button'
-            side_buttons[7].name = 'Arm_Button'
+            top_buttons = [ ConfigurableButtonElement(is_momentary, MIDI_CC_TYPE, 0, 104 + index) for index in range(8) ]
+            side_buttons = [ ConfigurableButtonElement(is_momentary, MIDI_NOTE_TYPE, 0, SIDE_NOTES[index]) for index in range(8) ]
+            top_buttons[0].name = u'Bank_Select_Up_Button'
+            top_buttons[1].name = u'Bank_Select_Down_Button'
+            top_buttons[2].name = u'Bank_Select_Left_Button'
+            top_buttons[3].name = u'Bank_Select_Right_Button'
+            top_buttons[4].name = u'Session_Button'
+            top_buttons[5].name = u'User1_Button'
+            top_buttons[6].name = u'User2_Button'
+            top_buttons[7].name = u'Mixer_Button'
+            side_buttons[0].name = u'Vol_Button'
+            side_buttons[1].name = u'Pan_Button'
+            side_buttons[2].name = u'SndA_Button'
+            side_buttons[3].name = u'SndB_Button'
+            side_buttons[4].name = u'Stop_Button'
+            side_buttons[5].name = u'Trk_On_Button'
+            side_buttons[6].name = u'Solo_Button'
+            side_buttons[7].name = u'Arm_Button'
             self._selector = MainSelectorComponent(matrix, tuple(top_buttons), tuple(side_buttons), self._config_button)
-            self._selector.name = 'Main_Modes'
+            self._selector.name = u'Main_Modes'
             for control in self.controls:
                 if isinstance(control, ConfigurableButtonElement):
                     control.add_value_listener(self._button_value)
@@ -92,7 +84,6 @@ class Launchpad(ControlSurface):
         self._config_button = None
         self._user_byte_write_button.send_value(0)
         self._user_byte_write_button = None
-        return
 
     def refresh_state(self):
         ControlSurface.refresh_state(self)
@@ -117,7 +108,7 @@ class Launchpad(ControlSurface):
             for note in DRUM_NOTES:
                 self._translate_message(MIDI_NOTE_TYPE, note, 0, note, new_channel)
 
-    def _send_midi(self, midi_bytes, optimized=None):
+    def _send_midi(self, midi_bytes, optimized = None):
         sent_successfully = False
         if not self._suppress_send_midi:
             sent_successfully = ControlSurface._send_midi(self, midi_bytes, optimized=optimized)

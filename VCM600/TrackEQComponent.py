@@ -1,16 +1,12 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/VCM600/TrackEQComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/VCM600/TrackEQComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
 from _Framework.EncoderElement import EncoderElement
 from _Generic.Devices import get_parameter_by_name
-EQ_DEVICES = {'Eq8': {'Gains': [ '%i Gain A' % (index + 1) for index in range(8) ]}, 'FilterEQ3': {'Gains': ['GainLo', 'GainMid', 'GainHi'], 'Cuts': [
-                        'LowOn', 'MidOn', 'HighOn']}}
+EQ_DEVICES = {u'Eq8': {u'Gains': [ u'%i Gain A' % (index + 1) for index in range(8) ]},
+ u'FilterEQ3': {u'Gains': [u'GainLo', u'GainMid', u'GainHi'],
+                u'Cuts': [u'LowOn', u'MidOn', u'HighOn']}}
 
 class TrackEQComponent(ControlSurfaceComponent):
     u""" Class representing a track's EQ, it attaches to the last EQ device in the track """
@@ -21,7 +17,6 @@ class TrackEQComponent(ControlSurfaceComponent):
         self._device = None
         self._gain_controls = None
         self._cut_buttons = None
-        return
 
     def disconnect(self):
         if self._gain_controls != None:
@@ -40,14 +35,12 @@ class TrackEQComponent(ControlSurfaceComponent):
         self._device = None
         if self._device != None:
             device_dict = EQ_DEVICES[self._device.class_name]
-            if 'Cuts' in device_dict.keys():
-                cut_names = device_dict['Cuts']
+            if u'Cuts' in device_dict.keys():
+                cut_names = device_dict[u'Cuts']
                 for cut_name in cut_names:
                     parameter = get_parameter_by_name(self._device, cut_name)
                     if parameter != None and parameter.value_has_listener(self._on_cut_changed):
                         parameter.remove_value_listener(self._on_cut_changed)
-
-        return
 
     def on_enabled_changed(self):
         self.update()
@@ -64,7 +57,6 @@ class TrackEQComponent(ControlSurfaceComponent):
         if self._track != None:
             self._track.add_devices_listener(self._on_devices_changed)
         self._on_devices_changed()
-        return
 
     def set_cut_buttons(self, buttons):
         assert buttons == None or isinstance(buttons, tuple)
@@ -79,7 +71,6 @@ class TrackEQComponent(ControlSurfaceComponent):
                     button.add_value_listener(self._cut_value, identify_sender=True)
 
             self.update()
-        return
 
     def set_gain_controls(self, controls):
         assert controls != None
@@ -94,14 +85,13 @@ class TrackEQComponent(ControlSurfaceComponent):
 
         self._gain_controls = controls
         self.update()
-        return
 
     def update(self):
         super(TrackEQComponent, self).update()
         if self.is_enabled() and self._device != None:
             device_dict = EQ_DEVICES[self._device.class_name]
             if self._gain_controls != None:
-                gain_names = device_dict['Gains']
+                gain_names = device_dict[u'Gains']
                 for index in range(len(self._gain_controls)):
                     self._gain_controls[index].release_parameter()
                     if len(gain_names) > index:
@@ -109,8 +99,8 @@ class TrackEQComponent(ControlSurfaceComponent):
                         if parameter != None:
                             self._gain_controls[index].connect_to(parameter)
 
-            if self._cut_buttons != None and 'Cuts' in device_dict.keys():
-                cut_names = device_dict['Cuts']
+            if self._cut_buttons != None and u'Cuts' in device_dict.keys():
+                cut_names = device_dict[u'Cuts']
                 for index in range(len(self._cut_buttons)):
                     self._cut_buttons[index].turn_off()
                     if len(cut_names) > index:
@@ -121,38 +111,35 @@ class TrackEQComponent(ControlSurfaceComponent):
                             if not parameter.value_has_listener(self._on_cut_changed):
                                 parameter.add_value_listener(self._on_cut_changed)
 
-        elif self._cut_buttons != None:
-            for button in self._cut_buttons:
-                if button != None:
-                    button.turn_off()
-
         else:
+            if self._cut_buttons != None:
+                for button in self._cut_buttons:
+                    if button != None:
+                        button.turn_off()
+
             if self._gain_controls != None:
                 for control in self._gain_controls:
                     control.release_parameter()
 
-        return
-
     def _cut_value(self, value, sender):
-        if not sender in self._cut_buttons:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._device != None and (not sender.is_momentary() or value is not 0):
+        assert sender in self._cut_buttons
+        assert value in range(128)
+        if self.is_enabled() and self._device != None:
+            if not sender.is_momentary() or value is not 0:
                 device_dict = EQ_DEVICES[self._device.class_name]
-                if 'Cuts' in device_dict.keys():
-                    cut_names = device_dict['Cuts']
+                if u'Cuts' in device_dict.keys():
+                    cut_names = device_dict[u'Cuts']
                     index = list(self._cut_buttons).index(sender)
                     if index in range(len(cut_names)):
                         parameter = get_parameter_by_name(self._device, cut_names[index])
                         if parameter != None and parameter.is_enabled:
                             parameter.value = float(int(parameter.value + 1) % 2)
-        return
 
     def _on_devices_changed(self):
         if self._device != None:
             device_dict = EQ_DEVICES[self._device.class_name]
-            if 'Cuts' in device_dict.keys():
-                cut_names = device_dict['Cuts']
+            if u'Cuts' in device_dict.keys():
+                cut_names = device_dict[u'Cuts']
                 for cut_name in cut_names:
                     parameter = get_parameter_by_name(self._device, cut_name)
                     if parameter != None and parameter.value_has_listener(self._on_cut_changed):
@@ -161,24 +148,21 @@ class TrackEQComponent(ControlSurfaceComponent):
         self._device = None
         if self._track != None:
             for index in range(len(self._track.devices)):
-                device = self._track.devices[(-1 * (index + 1))]
+                device = self._track.devices[-1 * (index + 1)]
                 if device.class_name in EQ_DEVICES.keys():
                     self._device = device
                     break
 
         self.update()
-        return
 
     def _on_cut_changed(self):
         assert self._device != None
-        assert 'Cuts' in EQ_DEVICES[self._device.class_name].keys()
+        assert u'Cuts' in EQ_DEVICES[self._device.class_name].keys()
         if self.is_enabled() and self._cut_buttons != None:
-            cut_names = EQ_DEVICES[self._device.class_name]['Cuts']
+            cut_names = EQ_DEVICES[self._device.class_name][u'Cuts']
             for index in range(len(self._cut_buttons)):
                 self._cut_buttons[index].turn_off()
                 if len(cut_names) > index:
                     parameter = get_parameter_by_name(self._device, cut_names[index])
                     if parameter != None and parameter.value == 0.0:
                         self._cut_buttons[index].turn_on()
-
-        return

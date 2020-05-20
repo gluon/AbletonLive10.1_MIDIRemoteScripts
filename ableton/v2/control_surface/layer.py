@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/layer.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/layer.py
 u"""
 Module implementing a way to resource-based access to controls in an
 unified interface dynamic.
@@ -27,7 +22,7 @@ class SimpleLayerOwner(Disconnectable):
     Simple owner that grabs a given layer until it's disconnected
     """
 
-    def __init__(self, layer=None):
+    def __init__(self, layer = None):
         self._layer = layer
         self._layer.grab(self)
 
@@ -37,11 +32,11 @@ class SimpleLayerOwner(Disconnectable):
 
 class LayerClient(ControlElementClient):
     u"""
-    Client of the indivial elements that delivers the elements to the
+    Client of the individual elements that delivers the elements to the
     layer owner.
     """
 
-    def __init__(self, layer=None, layer_client=None, *a, **k):
+    def __init__(self, layer = None, layer_client = None, *a, **k):
         super(LayerClient, self).__init__(*a, **k)
         assert layer_client
         assert layer
@@ -52,37 +47,32 @@ class LayerClient(ControlElementClient):
         layer = self.layer
         owner = self.layer_client
         assert owner
-        assert control_element in layer._element_to_names, 'Control not in layer: %s' % (
-         control_element,)
+        assert control_element in layer._element_to_names, u'Control not in layer: %s' % (control_element,)
         names = layer._element_to_names[control_element]
         if not grabbed:
             control_element = None
         for name in names:
             try:
-                handler = getattr(owner, 'set_' + name)
+                handler = getattr(owner, u'set_' + name)
             except AttributeError:
                 try:
                     control = getattr(owner, name)
                     handler = control.set_control_element
                 except AttributeError:
-                    if name[0] != '_':
-                        raise UnhandledElementError('Component %s has no handler for control_element %s' % (
-                         str(owner), name))
+                    if name[0] != u'_':
+                        raise UnhandledElementError(u'Component %s has no handler for control_element %s' % (str(owner), name))
                     else:
                         handler = nop
 
-            else:
-                handler(control_element or None)
-                layer._name_to_elements[name] = control_element
-
-        return
+            handler(control_element or None)
+            layer._name_to_elements[name] = control_element
 
 
 class CompoundLayer(CompoundResource):
     u"""
     A compound resource takes two layers and makes them look like one,
     grabbing both of them.  Both can have different priorities
-    thought.
+    though.
     """
 
     @property
@@ -104,7 +94,7 @@ class CompoundLayer(CompoundResource):
 
 class LayerBase(ExclusiveResource):
 
-    def __init__(self, priority=None, *a, **k):
+    def __init__(self, priority = None, *a, **k):
         super(LayerBase, self).__init__(*a, **k)
         self._priority = priority
 
@@ -119,7 +109,7 @@ class LayerBase(ExclusiveResource):
     def priority(self, priority):
         if priority != self._priority:
             if self.owner:
-                raise RuntimeError("Cannot change priority of a layer while it's owned")
+                raise RuntimeError(u"Cannot change priority of a layer while it's owned")
             self._priority = priority
 
     def grab(self, client, *a, **k):
@@ -136,36 +126,33 @@ class Layer(LayerBase):
     is an exclusive resource.  When grabbing the layer, it will try to
     grab all elements and will forward them to its own owner when he
     receives them, and will take them from him when they are
-    release. The layer with give and take away the elements from its
+    release. The layer will give and take away the elements from its
     client using methods of the form::
-
+    
         client.set[element-name](element)
-
+    
     Where [element-name] is the name the element was given in this
     layer.  This way, layers are a convenient way to provide elements
     to components indirectly, with automatic handling of competition
     for them.
-
+    
     Note that [element-name] can not be any of the following reserved
     names: priority, grab, release, on_received, on_lost, owner,
     get_owner
-
+    
     If [element-name] starts with an underscore (_) it is considered
     private.  It is grabbed but it is not delivered to the client.
     """
 
-    def __init__(self, priority=None, **elements):
+    def __init__(self, priority = None, **elements):
         super(Layer, self).__init__()
         self._priority = priority
         self._name_to_elements = dict(izip(elements.iterkeys(), repeat(None)))
         self._element_to_names = dict()
         self._element_clients = dict()
         for name, element in elements.iteritems():
-            if not get_element(element) is not None:
-                raise AssertionError(name)
-                self._element_to_names.setdefault(get_element(element), []).append(name)
-
-        return
+            assert get_element(element) is not None, name
+            self._element_to_names.setdefault(get_element(element), []).append(name)
 
     def __getattr__(self, name):
         u""" Provides access to elements """
@@ -177,7 +164,7 @@ class Layer(LayerBase):
     def on_received(self, client, *a, **k):
         u""" Override from ExclusiveResource """
         for element in self._element_to_names.iterkeys():
-            k.setdefault('priority', self._priority)
+            k.setdefault(u'priority', self._priority)
             element.resource.grab(self._get_control_client(client), *a, **k)
 
     def on_lost(self, client):
@@ -206,7 +193,7 @@ class BackgroundLayer(LayerBase):
     def on_received(self, client, *a, **k):
         u""" Override from ExclusiveResource """
         for element in self._elements:
-            k.setdefault('priority', self._priority)
+            k.setdefault(u'priority', self._priority)
             element.resource.grab(self, *a, **k)
 
     def on_lost(self, client):

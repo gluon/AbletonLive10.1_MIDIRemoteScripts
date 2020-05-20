@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/playhead_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/playhead_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens, liveobj_valid
 from ableton.v2.control_surface import Component
@@ -13,7 +8,7 @@ class PlayheadComponent(Component):
     Updates the contents of the Live playhead object.
     """
 
-    def __init__(self, paginator=None, grid_resolution=None, follower=None, notes=range(8), triplet_notes=range(6), feedback_channels=[], *a, **k):
+    def __init__(self, paginator = None, grid_resolution = None, follower = None, notes = range(8), triplet_notes = range(6), feedback_channels = [], *a, **k):
         super(PlayheadComponent, self).__init__(*a, **k)
         self._playhead = None
         self._clip = None
@@ -26,7 +21,6 @@ class PlayheadComponent(Component):
         self._on_page_changed.subject = self._paginator
         self.__on_grid_resolution_changed.subject = self._grid_resolution
         self._on_follower_is_following_changed.subject = self._follower
-        return
 
     def set_playhead(self, playhead):
         self._playhead = playhead
@@ -37,25 +31,24 @@ class PlayheadComponent(Component):
         self._on_playing_status_changed.subject = clip
         self._on_song_is_playing_changed.subject = self.song if clip else None
         self.update()
-        return
 
-    @listens('page')
+    @listens(u'page')
     def _on_page_changed(self):
         self.update()
 
-    @listens('playing_status')
+    @listens(u'playing_status')
     def _on_playing_status_changed(self):
         self.update()
 
-    @listens('is_playing')
+    @listens(u'is_playing')
     def _on_song_is_playing_changed(self):
         self.update()
 
-    @listens('index')
+    @listens(u'index')
     def __on_grid_resolution_changed(self, *a):
         self.update()
 
-    @listens('is_following')
+    @listens(u'is_following')
     def _on_follower_is_following_changed(self, value):
         self.update()
 
@@ -75,4 +68,3 @@ class PlayheadComponent(Component):
                 self._playhead.wrap_around = self._follower.is_following and self._paginator.can_change_page
                 self._playhead.start_time = self._paginator.page_length * self._paginator.page_index
                 self._playhead.step_length = self._paginator.page_length / len(notes)
-        return

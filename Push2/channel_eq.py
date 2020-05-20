@@ -1,16 +1,15 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/channel_eq.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/channel_eq.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData
 from .visualisation_settings import VisualisationGuides
 
 class ChannelEqDeviceComponent(DeviceComponentWithTrackColorViewData):
     VISUALISATION_POSITION = ButtonRange(1, 6)
-    FILTER_PARAMETERS = ['Highpass On', 'Low', 'Mid', 'Mid Freq', 'High']
+    FILTER_PARAMETERS = [u'Highpass On',
+     u'Low',
+     u'Mid',
+     u'Mid Freq',
+     u'High']
 
     def _parameter_touched(self, parameter):
         self._update_visualisation_view_data(self._adjustment_view_data)
@@ -21,14 +20,13 @@ class ChannelEqDeviceComponent(DeviceComponentWithTrackColorViewData):
     @property
     def _adjustment_view_data(self):
         adjusting_filter = False
-        touched_parameters = [ self.parameters[button.index] for button in self.parameter_touch_buttons if button.is_pressed
-                             ]
+        touched_parameters = [ self.parameters[button.index] for button in self.parameter_touch_buttons if button.is_pressed ]
         for parameter in touched_parameters:
             if parameter.name in self.FILTER_PARAMETERS:
                 adjusting_filter = True
                 break
 
-        return {'AdjustingFilter': adjusting_filter}
+        return {u'AdjustingFilter': adjusting_filter}
 
     @property
     def _visualisation_visible(self):
@@ -47,9 +45,9 @@ class ChannelEqDeviceComponent(DeviceComponentWithTrackColorViewData):
         position = self.VISUALISATION_POSITION
         start_position_in_px = VisualisationGuides.light_left_x(position.left_index)
         end_position_in_px = VisualisationGuides.light_right_x(position.right_index)
-        return {'VisualisationStart': start_position_in_px, 
-           'VisualisationWidth': end_position_in_px - start_position_in_px, 
-           'AdjustingFilter': False}
+        return {u'VisualisationStart': start_position_in_px,
+         u'VisualisationWidth': end_position_in_px - start_position_in_px,
+         u'AdjustingFilter': False}
 
     def _initial_visualisation_view_data(self):
         view_data = super(ChannelEqDeviceComponent, self)._initial_visualisation_view_data()

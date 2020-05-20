@@ -1,29 +1,23 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/session_ring_selection_linking.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/session_ring_selection_linking.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, index_if, listens, liveobj_changed, liveobj_valid
 from ableton.v2.control_surface import SessionRingSelectionLinking as SessionRingSelectionLinkingBase
 
 class SessionRingSelectionLinking(SessionRingSelectionLinkingBase):
 
-    def __init__(self, selection_changed_notifier=None, *a, **k):
+    def __init__(self, selection_changed_notifier = None, *a, **k):
         super(SessionRingSelectionLinking, self).__init__(selection_changed_notifier=selection_changed_notifier, *a, **k)
         self._previously_selected_track = None
         self._currently_selected_track = None
         self.__on_selected_track_changed.subject = self._song.view
         self.__on_selected_track_changed()
         self.__on_selection_paged.subject = selection_changed_notifier
-        return
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self._ensure_track_selection_history_is_synced()
 
-    @listens('selection_paged')
+    @listens(u'selection_paged')
     def __on_selection_paged(self):
         self._link_session_ring_by_paging()
 

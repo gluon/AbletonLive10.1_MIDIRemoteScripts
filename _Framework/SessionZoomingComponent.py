@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SessionZoomingComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SessionZoomingComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .CompoundComponent import CompoundComponent
 from .ScrollComponent import ScrollComponent
@@ -16,7 +11,7 @@ class SessionZoomingComponent(CompoundComponent):
     session, as if you had zoomed out from session.
     """
 
-    def __init__(self, session=None, enable_skinning=False, *a, **k):
+    def __init__(self, session = None, enable_skinning = False, *a, **k):
         super(SessionZoomingComponent, self).__init__(*a, **k)
         assert session
         self._buttons = None
@@ -36,16 +31,15 @@ class SessionZoomingComponent(CompoundComponent):
         self._horizontal_scroll.can_scroll_down = self._can_scroll_right
         self._horizontal_scroll.scroll_up = self._scroll_left
         self._horizontal_scroll.scroll_down = self._scroll_right
-        self.register_slot(self._session, self._on_session_offset_changes, 'offset')
+        self.register_slot(self._session, self._on_session_offset_changes, u'offset')
         if enable_skinning:
             self._enable_skinning()
-        return
 
     def _enable_skinning(self):
-        self.set_stopped_value('Zooming.Stopped')
-        self.set_selected_value('Zooming.Selected')
-        self.set_playing_value('Zooming.Playing')
-        self.set_empty_value('Zooming.Empty')
+        self.set_stopped_value(u'Zooming.Stopped')
+        self.set_selected_value(u'Zooming.Selected')
+        self.set_playing_value(u'Zooming.Playing')
+        self.set_empty_value(u'Zooming.Empty')
 
     def on_scene_list_changed(self):
         self.update()
@@ -145,22 +139,18 @@ class SessionZoomingComponent(CompoundComponent):
                     else:
                         self._buttons.set_light(x, y, value_to_send)
 
-        return
-
     def _update_scene_bank_buttens(self):
         if self._scene_bank_buttons != None:
             for index, button in enumerate(self._scene_bank_buttons):
                 if button:
                     button.set_light(index == self._scene_bank_index)
 
-        return
-
     def _on_session_offset_changes(self):
         if self._buttons:
             self._scene_bank_index = int(self._session.scene_offset() / self._session.height() / self._buttons.height())
         self.update()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_matrix_value(self, value, x, y, is_momentary):
         if self.is_enabled():
             if value != 0 or not is_momentary:
@@ -169,7 +159,7 @@ class SessionZoomingComponent(CompoundComponent):
                 if track_offset in xrange(len(self._session.tracks_to_use())) and scene_offset in xrange(len(self.song().scenes)):
                     self._session.set_offsets(track_offset, scene_offset)
 
-    @subject_slot_group('value')
+    @subject_slot_group(u'value')
     def _on_scene_bank_value(self, value, sender):
         if self.is_enabled() and self._buttons:
             if value != 0 or not sender.is_momentary():
@@ -240,7 +230,6 @@ class DeprecatedSessionZoomingComponent(SessionZoomingComponent):
         super(DeprecatedSessionZoomingComponent, self).__init__(*a, **k)
         self._zoom_button = None
         self._is_zoomed_out = False
-        return
 
     def set_button_matrix(self, buttons):
         u"""
@@ -262,7 +251,7 @@ class DeprecatedSessionZoomingComponent(SessionZoomingComponent):
     def _session_set_enabled(self, is_enabled):
         self._session.set_enabled(is_enabled)
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_zoom_value(self, value):
         if self.is_enabled():
             if self._zoom_button.is_momentary():
@@ -293,12 +282,12 @@ class DeprecatedSessionZoomingComponent(SessionZoomingComponent):
         if self._is_zoomed_out:
             super(DeprecatedSessionZoomingComponent, self)._on_session_offset_changes()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_matrix_value(self, *a, **k):
         if self._is_zoomed_out:
             super(DeprecatedSessionZoomingComponent, self)._on_matrix_value(*a, **k)
 
-    @subject_slot_group('value')
+    @subject_slot_group(u'value')
     def _on_scene_bank_value(self, *a, **k):
         if self._is_zoomed_out:
             super(DeprecatedSessionZoomingComponent, self)._on_scene_bank_value(*a, **k)

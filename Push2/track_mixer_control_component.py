@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/track_mixer_control_component.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/track_mixer_control_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, depends, listens, liveobj_valid
 from ableton.v2.control_surface import Component
@@ -16,44 +11,42 @@ from .mixer_control_component import assign_parameters
 
 class TrackMixerControlComponent(Component):
     __events__ = (u'parameters', u'scroll_offset', u'items')
-    BUTTON_SKIN = dict(color='TrackControlView.ButtonOff', pressed_color='TrackControlView.ButtonOn', disabled_color='TrackControlView.ButtonDisabled')
+    BUTTON_SKIN = dict(color=u'TrackControlView.ButtonOff', pressed_color=u'TrackControlView.ButtonOn', disabled_color=u'TrackControlView.ButtonDisabled')
     controls = control_list(MappedSensitivitySettingControl)
     scroll_right_button = ButtonControl(**BUTTON_SKIN)
     scroll_left_button = ButtonControl(**BUTTON_SKIN)
 
     @depends(tracks_provider=None, real_time_mapper=None, register_real_time_data=None)
-    def __init__(self, real_time_mapper=None, register_real_time_data=None, tracks_provider=None, *a, **k):
+    def __init__(self, real_time_mapper = None, register_real_time_data = None, tracks_provider = None, *a, **k):
         assert liveobj_valid(real_time_mapper)
         assert tracks_provider is not None
         super(TrackMixerControlComponent, self).__init__(*a, **k)
         self._tracks_provider = tracks_provider
         self._on_return_tracks_changed.subject = self.song
-        self.real_time_meter_channel = RealTimeDataComponent(parent=self, real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, channel_type='meter')
+        self.real_time_meter_channel = RealTimeDataComponent(parent=self, real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, channel_type=u'meter')
         self._scroll_offset = 0
         self._items = []
         self._number_return_tracks = self._number_sends()
         self._update_scroll_buttons()
         self.__on_selected_item_changed.subject = self._tracks_provider
         self.__on_selected_item_changed()
-        return
 
     def set_controls(self, controls):
         self.controls.set_control_element(controls)
         self._update_controls()
 
-    @listens('panning_mode')
+    @listens(u'panning_mode')
     def __on_pan_mode_changed(self):
         self._update_controls()
         self._update_scroll_offset()
 
-    @listens('selected_item')
+    @listens(u'selected_item')
     def __on_selected_item_changed(self):
         self._update_scroll_offset()
         self._update_real_time_channel_id()
         mixer = self._tracks_provider.selected_item.mixer_device
         self.__on_pan_mode_changed.subject = mixer if has_pan_mode(mixer) else None
         self.__on_pan_mode_changed()
-        return
 
     def update(self):
         super(TrackMixerControlComponent, self).update()
@@ -78,7 +71,7 @@ class TrackMixerControlComponent(Component):
     def scroll_offset(self):
         return self._scroll_offset
 
-    @listens('return_tracks')
+    @listens(u'return_tracks')
     def _on_return_tracks_changed(self):
         self._update_controls()
         self._update_scroll_offset()
@@ -140,8 +133,8 @@ class TrackMixerControlComponent(Component):
 
     def _update_view_slots(self):
         self._items = [ IconItemSlot() for _ in xrange(6) ]
-        self._items.append(IconItemSlot(icon='page_left.svg' if self.scroll_left_button.enabled else ''))
-        self._items.append(IconItemSlot(icon='page_right.svg' if self.scroll_right_button.enabled else ''))
+        self._items.append(IconItemSlot(icon=u'page_left.svg' if self.scroll_left_button.enabled else u''))
+        self._items.append(IconItemSlot(icon=u'page_right.svg' if self.scroll_right_button.enabled else u''))
         self.notify_items()
 
     def _scroll_controls(self, delta):

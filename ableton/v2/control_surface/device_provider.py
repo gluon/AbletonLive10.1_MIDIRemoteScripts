@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/device_provider.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/device_provider.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ..base import listenable_property, listens, liveobj_changed, liveobj_valid, EventObject
@@ -15,13 +10,13 @@ def device_to_appoint(device):
     return appointed_device
 
 
-def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros=True):
+def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros = True):
     u"""
     Convenience function for selecting a device for a control surface to control.
-
+    
     This takes care of selecting the device and appointing it for remote control, which
     is important, because these are two concepts, that are not exactly the same.
-
+    
     The device component always controls the appointed device. It's possible to select
     another device, but not appoint it for control. The behaviour in this function
     appoints a drum rack's selected chain's first device if none of the macros are mapped
@@ -38,18 +33,18 @@ def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros=Tru
 class DeviceProvider(EventObject):
     u"""
     Provide "controlled device" to device component
-
+    
     This class abstracts the logic required to provide a controlled device to be used
     by the device component. In most cases, this is the same as the appointed device, but
     not always, e.g. when a surface is locked to a device (there is only one global
     appointed device per Song).
-
+    
     This class also takes care of appointing the right device when switching between
     tracks etc.
     """
     device_selection_follows_track_selection = True
 
-    def __init__(self, song=None, *a, **k):
+    def __init__(self, song = None, *a, **k):
         super(DeviceProvider, self).__init__(*a, **k)
         self._device = None
         self._locked_to_device = False
@@ -57,7 +52,6 @@ class DeviceProvider(EventObject):
         self.__on_appointed_device_changed.subject = song
         self.__on_selected_track_changed.subject = song.view
         self.__on_selected_device_changed.subject = song.view.selected_track.view
-        return
 
     @listenable_property
     def device(self):
@@ -102,27 +96,26 @@ class DeviceProvider(EventObject):
         else:
             self.song.appointed_device = None
             self.device = None
-        return
 
-    @listens('appointed_device')
+    @listens(u'appointed_device')
     def __on_appointed_device_changed(self):
         self.device = device_to_appoint(self.song.appointed_device)
 
-    @listens('has_macro_mappings')
+    @listens(u'has_macro_mappings')
     def __on_has_macro_mappings_changed(self):
         self.song.appointed_device = device_to_appoint(self.song.view.selected_track.view.selected_device)
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self.__on_selected_device_changed.subject = self.song.view.selected_track.view
         if self.device_selection_follows_track_selection:
             self.update_device_selection()
 
-    @listens('selected_device')
+    @listens(u'selected_device')
     def __on_selected_device_changed(self):
         self._update_appointed_device()
 
-    @listens('chains')
+    @listens(u'chains')
     def __on_chains_changed(self):
         self._update_appointed_device()
 
@@ -134,4 +127,3 @@ class DeviceProvider(EventObject):
         rack_device = device if isinstance(device, Live.RackDevice.RackDevice) else None
         self.__on_has_macro_mappings_changed.subject = rack_device
         self.__on_chains_changed.subject = rack_device
-        return

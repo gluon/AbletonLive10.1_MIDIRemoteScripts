@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_list.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_list.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import islice
@@ -14,7 +9,7 @@ class BrowserList(EventObject, UniqueIdMixin):
     LAZY_ACCESS_COUNT = 1000
     LAZY_ACCESS_THRESHOLD = LAZY_ACCESS_COUNT - 100
 
-    def __init__(self, item_iterator=None, item_wrapper=nop, limit=-1, *a, **k):
+    def __init__(self, item_iterator = None, item_wrapper = nop, limit = -1, *a, **k):
         super(BrowserList, self).__init__(*a, **k)
         self._selected_index = -1
         self._item_iterator = item_iterator
@@ -75,8 +70,7 @@ class BrowserList(EventObject, UniqueIdMixin):
     def selected_item(self):
         if self.selected_index == -1:
             return None
-        else:
-            return self.items[self.selected_index]
+        return self.items[self.selected_index]
 
     @listenable_property
     def selected_index(self):
@@ -88,7 +82,7 @@ class BrowserList(EventObject, UniqueIdMixin):
             assert value == -1 or self._limit == -1
             num_children = len(self._items)
             if value < -1 or value >= num_children:
-                raise IndexError('Index %i must be in [-1..%i]' % (value, num_children - 1))
+                raise IndexError(u'Index %i must be in [-1..%i]' % (value, num_children - 1))
             self._selected_index = value
             self.notify_selected_index()
             if self._selected_index >= self.LAZY_ACCESS_THRESHOLD and not self._access_all:

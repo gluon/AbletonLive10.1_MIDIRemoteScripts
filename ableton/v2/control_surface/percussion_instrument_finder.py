@@ -1,13 +1,8 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/percussion_instrument_finder.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/percussion_instrument_finder.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import chain
-from ..base import EventObject, listens_group, liveobj_changed, liveobj_valid
+from ..base import EventObject, listens_group, liveobj_changed
 from .device_chain_utils import find_instrument_devices, find_instrument_meeting_requirement
 from .mode import Mode
 
@@ -17,17 +12,15 @@ class PercussionInstrumentFinder(Mode, EventObject):
     for the first available drum-rack or sliced simpler (depth-first),
     updating as the device list changes.
     """
-    __events__ = (u'instrument', )
+    __events__ = (u'instrument',)
     _drum_group = None
     _simpler = None
 
-    def __init__(self, device_parent=None, is_enabled=True, *a, **k):
-        assert liveobj_valid(device_parent)
+    def __init__(self, device_parent = None, is_enabled = True, *a, **k):
         super(PercussionInstrumentFinder, self).__init__(*a, **k)
         self._is_enabled = is_enabled
         self._device_parent = None
         self.device_parent = device_parent
-        return
 
     @property
     def is_enabled(self):
@@ -58,29 +51,29 @@ class PercussionInstrumentFinder(Mode, EventObject):
         """
         return self._simpler
 
-    def _get_device_parent(self):
+    @property
+    def device_parent(self):
         u"""
         The currently observed track.
         """
         return self._device_parent
 
-    def _set_device_parent(self, device_parent):
+    @device_parent.setter
+    def device_parent(self, device_parent):
         if liveobj_changed(self._device_parent, device_parent):
             self._device_parent = device_parent
             self.update()
 
-    device_parent = property(_get_device_parent, _set_device_parent)
-
-    @listens_group('devices')
+    @listens_group(u'devices')
     def __on_devices_changed(self, chain):
-        self._get_device_parent().set_data('alternative_mode_locked', False)
+        self.device_parent.set_data(u'alternative_mode_locked', False)
         self.update()
 
-    @listens_group('chains')
+    @listens_group(u'chains')
     def __on_chains_changed(self, chain):
         self.update()
 
-    @listens_group('playback_mode')
+    @listens_group(u'playback_mode')
     def __on_slicing_changed(self, _simpler):
         self.update()
 
@@ -93,7 +86,7 @@ class PercussionInstrumentFinder(Mode, EventObject):
         device_parent = self.device_parent
         devices = list(find_instrument_devices(device_parent))
         racks = filter(lambda d: d.can_have_chains, devices)
-        simplers = filter(lambda d: hasattr(d, 'playback_mode'), devices)
+        simplers = filter(lambda d: hasattr(d, u'playback_mode'), devices)
         chains = list(chain([device_parent], *[ d.chains for d in racks ]))
         self.__on_chains_changed.replace_subjects(racks)
         self.__on_devices_changed.replace_subjects(chains)
@@ -113,7 +106,10 @@ def find_drum_group_device(track_or_chain):
     u"""
     Looks up recursively for a drum_group device in the track.
     """
-    requirement = lambda i: i.can_have_drum_pads
+
+    def requirement(instrument):
+        return instrument.can_have_drum_pads
+
     return find_instrument_meeting_requirement(requirement, track_or_chain)
 
 
@@ -121,5 +117,8 @@ def find_sliced_simpler(track_or_chain):
     u"""
     Looks up recursively for a sliced simpler device in the track.
     """
-    requirement = lambda i: getattr(i, 'playback_mode', None) == Live.SimplerDevice.PlaybackMode.slicing
+
+    def requirement(instrument):
+        return getattr(instrument, u'playback_mode', None) == Live.SimplerDevice.PlaybackMode.slicing
+
     return find_instrument_meeting_requirement(requirement, track_or_chain)

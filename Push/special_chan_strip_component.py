@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/special_chan_strip_component.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/special_chan_strip_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import flatten, listens, listens_group, liveobj_valid, task
@@ -25,7 +20,7 @@ def param_value_to_graphic(param, graphic):
         value = int((param.value - param.min) / param_range * graph_range)
         graphic_display_string = graphic[value]
     else:
-        graphic_display_string = ' '
+        graphic_display_string = u' '
     return graphic_display_string
 
 
@@ -37,29 +32,25 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
 
     def __init__(self, *a, **k):
         super(SpecialChanStripComponent, self).__init__(*a, **k)
-        self.empty_color = 'Option.Unused'
+        self.empty_color = u'Option.Unused'
         self._invert_mute_feedback = True
         self._duplicate_button = None
         self._selector_button = None
         self._delete_handler = None
-        self._track_parameter_name_sources = [ DisplayDataSource(' ') for _ in xrange(14)
-                                             ]
-        self._track_parameter_data_sources = [ DisplayDataSource(' ') for _ in xrange(14)
-                                             ]
-        self._track_parameter_graphic_sources = [ DisplayDataSource(' ') for _ in xrange(14)
-                                                ]
+        self._track_parameter_name_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
+        self._track_parameter_data_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
+        self._track_parameter_graphic_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
         self._on_return_tracks_changed.subject = self.song
         self._on_selected_track_changed.subject = self.song.view
         self._fold_task = self._tasks.add(task.sequence(task.wait(TRACK_FOLD_DELAY), task.run(self._do_fold_track))).kill()
         self._cue_volume_slot = self.register_disconnectable(ParameterSlot())
-        return
 
     def set_delete_handler(self, delete_handler):
         self._delete_handler = delete_handler
 
     def _update_control_sensitivities(self, control):
         if control:
-            if hasattr(control, 'set_sensitivities'):
+            if hasattr(control, u'set_sensitivities'):
                 control.set_sensitivities(CONTINUOUS_MAPPING_SENSITIVITY, FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY)
             else:
                 control.mapping_sensitivity = CONTINUOUS_MAPPING_SENSITIVITY
@@ -78,7 +69,6 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
                 self._update_control_sensitivities(control)
 
         super(SpecialChanStripComponent, self).set_send_controls(controls)
-        return
 
     def set_cue_volume_control(self, control):
         self._update_control_sensitivities(control)
@@ -108,25 +98,24 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         arm_subject = track if track and track.can_be_armed else None
         self._on_explicit_arm_changed.subject = arm_subject
         self._on_implicit_arm_changed.subject = arm_subject
-        return
 
-    @listens('arm')
+    @listens(u'arm')
     def _on_explicit_arm_changed(self):
         if self.is_enabled() and self._track:
             self._update_track_button()
 
-    @listens('implicit_arm')
+    @listens(u'implicit_arm')
     def _on_implicit_arm_changed(self):
         if self.is_enabled() and self._track:
             self._update_track_button()
 
-    @listens('return_tracks')
+    @listens(u'return_tracks')
     def _on_return_tracks_changed(self):
         self._update_track_listeners()
         self._update_parameter_name_sources()
         self._update_parameter_values()
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def _on_selected_track_changed(self):
         self._update_track_listeners()
         self._update_track_name_data_source()
@@ -138,14 +127,13 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
                 self.select_button.color = self.empty_color
             elif self._track.can_be_armed and (self._track.arm or self._track.implicit_arm):
                 if self._track == self.song.view.selected_track:
-                    self.select_button.color = 'Mixer.ArmSelected'
+                    self.select_button.color = u'Mixer.ArmSelected'
                 else:
-                    self.select_button.color = 'Mixer.ArmUnselected'
+                    self.select_button.color = u'Mixer.ArmUnselected'
             elif self._track == self.song.view.selected_track:
-                self.select_button.color = 'Option.Selected'
+                self.select_button.color = u'Option.Selected'
             else:
-                self.select_button.color = 'Option.Unselected'
-        return
+                self.select_button.color = u'Option.Unselected'
 
     def _update_track_listeners(self):
         mixer = self._track.mixer_device if self._track else None
@@ -155,7 +143,6 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         self._on_volume_value_changed.subject = mixer and mixer.volume
         self._on_panning_value_changed.subject = mixer and mixer.panning
         self._on_sends_value_changed.replace_subjects(sends)
-        return
 
     def _update_parameter_name_sources(self):
         num_params = self._track and len(self._track.mixer_device.sends) + 2
@@ -164,16 +151,16 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
                 track_parameter_names = (u'Volume', u'Pan') + SEND_PARAMETER_NAMES
                 source.set_display_string(track_parameter_names[index])
             else:
-                source.set_display_string(' ')
+                source.set_display_string(u' ')
 
     def _update_track_name_data_source(self):
         if self._track_name_data_source:
             if liveobj_valid(self._track):
                 selected = self._track == self.song.view.selected_track
-                prefix = consts.CHAR_SELECT if selected else ''
+                prefix = consts.CHAR_SELECT if selected else u''
                 self._track_name_data_source.set_display_string(prefix + self._track.name)
             else:
-                self._track_name_data_source.set_display_string(' ')
+                self._track_name_data_source.set_display_string(u' ')
 
     @property
     def _is_deleting(self):
@@ -241,7 +228,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         if self.is_enabled() and liveobj_valid(self._track) and self._track.is_foldable:
             self._track.fold_state = not self._track.fold_state
 
-    @listens('value')
+    @listens(u'value')
     def _on_volume_value_changed(self):
         if self.is_enabled() and liveobj_valid(self._track):
             param = self._track.mixer_device.volume
@@ -250,7 +237,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
             text.set_display_string(str(param))
             graph.set_display_string(param_value_to_graphic(param, consts.GRAPH_VOL))
 
-    @listens('value')
+    @listens(u'value')
     def _on_panning_value_changed(self):
         if self.is_enabled() and liveobj_valid(self._track):
             param = self._track.mixer_device.panning
@@ -259,7 +246,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
             text.set_display_string(str(param))
             graph.set_display_string(param_value_to_graphic(param, consts.GRAPH_PAN))
 
-    @listens_group('value')
+    @listens_group(u'value')
     def _on_sends_value_changed(self, send):
         if self.is_enabled() and liveobj_valid(self._track) and self._track != self.song.master_track and send in list(self._track.mixer_device.sends):
             index = list(self._track.mixer_device.sends).index(send) + 2
@@ -270,7 +257,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
 
     def _update_parameter_values(self):
         for source in flatten(zip(self._track_parameter_data_sources, self._track_parameter_graphic_sources)):
-            source.set_display_string(' ')
+            source.set_display_string(u' ')
 
         self._on_volume_value_changed()
         self._on_panning_value_changed()
@@ -282,11 +269,11 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         if self.is_enabled():
             self._update_track_button()
 
-    @listens('panning_mode')
+    @listens(u'panning_mode')
     def _on_panning_mode_changed(self):
         self.update()
 
-    @listens('value')
+    @listens(u'value')
     def _on_pan_control_value_changed(self, _):
         pass
 
@@ -298,9 +285,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
                 self._on_pan_control_value_changed.subject = self._pan_control
             else:
                 self._on_pan_control_value_changed.subject = None
-        return
 
     def _disconnect_parameters(self):
         super(SpecialChanStripComponent, self)._disconnect_parameters()
         self._on_pan_control_value_changed.subject = None
-        return

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/color_chooser.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/color_chooser.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_changed, liveobj_valid, nop
 from ableton.v2.control_surface import Component
@@ -12,8 +7,7 @@ from pushbase.colors import Pulse
 from pushbase.message_box_component import Messenger
 from .colors import IndexedColor, Rgb, inverse_translate_color_index, translate_color_index
 from .skin_default import SELECTION_PULSE_SPEED
-COLOR_CHOOSER_LAYOUT = (
- (10, 11, 12, 13, 14, 15, 16, 17),
+COLOR_CHOOSER_LAYOUT = ((10, 11, 12, 13, 14, 15, 16, 17),
  (9, None, None, None, None, None, None, 18),
  (8, None, None, None, None, None, None, 19),
  (7, None, None, None, None, None, None, 20),
@@ -33,8 +27,6 @@ class ColorChooserComponent(Component, Messenger):
             row, column = button.coordinate
             button.color_index = COLOR_CHOOSER_LAYOUT[row][column]
 
-        return
-
     @property
     def object(self):
         return self._object
@@ -51,20 +43,18 @@ class ColorChooserComponent(Component, Messenger):
             else:
                 self._render_color_palette(translate_color_index(obj.color_index))
                 self.set_enabled(True)
-                self._notification_ref = self.show_notification('Select a color for: %s' % obj.name, notification_time=-1)
-        return
+                self._notification_ref = self.show_notification(u'Select a color for: %s' % obj.name, notification_time=-1)
 
     @matrix.pressed
     def matrix(self, button):
         if liveobj_valid(self.object):
             if button.color_index is None:
-                if hasattr(self.object, 'is_auto_colored'):
+                if hasattr(self.object, u'is_auto_colored'):
                     self.object.is_auto_colored = True
-                    self.show_notification('Color automatically enabled for: %s' % self.object.name)
+                    self.show_notification(u'Color automatically enabled for: %s' % self.object.name)
             else:
                 self.object.color_index = inverse_translate_color_index(button.color_index)
             self.object = None
-        return
 
     def _render_color_palette(self, selected_color_index):
         for button in self.matrix:
@@ -76,5 +66,3 @@ class ColorChooserComponent(Component, Messenger):
                     button.color = IndexedColor.from_push_index(color_index)
             else:
                 button.color = Rgb.BLACK
-
-        return

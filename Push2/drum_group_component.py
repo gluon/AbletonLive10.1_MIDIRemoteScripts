@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/drum_group_component.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/drum_group_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter, izip
 from ableton.v2.base import EventObject, flatten, listenable_property, listens, listens_group, liveobj_valid
@@ -16,7 +11,7 @@ from .decoration import find_decorated_object
 from .device_decoration import SimplerDecoratedPropertiesCopier
 
 def find_simplers(chain):
-    return ifilter(lambda i: hasattr(i, 'playback_mode'), find_instrument_devices(chain))
+    return ifilter(lambda i: hasattr(i, u'playback_mode'), find_instrument_devices(chain))
 
 
 def find_all_simplers_on_pad(drum_pad):
@@ -29,7 +24,7 @@ def find_all_simplers_on_pad(drum_pad):
 
 class DrumPadCopyHandler(DrumPadCopyHandlerBase):
 
-    def __init__(self, decorator_factory=None, song=None, *a, **k):
+    def __init__(self, decorator_factory = None, song = None, *a, **k):
         super(DrumPadCopyHandler, self).__init__(*a, **k)
         self._song = song
         self._decorator_factory = decorator_factory
@@ -54,11 +49,10 @@ class DrumPadCopyHandler(DrumPadCopyHandlerBase):
 class DrumPadColorAdapter(object):
     u""" Adapter that takes care of coloring all chains """
 
-    def __init__(self, drum_pad=None, *a, **k):
+    def __init__(self, drum_pad = None, *a, **k):
         assert drum_pad is not None
         super(DrumPadColorAdapter, self).__init__(*a, **k)
         self._drum_pad = drum_pad
-        return
 
     @property
     def name(self):
@@ -68,8 +62,6 @@ class DrumPadColorAdapter(object):
     def color_index(self):
         if self._drum_pad.chains:
             return self._drum_pad.chains[0].color_index
-        else:
-            return
 
     @color_index.setter
     def color_index(self, color_index):
@@ -80,8 +72,6 @@ class DrumPadColorAdapter(object):
     def is_auto_colored(self):
         if self._drum_pad.chains:
             return self._drum_pad.chains[0].is_auto_colored
-        else:
-            return
 
     @is_auto_colored.setter
     def is_auto_colored(self, is_auto_colored):
@@ -101,12 +91,12 @@ class DrumPadColorNotifier(EventObject):
         self._update_drum_group_listeners()
         self.notify_note_colors()
 
-    @listens_group('chains')
+    @listens_group(u'chains')
     def __on_drum_pad_chains_changed(self, pad):
         self._update_drum_group_listeners()
         self.notify_note_colors()
 
-    @listens_group('color_index')
+    @listens_group(u'color_index')
     def __on_chain_color_index_changed(self, pad):
         self.notify_note_colors()
 
@@ -119,16 +109,15 @@ class DrumPadColorNotifier(EventObject):
                 return parent_track.color_index
             return -1
 
-        colors = [
-         -1] * 128
+        colors = [-1] * 128
         if self.has_drum_group:
             track_color_index = None
             for pad in self._drum_group.drum_pads:
                 if pad.chains and liveobj_valid(pad.chains[0]):
                     colors[pad.note] = pad.chains[0].color_index
-                elif track_color_index is None:
-                    track_color_index = get_track_color_index()
                 else:
+                    if track_color_index is None:
+                        track_color_index = get_track_color_index()
                     colors[pad.note] = track_color_index
 
         return colors
@@ -137,29 +126,27 @@ class DrumPadColorNotifier(EventObject):
         chains = []
         pads = []
         if self.has_drum_group:
-            chains = [ pad.chains[0] for pad in self._drum_group.drum_pads if pad.chains and liveobj_valid(pad.chains[0])
-                     ]
+            chains = [ pad.chains[0] for pad in self._drum_group.drum_pads if pad.chains and liveobj_valid(pad.chains[0]) ]
             pads = self._drum_group.drum_pads
         self.__on_chain_color_index_changed.replace_subjects(chains)
         self.__on_drum_pad_chains_changed.replace_subjects(pads)
 
 
 class DrumGroupComponent(DrumGroupComponentBase):
-    __events__ = (u'mute_solo_stop_cancel_action_performed', )
+    __events__ = (u'mute_solo_stop_cancel_action_performed',)
     select_color_button = ButtonControl()
 
-    def __init__(self, tracks_provider=None, device_decorator_factory=None, color_chooser=None, *a, **k):
+    def __init__(self, tracks_provider = None, device_decorator_factory = None, color_chooser = None, *a, **k):
         assert tracks_provider is not None
         self._decorator_factory = device_decorator_factory
         super(DrumGroupComponent, self).__init__(*a, **k)
-        self.mute_button.color = 'DefaultButton.Transparent'
-        self.solo_button.color = 'DefaultButton.Transparent'
+        self.mute_button.color = u'DefaultButton.Transparent'
+        self.solo_button.color = u'DefaultButton.Transparent'
         self._tracks_provider = tracks_provider
         self._hotswap_indication_mode = None
         self._color_chooser = color_chooser
         self._drum_pad_color_notifier = self.register_disconnectable(DrumPadColorNotifier())
         self.__on_drum_pad_note_colors_changed.subject = self._drum_pad_color_notifier
-        return
 
     @property
     def drum_group_device(self):
@@ -173,7 +160,6 @@ class DrumGroupComponent(DrumGroupComponentBase):
     def select_color_button(self, button):
         if self._color_chooser is not None:
             self._color_chooser.object = None
-        return
 
     def select_drum_pad(self, drum_pad):
         if len(drum_pad.chains) > 0 and self.song.view.selected_track.is_showing_chains:
@@ -185,18 +171,16 @@ class DrumGroupComponent(DrumGroupComponentBase):
             if liveobj_valid(pad) and pad.chains and liveobj_valid(pad.chains[0]):
                 self._color_chooser.object = DrumPadColorAdapter(pad)
             else:
-                self.show_notification('Cannot color an empty drum pad')
+                self.show_notification(u'Cannot color an empty drum pad')
         else:
             super(DrumGroupComponent, self)._on_matrix_pressed(button)
         self.notify_mute_solo_stop_cancel_action_performed()
-        return
 
     def _on_selected_drum_pad_changed(self):
         super(DrumGroupComponent, self)._on_selected_drum_pad_changed()
         chain = self._selected_drum_pad.chains[0] if self._selected_drum_pad and len(self._selected_drum_pad.chains) > 0 else None
         if self.song.view.selected_track.is_showing_chains and liveobj_valid(chain):
             self._tracks_provider.set_selected_item_without_updating_view(self._selected_drum_pad.chains[0])
-        return
 
     @property
     def hotswap_indication_mode(self):
@@ -209,25 +193,25 @@ class DrumGroupComponent(DrumGroupComponentBase):
 
     def _color_for_pad(self, pad):
         if self._is_hotswapping(pad):
-            color = 'DrumGroup.PadHotswapping'
+            color = u'DrumGroup.PadHotswapping'
         else:
             color = super(DrumGroupComponent, self)._color_for_pad(pad)
             color = self._chain_color_for_pad(pad, color)
         return color
 
     def _chain_color_for_pad(self, pad, color):
-        if color == 'DrumGroup.PadFilled':
-            assert pad.chains and liveobj_valid(pad.chains[0]), 'Filled pads should have a chain'
+        if color == u'DrumGroup.PadFilled':
+            assert pad.chains and liveobj_valid(pad.chains[0]), u'Filled pads should have a chain'
             color = IndexedColor.from_live_index(pad.chains[0].color_index)
-        elif color == 'DrumGroup.PadMuted':
-            assert pad.chains and liveobj_valid(pad.chains[0]), 'Filled pads should have a chain'
+        elif color == u'DrumGroup.PadMuted':
+            assert pad.chains and liveobj_valid(pad.chains[0]), u'Filled pads should have a chain'
             color = IndexedColor.from_live_index(pad.chains[0].color_index, shade_level=1)
         return color
 
     def _is_hotswapping(self, pad):
-        if self._hotswap_indication_mode == 'current_pad':
+        if self._hotswap_indication_mode == u'current_pad':
             return pad == self._selected_drum_pad
-        if self._hotswap_indication_mode == 'all_pads':
+        if self._hotswap_indication_mode == u'all_pads':
             return True
         return False
 
@@ -235,7 +219,7 @@ class DrumGroupComponent(DrumGroupComponentBase):
         super(DrumGroupComponent, self)._update_drum_pad_listeners()
         self._drum_pad_color_notifier.set_drum_group(self._drum_group_device)
 
-    @listens('note_colors')
+    @listens(u'note_colors')
     def __on_drum_pad_note_colors_changed(self):
         self._update_led_feedback()
 

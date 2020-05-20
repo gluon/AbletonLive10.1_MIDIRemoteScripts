@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/scales_component.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/scales_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import EventObject, forward_property, listens, listens_group, recursive_map
@@ -44,25 +39,22 @@ class DisplayingModesComponent(ModesComponent):
     def _update_data_sources(self, selected):
         if self.is_enabled():
             for name, (source, string) in self._mode_data_sources.iteritems():
-                source.set_display_string('*' + string if name == selected else string)
+                source.set_display_string(u'*' + string if name == selected else string)
 
 
 class InstrumentPresetsComponent(DisplayingModesComponent):
 
-    def __init__(self, note_layout=None, *a, **k):
+    def __init__(self, note_layout = None, *a, **k):
         assert note_layout is not None
         super(InstrumentPresetsComponent, self).__init__(*a, **k)
         self._note_layout = note_layout
-        self._line_names = recursive_map(DisplayDataSource, (
-         (u'Scale layout:', ),
-         (u'4th ^', u'4th >', u'3rd ^', u'3rd >', u'Sequent ^', u'Sequent >', u'', u'')))
-        self.add_mode('scale_p4_vertical', partial(self._set_scale_mode, True, 3), self._line_names[1][0])
-        self.add_mode('scale_p4_horizontal', partial(self._set_scale_mode, False, 3), self._line_names[1][1])
-        self.add_mode('scale_m3_vertical', partial(self._set_scale_mode, True, 2), self._line_names[1][2])
-        self.add_mode('scale_m3_horizontal', partial(self._set_scale_mode, False, 2), self._line_names[1][3])
-        self.add_mode('scale_m6_vertical', partial(self._set_scale_mode, True, None), self._line_names[1][4])
-        self.add_mode('scale_m6_horizontal', partial(self._set_scale_mode, False, None), self._line_names[1][5])
-        return
+        self._line_names = recursive_map(DisplayDataSource, ((u'Scale layout:',), (u'4th ^', u'4th >', u'3rd ^', u'3rd >', u'Sequent ^', u'Sequent >', u'', u'')))
+        self.add_mode(u'scale_p4_vertical', partial(self._set_scale_mode, True, 3), self._line_names[1][0])
+        self.add_mode(u'scale_p4_horizontal', partial(self._set_scale_mode, False, 3), self._line_names[1][1])
+        self.add_mode(u'scale_m3_vertical', partial(self._set_scale_mode, True, 2), self._line_names[1][2])
+        self.add_mode(u'scale_m3_horizontal', partial(self._set_scale_mode, False, 2), self._line_names[1][3])
+        self.add_mode(u'scale_m6_vertical', partial(self._set_scale_mode, True, None), self._line_names[1][4])
+        self.add_mode(u'scale_m6_horizontal', partial(self._set_scale_mode, False, None), self._line_names[1][5])
 
     def _update_data_sources(self, selected):
         if self.is_enabled():
@@ -90,11 +82,9 @@ class InstrumentPresetsComponent(DisplayingModesComponent):
         if buttons:
             buttons.reset()
         self._set_scales_preset_buttons(buttons[:6] if buttons else None)
-        return
 
     def _set_scales_preset_buttons(self, buttons):
-        modes = (u'scale_p4_vertical', u'scale_p4_horizontal', u'scale_m3_vertical',
-                 u'scale_m3_horizontal', u'scale_m6_vertical', u'scale_m6_horizontal')
+        modes = (u'scale_p4_vertical', u'scale_p4_horizontal', u'scale_m3_vertical', u'scale_m3_horizontal', u'scale_m6_vertical', u'scale_m6_horizontal')
         self._set_mode_buttons(buttons, modes)
 
     def _set_mode_buttons(self, buttons, modes):
@@ -107,13 +97,12 @@ class InstrumentPresetsComponent(DisplayingModesComponent):
                 self.get_mode_button(mode).set_control_element(None)
 
         self.update()
-        return
 
 
 class InstrumentScalesComponent(Component):
-    presets_toggle_button = ButtonControl(color='DefaultButton.Off', pressed_color='DefaultButton.On')
+    presets_toggle_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
 
-    def __init__(self, note_layout=None, *a, **k):
+    def __init__(self, note_layout = None, *a, **k):
         assert note_layout is not None
         super(InstrumentScalesComponent, self).__init__(*a, **k)
         self._note_layout = note_layout
@@ -125,23 +114,18 @@ class InstrumentScalesComponent(Component):
         self._absolute_relative_button = None
         self._diatonic_chromatic_button = None
         self._info_sources = map(DisplayDataSource, (u'Scale selection:', u'', u''))
-        self._line_sources = recursive_map(DisplayDataSource, (
-         (u'', u'', u'', u'', u'', u'', u''), (u'', u'', u'', u'', u'', u'', u'')))
-        self._scale_sources = map(partial(DisplayDataSource, adjust_string_fn=adjust_string_crop), (u'',
-                                                                                                    u'',
-                                                                                                    u'',
-                                                                                                    u''))
+        self._line_sources = recursive_map(DisplayDataSource, ((u'', u'', u'', u'', u'', u'', u''), (u'', u'', u'', u'', u'', u'', u'')))
+        self._scale_sources = map(partial(DisplayDataSource, adjust_string_fn=adjust_string_crop), (u'', u'', u'', u''))
         self._presets = InstrumentPresetsComponent(self._note_layout, is_enabled=False, parent=self)
-        self._presets.selected_mode = 'scale_p4_vertical'
+        self._presets.selected_mode = u'scale_p4_vertical'
         self._scale_list = ListComponent(parent=self, data_sources=self._scale_sources)
         self._scale_list.scrollable_list.fixed_offset = 1
         self._scale_list.scrollable_list.assign_items(SCALES)
         self._scale_list.scrollable_list.select_item_index_with_offset(list(SCALES).index(self._note_layout.scale), 1)
         self._on_selected_scale.subject = self._scale_list.scrollable_list
         self._update_data_sources()
-        return
 
-    presets_layer = forward_property('_presets')('layer')
+    presets_layer = forward_property(u'_presets')(u'layer')
 
     @property
     def available_scales(self):
@@ -163,7 +147,7 @@ class InstrumentScalesComponent(Component):
         if display:
             display.set_data_sources([self._scale_sources[index]])
             for segment in display.segments:
-                segment.separator = ''
+                segment.separator = u''
 
     def set_info_line(self, display):
         if display:
@@ -201,7 +185,6 @@ class InstrumentScalesComponent(Component):
             self.set_key_center_buttons(self._top_key_center_buttons + self._bottom_key_center_buttons)
         else:
             self.set_key_center_buttons(tuple())
-        return
 
     def set_bottom_buttons(self, buttons):
         if buttons:
@@ -217,7 +200,6 @@ class InstrumentScalesComponent(Component):
             self.set_key_center_buttons(self._top_key_center_buttons + self._bottom_key_center_buttons)
         else:
             self.set_key_center_buttons([])
-        return
 
     def set_scale_down_button(self, button):
         self._scale_list.select_next_button.set_control_element(button)
@@ -245,7 +227,7 @@ class InstrumentScalesComponent(Component):
         self._on_diatonic_chromatic_value.subject = diatonic_chromatic_button
         self._update_diatonic_chromatic_button()
 
-    @listens_group('value')
+    @listens_group(u'value')
     def _on_key_center_button_value(self, value, sender):
         if self.is_enabled() and (value or not sender.is_momentary()):
             index = list(self._key_center_buttons).index(sender)
@@ -253,7 +235,7 @@ class InstrumentScalesComponent(Component):
             self._update_key_center_buttons()
             self._update_data_sources()
 
-    @listens('value')
+    @listens(u'value')
     def _on_absolute_relative_value(self, value):
         if self.is_enabled():
             if value != 0 or not self._absolute_relative_button.is_momentary():
@@ -261,7 +243,7 @@ class InstrumentScalesComponent(Component):
                 self._update_absolute_relative_button()
                 self._update_data_sources()
 
-    @listens('value')
+    @listens(u'value')
     def _on_diatonic_chromatic_value(self, value):
         if self.is_enabled():
             if value != 0 or not self._diatonic_chromatic_button.is_momentary():
@@ -269,7 +251,7 @@ class InstrumentScalesComponent(Component):
                 self._update_diatonic_chromatic_button()
                 self._update_data_sources()
 
-    @listens('selected_item')
+    @listens(u'selected_item')
     def _on_selected_scale(self):
         self._note_layout.scale = self._scale_list.scrollable_list.selected_item.content
         self._update_data_sources()
@@ -287,28 +269,26 @@ class InstrumentScalesComponent(Component):
         if self.is_enabled():
             for index, button in enumerate(self._key_center_buttons):
                 if button:
-                    color = 'Scales.Selected' if self._note_layout.root_note == ROOT_NOTES[index] else 'Scales.Unselected'
+                    color = u'Scales.Selected' if self._note_layout.root_note == ROOT_NOTES[index] else u'Scales.Unselected'
                     button.set_light(color)
 
     def _update_absolute_relative_button(self):
         if self.is_enabled() and self._absolute_relative_button != None:
-            color = 'Scales.FixedOn' if self._note_layout.is_fixed else 'Scales.FixedOff'
+            color = u'Scales.FixedOn' if self._note_layout.is_fixed else u'Scales.FixedOff'
             self._absolute_relative_button.set_light(color)
-        return
 
     def _update_diatonic_chromatic_button(self):
         if self.is_enabled() and self._diatonic_chromatic_button != None:
-            color = 'Scales.Diatonic' if self._note_layout.is_in_key else 'Scales.Chromatic'
+            color = u'Scales.Diatonic' if self._note_layout.is_in_key else u'Scales.Chromatic'
             self._diatonic_chromatic_button.set_light(color)
-        return
 
     def _update_data_sources(self):
         key_index = list(ROOT_NOTES).index(self._note_layout.root_note)
         key_sources = self._line_sources[0][:6] + self._line_sources[1][:6]
         key_names = [ scale.name for scale in self.available_scales ]
         for idx, (source, orig) in enumerate(zip(key_sources, key_names)):
-            source.set_display_string('   ' + consts.CHAR_SELECT + orig if idx == key_index else '    ' + orig)
+            source.set_display_string(u'   ' + consts.CHAR_SELECT + orig if idx == key_index else u'    ' + orig)
 
-        self._line_sources[0][6].set_display_string('Fixed: Y' if self._note_layout.is_fixed else 'Fixed: N')
-        self._line_sources[1][6].set_display_string('In Key' if self._note_layout.is_in_key else 'Chromatc')
+        self._line_sources[0][6].set_display_string(u'Fixed: Y' if self._note_layout.is_fixed else u'Fixed: N')
+        self._line_sources[1][6].set_display_string(u'In Key' if self._note_layout.is_in_key else u'Chromatc')
         self._info_sources[1].set_display_string(str(self._scale_list.scrollable_list.selected_item))

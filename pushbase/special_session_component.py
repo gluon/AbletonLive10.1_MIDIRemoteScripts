@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/special_session_component.py
-# Compiled at: 2019-04-29 19:37:39
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/special_session_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import const, depends, forward_property, inject, listens, liveobj_valid
@@ -23,7 +18,6 @@ class ClipSlotCopyHandler(Messenger):
         self._is_copying = False
         self._source_clip_slot = None
         self._last_shown_notification_ref = const(None)
-        return
 
     @property
     def is_copying(self):
@@ -40,7 +34,6 @@ class ClipSlotCopyHandler(Messenger):
         notification_ref = self._last_shown_notification_ref()
         if notification_ref is not None:
             notification_ref.hide()
-        return
 
     def _show_notification(self, notification):
         self._last_shown_notification_ref = self.show_notification(notification)
@@ -84,29 +77,26 @@ class ClipSlotCopyHandler(Messenger):
     def _reset_copying_state(self):
         self._source_clip_slot = None
         self._is_copying = False
-        return
 
     def _on_duplicated(self, source_clip_slot, target_clip_slot):
         clip_name = clip_name_from_clip_slot(source_clip_slot)
         track_name = target_clip_slot.canonical_parent.name
-        self._show_notification((
-         MessageBoxText.PASTED_CLIP, clip_name, track_name))
+        self._show_notification((MessageBoxText.PASTED_CLIP, clip_name, track_name))
 
 
 class DuplicateSceneComponent(Component, Messenger):
 
-    def __init__(self, session_ring=None, *a, **k):
+    def __init__(self, session_ring = None, *a, **k):
         super(DuplicateSceneComponent, self).__init__(*a, **k)
         assert session_ring is not None
         self._session_ring = session_ring
         self._scene_buttons = None
-        return
 
     def set_scene_buttons(self, buttons):
         self._scene_buttons = buttons
         self._on_scene_value.subject = buttons
 
-    @listens('value')
+    @listens(u'value')
     def _on_scene_value(self, value, index, _, is_momentary):
         if self.is_enabled() and (value or not is_momentary):
             try:
@@ -123,13 +113,12 @@ class DuplicateSceneComponent(Component, Messenger):
 class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
 
     @depends(copy_handler=const(None), fixed_length_recording=const(None))
-    def __init__(self, copy_handler=None, fixed_length_recording=None, *a, **k):
+    def __init__(self, copy_handler = None, fixed_length_recording = None, *a, **k):
         assert copy_handler is not None
         assert fixed_length_recording is not None
         super(SpecialClipSlotComponent, self).__init__(*a, **k)
         self._copy_handler = copy_handler
         self._fixed_length_recording = fixed_length_recording
-        return
 
     def _do_delete_clip(self):
         if self._clip_slot and self._clip_slot.has_clip:
@@ -187,7 +176,7 @@ class SpecialSessionComponent(SessionComponent):
     scene_component_type = SpecialSceneComponent
     duplicate_button = ButtonControl()
 
-    def __init__(self, clip_slot_copy_handler=None, fixed_length_recording=None, *a, **k):
+    def __init__(self, clip_slot_copy_handler = None, fixed_length_recording = None, *a, **k):
         self._clip_copy_handler = clip_slot_copy_handler or ClipSlotCopyHandler()
         self._fixed_length_recording = fixed_length_recording
         with inject(copy_handler=const(self._clip_copy_handler), fixed_length_recording=const(self._fixed_length_recording)).everywhere():
@@ -197,17 +186,16 @@ class SpecialSessionComponent(SessionComponent):
         self._duplicate = DuplicateSceneComponent(self._session_ring, parent=self)
         self._duplicate_enabler = EnablingModesComponent(parent=self, component=self._duplicate)
         self._end_initialisation()
-        return
 
-    duplicate_layer = forward_property('_duplicate')('layer')
+    duplicate_layer = forward_property(u'_duplicate')(u'layer')
 
     @duplicate_button.pressed
     def duplicate_button(self, button):
-        self._duplicate_enabler.selected_mode = 'enabled'
+        self._duplicate_enabler.selected_mode = u'enabled'
 
     @duplicate_button.released
     def duplicate_button(self, button):
-        self._duplicate_enabler.selected_mode = 'disabled'
+        self._duplicate_enabler.selected_mode = u'disabled'
         self._clip_copy_handler.stop_copying()
 
     def set_slot_launch_button(self, button):
@@ -222,15 +210,14 @@ class SpecialSessionComponent(SessionComponent):
     def set_touch_strip(self, touch_strip):
         if touch_strip:
             touch_strip.set_mode(TouchStripModes.CUSTOM_FREE)
-            touch_strip.send_state([ TouchStripStates.STATE_OFF for _ in xrange(touch_strip.state_count)
-                                   ])
+            touch_strip.send_state([ TouchStripStates.STATE_OFF for _ in xrange(touch_strip.state_count) ])
         self._on_touch_strip_value.subject = touch_strip
 
-    @listens('value')
+    @listens(u'value')
     def _on_touch_strip_value(self, value):
         pass
 
-    @listens('value')
+    @listens(u'value')
     def _on_slot_launch_value(self, value):
         if self.is_enabled():
             if value != 0 or not self._slot_launch_button.is_momentary():

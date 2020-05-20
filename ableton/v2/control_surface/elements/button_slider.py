@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/button_slider.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/button_slider.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import EventObject
 from ..input_control_element import InputControlElement, MIDI_INVALID_TYPE
@@ -19,30 +14,26 @@ class ButtonSliderElement(SliderElement):
         assert isinstance(buttons, tuple)
         assert len(buttons) > 1
         SliderElement.__init__(self, MIDI_INVALID_TYPE, 0, 0)
-        self._parameter_value_slot = self.register_slot(None, self._on_parameter_changed, 'value')
+        self._parameter_value_slot = self.register_slot(None, self._on_parameter_changed, u'value')
         self._buttons = buttons
         self._button_slots = self.register_disconnectable(EventObject())
         for button in self._buttons:
             assert button != None
-            if not isinstance(button, ButtonElement):
-                raise AssertionError
-                self._button_slots.register_slot(button, self._button_value, 'value', extra_kws={'identify_sender': True})
-
-        return
+            assert isinstance(button, ButtonElement)
+            self._button_slots.register_slot(button, self._button_value, u'value', extra_kws={u'identify_sender': True})
 
     def disconnect(self):
         SliderElement.disconnect(self)
         self._buttons = None
-        return
 
     def message_channel(self):
-        raise NotImplementedError('message_channel() should not be called directly on ButtonSliderElement')
+        raise NotImplementedError(u'message_channel() should not be called directly on ButtonSliderElement')
 
     def message_identifier(self):
-        raise NotImplementedError('message_identifier() should not be called directly on ButtonSliderElement')
+        raise NotImplementedError(u'message_identifier() should not be called directly on ButtonSliderElement')
 
     def message_map_mode(self):
-        raise NotImplementedError('message_map_mode() should not be called directly on ButtonSliderElement')
+        raise NotImplementedError(u'message_map_mode() should not be called directly on ButtonSliderElement')
 
     def install_connections(self, install_translation_callback, install_mapping_callback, install_forwarding_callback):
         pass
@@ -52,15 +43,13 @@ class ButtonSliderElement(SliderElement):
         self._parameter_value_slot.subject = parameter
         if self._parameter_to_map_to != None:
             self._on_parameter_changed()
-        return
 
     def release_parameter(self):
         self._parameter_value_slot.subject = None
         InputControlElement.release_parameter(self)
-        return
 
     def identifier_bytes(self):
-        raise RuntimeWarning('identifier_bytes() should not be called on ButtonSliderElement')
+        raise RuntimeWarning(u'identifier_bytes() should not be called on ButtonSliderElement')
 
     def send_value(self, value):
         if value != self._last_sent_value:
@@ -89,11 +78,9 @@ class ButtonSliderElement(SliderElement):
                         param_value = self._parameter_to_map_to.max
                 self._parameter_to_map_to.value = param_value
             self.notify_value(midi_value)
-        return
 
     def _on_parameter_changed(self):
         assert self._parameter_to_map_to != None
         param_range = abs(self._parameter_to_map_to.max - self._parameter_to_map_to.min)
         midi_value = int(127 * abs(self._parameter_to_map_to.value - self._parameter_to_map_to.min) / param_range)
         self.send_value(midi_value)
-        return

@@ -1,19 +1,8 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/device_navigation.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/device_navigation.py
 from __future__ import absolute_import, print_function, unicode_literals
-from contextlib import contextmanager
 from itertools import ifilter, imap, chain
-from functools import partial
-from multipledispatch import dispatch
-import Live
-from ...base import find_if, first, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, EventObject, SlotGroup, task
+from ...base import first, index_if, listens, liveobj_changed, liveobj_valid, SlotGroup
 from ...control_surface import device_to_appoint
-from ...control_surface.control import control_list, StepEncoderControl
-from ...control_surface.mode import Component, ModesComponent
 from .item_lister import ItemListerComponent, ItemProvider
 
 def is_empty_rack(rack):
@@ -23,11 +12,9 @@ def is_empty_rack(rack):
 def nested_device_parent(device):
     if device.can_have_chains and device.view.is_showing_chain_devices and not device.view.is_collapsed:
         return device.view.selected_chain
-    else:
-        return
 
 
-def collect_devices(track_or_chain, nesting_level=0):
+def collect_devices(track_or_chain, nesting_level = 0):
     chain_devices = track_or_chain.devices if liveobj_valid(track_or_chain) else []
     devices = []
     for device in chain_devices:
@@ -39,7 +26,7 @@ def collect_devices(track_or_chain, nesting_level=0):
 
 class FlattenedDeviceChain(ItemProvider):
 
-    def __init__(self, collect_devices_fun=collect_devices, *a, **k):
+    def __init__(self, collect_devices_fun = collect_devices, *a, **k):
         super(FlattenedDeviceChain, self).__init__(*a, **k)
         self._device_parent = None
         self._devices = []
@@ -50,26 +37,25 @@ class FlattenedDeviceChain(ItemProvider):
             slot_group = SlotGroup(self._update_devices, event)
             return self.register_disconnectable(slot_group)
 
-        self._devices_changed = make_slot_group('devices')
-        self._selected_chain_changed = make_slot_group('selected_chain')
-        self._selected_pad_changed = make_slot_group('selected_drum_pad')
-        self._collapsed_state_changed = make_slot_group('is_collapsed')
-        self._chain_devices_visibility_changed = make_slot_group('is_showing_chain_devices')
-        return
+        self._devices_changed = make_slot_group(u'devices')
+        self._selected_chain_changed = make_slot_group(u'selected_chain')
+        self._selected_pad_changed = make_slot_group(u'selected_drum_pad')
+        self._collapsed_state_changed = make_slot_group(u'is_collapsed')
+        self._chain_devices_visibility_changed = make_slot_group(u'is_showing_chain_devices')
 
     @property
     def items(self):
         return self._devices
 
-    def _get_selected_item(self):
+    @property
+    def selected_item(self):
         return self._selected_item
 
-    def _set_selected_item(self, device):
+    @selected_item.setter
+    def selected_item(self, device):
         if liveobj_changed(self._selected_item, device):
             self._selected_item = device
             self.notify_selected_item()
-
-    selected_item = property(_get_selected_item, _set_selected_item)
 
     @property
     def has_invalid_selection(self):
@@ -89,10 +75,9 @@ class FlattenedDeviceChain(ItemProvider):
         def get_rack_views(racks):
             return map(lambda x: first(x).view, racks)
 
-        racks = filter(lambda x: getattr(first(x), 'can_have_chains', False), self._devices)
+        racks = filter(lambda x: getattr(first(x), u'can_have_chains', False), self._devices)
         rack_views = get_rack_views(racks)
-        device_parents = chain(imap(lambda x: x.selected_chain, rack_views), [
-         self._device_parent])
+        device_parents = chain(imap(lambda x: x.selected_chain, rack_views), [self._device_parent])
 
         def is_empty_pad_drum_rack(item):
             rack = first(item)
@@ -108,7 +93,7 @@ class FlattenedDeviceChain(ItemProvider):
 
 class DeviceNavigationComponent(ItemListerComponent):
 
-    def __init__(self, device_component=None, item_provider=None, *a, **k):
+    def __init__(self, device_component = None, item_provider = None, *a, **k):
         assert device_component is not None
         self._flattened_chain = item_provider or FlattenedDeviceChain()
         super(DeviceNavigationComponent, self).__init__(item_provider=self._flattened_chain, *a, **k)
@@ -121,14 +106,12 @@ class DeviceNavigationComponent(ItemListerComponent):
         self._on_selected_track_changed.subject = self.song.view
         self.__on_device_changed()
         self._update_button_colors()
-        return
 
     @property
     def selected_item(self):
         return self.item_provider.selected_item
 
     def _on_select_button_pressed(self, button):
-        device_or_pad = self.items[button.index].item
         self._select_item(self.items[button.index].item)
 
     def _show_selected_item(self):
@@ -141,12 +124,11 @@ class DeviceNavigationComponent(ItemListerComponent):
                     self.item_offset = selected_index - self._num_visible_items + 2
                 elif selected_index > 0 and selected_index <= self.item_offset:
                     self.item_offset = selected_index - 1
-        return
 
     def _current_track(self):
         return self.song.view.selected_track
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def _on_selected_track_changed(self):
         self._update_selected_track()
 
@@ -176,14 +158,14 @@ class DeviceNavigationComponent(ItemListerComponent):
     def _appoint_device(self, device):
         self._device_component.set_device(device)
 
-    @listens('device')
+    @listens(u'device')
     def __on_device_changed(self):
         self._update_device()
 
     def _update_device(self):
         self._update_item_provider(self._device_component.device())
 
-    @listens('selected_device')
+    @listens(u'selected_device')
     def _device_selection_in_track_changed(self):
         new_selection = self.song.view.selected_track.view.selected_device
         self._update_item_provider(new_selection)

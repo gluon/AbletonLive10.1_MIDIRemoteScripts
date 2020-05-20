@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ModeSelectorComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ModeSelectorComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .ButtonElement import ButtonElement
 from .ControlSurfaceComponent import ControlSurfaceComponent
@@ -20,7 +15,6 @@ class ModeSelectorComponent(ControlSurfaceComponent):
         self.__mode_index = -1
         self._modes_observers = {}
         self._modes_heap = []
-        return
 
     def _get_protected_mode_index(self):
         return self.__mode_index
@@ -49,7 +43,6 @@ class ModeSelectorComponent(ControlSurfaceComponent):
         self._modes_buttons = None
         self._mode_listeners = None
         super(ModeSelectorComponent, self).disconnect()
-        return
 
     def on_enabled_changed(self):
         self.update()
@@ -62,31 +55,27 @@ class ModeSelectorComponent(ControlSurfaceComponent):
         if self._mode_toggle != None:
             self._mode_toggle.add_value_listener(self._toggle_value)
         self.set_mode(0)
-        return
 
     def set_mode_buttons(self, buttons):
         assert buttons != None
         assert isinstance(buttons, tuple)
         assert len(buttons) - 1 in range(16)
         for button in buttons:
-            if not isinstance(button, ButtonElement):
-                raise AssertionError
-                identify_sender = True
-                button.add_value_listener(self._mode_value, identify_sender)
-                self._modes_buttons.append(button)
+            assert isinstance(button, ButtonElement)
+            identify_sender = True
+            button.add_value_listener(self._mode_value, identify_sender)
+            self._modes_buttons.append(button)
 
         self.set_mode(0)
-        return
 
     def set_mode(self, mode):
         self._clean_heap()
         self._modes_heap = [(mode, None, None)]
         if self._mode_index != mode:
             self._update_mode()
-        return
 
     def _update_mode(self):
-        mode = self._modes_heap[(-1)][0]
+        mode = self._modes_heap[-1][0]
         assert mode in range(self.number_of_modes())
         if self._mode_index != mode:
             self._mode_index = mode
@@ -98,7 +87,6 @@ class ModeSelectorComponent(ControlSurfaceComponent):
                 observer.disconnect()
 
         self._modes_heap = []
-        return
 
     def number_of_modes(self):
         raise NotImplementedError
@@ -125,7 +113,7 @@ class ModeSelectorComponent(ControlSurfaceComponent):
                 mode_observer.set_mode_details(new_mode, self._controls_for_mode(new_mode), self._get_public_mode_index)
                 self._modes_heap.append((new_mode, sender, mode_observer))
                 self._update_mode()
-            elif self._modes_heap[(-1)][1] == sender and not self._modes_heap[(-1)][2].is_mode_momentary():
+            elif self._modes_heap[-1][1] == sender and not self._modes_heap[-1][2].is_mode_momentary():
                 self.set_mode(new_mode)
             else:
                 for mode, button, observer in self._modes_heap:
@@ -142,14 +130,11 @@ class ModeSelectorComponent(ControlSurfaceComponent):
         assert isinstance(value, int)
         if value is not 0 or not self._mode_toggle.is_momentary():
             self.set_mode((self._mode_index + 1) % self.number_of_modes())
-        return
 
     def _controls_for_mode(self, mode):
-        return
+        return None
 
     def _on_timer(self):
         for _, _, mode_observer in self._modes_heap:
             if mode_observer != None:
                 mode_observer.on_timer()
-
-        return

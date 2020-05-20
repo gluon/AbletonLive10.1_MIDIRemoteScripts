@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/mapped.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/mapped.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import clamp, listens, liveobj_valid
 from ...control_surface.internal_parameter import InternalParameterBase
@@ -20,12 +15,11 @@ class MappedControl(InputControl):
         State-full representation of the Control.
         """
 
-        def __init__(self, control=None, manager=None, *a, **k):
+        def __init__(self, control = None, manager = None, *a, **k):
             assert control is not None
             assert manager is not None
             super(MappedControl.State, self).__init__(control=control, manager=manager, *a, **k)
             self._direct_mapping = None
-            return
 
         def set_control_element(self, control_element):
             u"""
@@ -51,6 +45,9 @@ class MappedControl(InputControl):
             self._direct_mapping = direct_mapping
             self._update_direct_connection()
 
+        def _event_listener_required(self):
+            return True
+
         def _update_direct_connection(self):
             if self._control_element:
                 self._control_element.connect_to(self._direct_mapping)
@@ -70,7 +67,7 @@ def is_zoom_parameter(parameter):
     u""" Returns true for parameters, that provide a zoom method, i.e. Push 2's
         waveform zooming parameter.
     """
-    return hasattr(parameter, 'zoom')
+    return hasattr(parameter, u'zoom')
 
 
 class MappedSensitivitySettingControl(MappedControl):
@@ -100,7 +97,6 @@ class MappedSensitivitySettingControl(MappedControl):
                 self._control_value.subject = None
                 self._update_control_element()
             self._quantized_stepper.reset()
-            return
 
         def _update_control_element(self):
             if liveobj_valid(self.mapped_parameter):
@@ -111,12 +107,12 @@ class MappedSensitivitySettingControl(MappedControl):
             self._quantized_stepper.reset()
 
         def _update_control_sensitivity(self):
-            if hasattr(self._control_element, 'set_sensitivities'):
+            if hasattr(self._control_element, u'set_sensitivities'):
                 self._control_element.set_sensitivities(self.default_sensitivity, self.fine_sensitivity)
             else:
                 self._control_element.mapping_sensitivity = self.default_sensitivity
 
-        @listens('normalized_value')
+        @listens(u'normalized_value')
         def _control_value(self, value):
             if is_zoom_parameter(self.mapped_parameter):
                 self.mapped_parameter.zoom(value * self._control_element.mapping_sensitivity)

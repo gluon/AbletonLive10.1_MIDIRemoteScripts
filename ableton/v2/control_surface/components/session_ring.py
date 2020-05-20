@@ -1,16 +1,11 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session_ring.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session_ring.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import const, depends, nop, listens
 from ..component import Component
 
 class SessionRingModel(object):
 
-    def __init__(self, num_tracks, num_scenes, set_session_highlight=nop):
+    def __init__(self, num_tracks, num_scenes, set_session_highlight = nop):
         assert num_tracks >= 0
         assert num_scenes >= 0
         assert callable(set_session_highlight)
@@ -40,7 +35,7 @@ class SessionRingComponent(Component):
     u"""
     Manages the set of controlled tracks and scenes from Live's session, aka
     the session ring.
-
+    
     NOTE:
     The session highlight's visibility is controlled by this component's
     enabled state.
@@ -48,7 +43,7 @@ class SessionRingComponent(Component):
     __events__ = (u'offset', u'tracks')
 
     @depends(set_session_highlight=const(nop))
-    def __init__(self, num_tracks=0, num_scenes=0, set_session_highlight=nop, tracks_to_use=None, always_snap_track_offset=False, *a, **k):
+    def __init__(self, num_tracks = 0, num_scenes = 0, set_session_highlight = nop, tracks_to_use = None, always_snap_track_offset = False, *a, **k):
         super(SessionRingComponent, self).__init__(*a, **k)
         self._session_ring = SessionRingModel(num_tracks, num_scenes, set_session_highlight=set_session_highlight)
         if tracks_to_use != None:
@@ -65,7 +60,6 @@ class SessionRingComponent(Component):
         self.__on_track_list_changed.subject = self.song
         self.__on_visible_tracks_changed.subject = self.song
         self.__on_scene_list_changed.subject = self.song
-        return
 
     def tracks_to_use(self):
         return self._cached_track_list
@@ -94,8 +88,7 @@ class SessionRingComponent(Component):
 
     def _snapped_offsets(self, track_offset, scene_offset):
         snapped_track_offset = track_offset - track_offset % self.num_tracks
-        return (
-         snapped_track_offset, scene_offset)
+        return (snapped_track_offset, scene_offset)
 
     def controlled_tracks(self):
         index = self.track_offset
@@ -128,11 +121,11 @@ class SessionRingComponent(Component):
     def on_enabled_changed(self):
         self._update_highlight()
 
-    @listens('tracks')
+    @listens(u'tracks')
     def __on_track_list_changed(self):
         self._update_track_list()
 
-    @listens('visible_tracks')
+    @listens(u'visible_tracks')
     def __on_visible_tracks_changed(self):
         self._update_track_list()
 
@@ -145,7 +138,7 @@ class SessionRingComponent(Component):
             self._cached_track_list = current_track_list
             self.notify_tracks()
 
-    @listens('scenes')
+    @listens(u'scenes')
     def __on_scene_list_changed(self):
         new_offset = min(self.scene_offset, len(self.song.scenes) - 1)
         if new_offset != self.scene_offset:

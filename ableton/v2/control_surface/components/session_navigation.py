@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session_navigation.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session_navigation.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import listens
 from ..component import Component
@@ -11,11 +6,10 @@ from .scroll import ScrollComponent, Scrollable
 
 class SessionRingScroller(Scrollable):
 
-    def __init__(self, session_ring=None, *a, **k):
+    def __init__(self, session_ring = None, *a, **k):
         super(SessionRingScroller, self).__init__(*a, **k)
         assert session_ring is not None
         self._session_ring = session_ring
-        return
 
     do_scroll_up = NotImplemented
     do_scroll_down = NotImplemented
@@ -106,7 +100,7 @@ class SessionNavigationComponent(Component):
     track_pager_type = SessionRingTrackPager
     scene_pager_type = SessionRingScenePager
 
-    def __init__(self, session_ring=None, *a, **k):
+    def __init__(self, session_ring = None, *a, **k):
         super(SessionNavigationComponent, self).__init__(*a, **k)
         assert session_ring is not None
         self._session_ring = session_ring
@@ -117,18 +111,17 @@ class SessionNavigationComponent(Component):
         self._horizontal_banking = ScrollComponent(self.track_scroller_type(session_ring), parent=self)
         self._vertical_paginator = ScrollComponent(self.scene_pager_type(session_ring), parent=self)
         self._horizontal_paginator = ScrollComponent(self.track_pager_type(session_ring), parent=self)
-        return
 
-    @listens('offset')
+    @listens(u'offset')
     def __on_offset_changed(self, track_offset, _):
         self._update_vertical()
         self._update_horizontal()
 
-    @listens('tracks')
+    @listens(u'tracks')
     def __on_tracks_changed(self):
         self._update_horizontal()
 
-    @listens('scenes')
+    @listens(u'scenes')
     def __on_scene_list_changed(self):
         self._update_vertical()
 

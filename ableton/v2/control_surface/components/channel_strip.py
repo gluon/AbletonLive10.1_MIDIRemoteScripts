@@ -1,12 +1,6 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/channel_strip.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/channel_strip.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
-import Live
 from ...base import EventObject, nop, listens, liveobj_valid
 from ..control import ButtonControl
 from ..component import Component
@@ -15,13 +9,11 @@ from ..elements import DisplayDataSource
 def release_control(control):
     if control != None:
         control.release_parameter()
-    return
 
 
 def reset_button(button):
     if button != None:
         button.reset()
-    return
 
 
 class ChannelStripComponent(Component):
@@ -73,42 +65,40 @@ class ChannelStripComponent(Component):
         self._empty_control_slots = self.register_disconnectable(EventObject())
         self.__on_selected_track_changed.subject = self.song.view
 
-        def make_property_slot(name, alias=None):
+        def make_property_slot(name, alias = None):
             alias = alias or name
-            return self.register_slot(None, getattr(self, '_on_%s_changed' % alias), name)
+            return self.register_slot(None, getattr(self, u'_on_%s_changed' % alias), name)
 
-        self._track_property_slots = [
-         make_property_slot('mute'),
-         make_property_slot('solo'),
-         make_property_slot('arm'),
-         make_property_slot('input_routing_type', 'input_routing'),
-         make_property_slot('name', 'track_name')]
-        self._mixer_device_property_slots = [
-         make_property_slot('crossfade_assign', 'cf_assign'),
-         make_property_slot('sends')]
+        self._track_property_slots = [make_property_slot(u'mute'),
+         make_property_slot(u'solo'),
+         make_property_slot(u'arm'),
+         make_property_slot(u'input_routing_type', u'input_routing'),
+         make_property_slot(u'name', u'track_name')]
+        self._mixer_device_property_slots = [make_property_slot(u'crossfade_assign', u'cf_assign'), make_property_slot(u'sends')]
 
         def make_button_slot(name):
-            return self.register_slot(None, getattr(self, '_%s_value' % name), 'value')
+            return self.register_slot(None, getattr(self, u'_%s_value' % name), u'value')
 
-        self._mute_button_slot = make_button_slot('mute')
-        self._solo_button_slot = make_button_slot('solo')
-        self._arm_button_slot = make_button_slot('arm')
-        self._shift_button_slot = make_button_slot('shift')
-        self._crossfade_toggle_slot = make_button_slot('crossfade_toggle')
-        return
+        self._mute_button_slot = make_button_slot(u'mute')
+        self._solo_button_slot = make_button_slot(u'solo')
+        self._arm_button_slot = make_button_slot(u'arm')
+        self._shift_button_slot = make_button_slot(u'shift')
+        self._crossfade_toggle_slot = make_button_slot(u'crossfade_toggle')
 
     def disconnect(self):
         u""" releasing references and removing listeners"""
         ChannelStripComponent._active_instances.remove(self)
         for button in [self._mute_button,
-         self._solo_button, self._arm_button,
-         self._shift_button, self._crossfade_toggle]:
+         self._solo_button,
+         self._arm_button,
+         self._shift_button,
+         self._crossfade_toggle]:
             reset_button(button)
 
         for control in self._all_controls():
             release_control(control)
 
-        self._track_name_data_source.set_display_string('')
+        self._track_name_data_source.set_display_string(u'')
         self._mute_button = None
         self._solo_button = None
         self._arm_button = None
@@ -120,7 +110,6 @@ class ChannelStripComponent(Component):
         self._send_controls = None
         self._track = None
         super(ChannelStripComponent, self).disconnect()
-        return
 
     def set_track(self, track):
         for control in self._all_controls():
@@ -134,23 +123,23 @@ class ChannelStripComponent(Component):
             slot.subject = track.mixer_device if liveobj_valid(track) else None
 
         if liveobj_valid(self._track):
-            assert self._track in tuple(self.song.tracks) + tuple(self.song.return_tracks) + (
-             self.song.master_track,)
-            for button in (self._mute_button, self._solo_button,
-             self._arm_button, self._crossfade_toggle):
+            assert self._track in tuple(self.song.tracks) + tuple(self.song.return_tracks) + (self.song.master_track,)
+            for button in (self._mute_button,
+             self._solo_button,
+             self._arm_button,
+             self._crossfade_toggle):
                 if button != None:
                     button.set_light(False)
 
         self.select_button.enabled = True if self._track else False
         self._update_track_name_data_source()
         self.update()
-        return
 
     def reset_button_on_exchange(self, button):
         reset_button(button)
 
     def _update_track_name_data_source(self):
-        self._track_name_data_source.set_display_string(self._track.name if liveobj_valid(self._track) else ' - ')
+        self._track_name_data_source.set_display_string(self._track.name if liveobj_valid(self._track) else u' - ')
 
     def set_send_controls(self, controls):
         for control in list(self._send_controls or []):
@@ -217,16 +206,18 @@ class ChannelStripComponent(Component):
             self._invert_mute_feedback = invert_feedback
             self.update()
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
+        self._update_select_button()
+
+    def _update_select_button(self):
         if liveobj_valid(self._track) or self.empty_color == None:
             if self.song.view.selected_track == self._track:
-                self.select_button.color = 'DefaultButton.On'
+                self.select_button.color = u'DefaultButton.On'
             else:
-                self.select_button.color = 'DefaultButton.Off'
+                self.select_button.color = u'DefaultButton.Off'
         else:
             self.select_button.color = self.empty_color
-        return
 
     def solo_button_pressed(self):
         return self._solo_pressed
@@ -254,10 +245,8 @@ class ChannelStripComponent(Component):
                         send_control.connect_to(self._track.mixer_device.sends[index])
                     else:
                         send_control.release_parameter()
-                        self._empty_control_slots.register_slot(send_control, nop, 'value')
+                        self._empty_control_slots.register_slot(send_control, nop, u'value')
                 index += 1
-
-        return
 
     def _all_controls(self):
         return [self._pan_control, self._volume_control] + list(self._send_controls or [])
@@ -265,7 +254,7 @@ class ChannelStripComponent(Component):
     def _disconnect_parameters(self):
         for control in self._all_controls():
             release_control(control)
-            self._empty_control_slots.register_slot(control, nop, 'value')
+            self._empty_control_slots.register_slot(control, nop, u'value')
 
     def update(self):
         super(ChannelStripComponent, self).update()
@@ -290,6 +279,13 @@ class ChannelStripComponent(Component):
     def _on_select_button_pressed(self, button):
         if liveobj_valid(self._track) and self.song.view.selected_track != self._track:
             self.song.view.selected_track = self._track
+
+    @select_button.pressed_delayed
+    def select_button(self, button):
+        self._on_select_button_pressed_delayed(button)
+
+    def _on_select_button_pressed_delayed(self, button):
+        pass
 
     @select_button.released
     def select_button(self, button):
@@ -362,34 +358,31 @@ class ChannelStripComponent(Component):
         if self.is_enabled() and self._mute_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.mute != self._invert_mute_feedback:
-                    self._mute_button.set_light('Mixer.MuteOff')
+                    self._mute_button.set_light(u'Mixer.MuteOff')
                 else:
-                    self._mute_button.set_light('Mixer.MuteOn')
+                    self._mute_button.set_light(u'Mixer.MuteOn')
             else:
                 self._mute_button.set_light(self.empty_color)
-        return
 
     def _on_solo_changed(self):
         if self.is_enabled() and self._solo_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.solo:
-                    self._solo_button.set_light('Mixer.SoloOn')
+                    self._solo_button.set_light(u'Mixer.SoloOn')
                 else:
-                    self._solo_button.set_light('Mixer.SoloOff')
+                    self._solo_button.set_light(u'Mixer.SoloOff')
             else:
                 self._solo_button.set_light(self.empty_color)
-        return
 
     def _on_arm_changed(self):
         if self.is_enabled() and self._arm_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in self.song.tracks and self._track.can_be_armed and self._track.arm:
-                    self._arm_button.set_light('Mixer.ArmOn')
+                    self._arm_button.set_light(u'Mixer.ArmOn')
                 else:
-                    self._arm_button.set_light('Mixer.ArmOff')
+                    self._arm_button.set_light(u'Mixer.ArmOff')
             else:
                 self._arm_button.set_light(self.empty_color)
-        return
 
     def _on_track_name_changed(self):
         if liveobj_valid(self._track):
@@ -401,7 +394,6 @@ class ChannelStripComponent(Component):
                 self._crossfade_toggle.set_light(True)
             else:
                 self._crossfade_toggle.set_light(False)
-        return
 
     def _on_input_routing_changed(self):
         if self.is_enabled():

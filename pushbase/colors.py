@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/colors.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/colors.py
 u"""
 Module for the color interfaces defining all posible ways of turning
 on buttons on Push.
@@ -30,11 +25,10 @@ class RgbColor(PushColor):
     needs_rgb_interface = True
     _rgb_value = (0, 0, 0)
 
-    def __init__(self, midi_value=None, rgb_value=None, *a, **k):
+    def __init__(self, midi_value = None, rgb_value = None, *a, **k):
         super(RgbColor, self).__init__(midi_value=midi_value, *a, **k)
         if rgb_value is not None:
             self._rgb_value = rgb_value
-        return
 
     def shade(self, shade_level):
         u"""
@@ -64,7 +58,7 @@ class FallbackColor(PushColor):
     or rgb button.
     """
 
-    def __init__(self, default_color=None, fallback_color=None, *a, **k):
+    def __init__(self, default_color = None, fallback_color = None, *a, **k):
         super(FallbackColor, self).__init__(midi_value=to_midi_value(fallback_color), *a, **k)
         self.default_color = default_color
 
@@ -85,7 +79,7 @@ class AnimatedColor(PushColor):
     def midi_value(self):
         return self.convert_to_midi_value()
 
-    def __init__(self, color1=RgbColor(), color2=RgbColor(), channel2=7, *a, **k):
+    def __init__(self, color1 = RgbColor(), color2 = RgbColor(), channel2 = 7, *a, **k):
         super(AnimatedColor, self).__init__(*a, **k)
         self.color1 = color1
         self.color2 = color2
@@ -100,7 +94,7 @@ class AnimatedColor(PushColor):
         interface.send_value(self.color2.midi_value, channel=self.channel2)
 
     def convert_to_midi_value(self):
-        raise NotImplementedError, 'Animations cannot be serialized'
+        raise NotImplementedError, u'Animations cannot be serialized'
 
 
 class Pulse(AnimatedColor):
@@ -108,9 +102,12 @@ class Pulse(AnimatedColor):
     Smoothly pulsates between two colors.
     """
 
-    def __init__(self, color1=RgbColor(), color2=RgbColor(), speed=6, *a, **k):
-        channel2 = [
-         4, 6, 12, 24, 48].index(speed) + 6
+    def __init__(self, color1 = RgbColor(), color2 = RgbColor(), speed = 6, *a, **k):
+        channel2 = [4,
+         6,
+         12,
+         24,
+         48].index(speed) + 6
         super(Pulse, self).__init__(color1=color1, color2=color2, channel2=channel2, *a, **k)
 
 
@@ -119,8 +116,12 @@ class Blink(AnimatedColor):
     Blinks jumping between two colors.
     """
 
-    def __init__(self, color1=0, color2=0, speed=6, *a, **k):
-        channel2 = [4, 6, 12, 24, 48].index(speed) + 11
+    def __init__(self, color1 = 0, color2 = 0, speed = 6, *a, **k):
+        channel2 = [4,
+         6,
+         12,
+         24,
+         48].index(speed) + 11
         super(Blink, self).__init__(color1=color1, color2=color2, channel2=channel2, *a, **k)
 
 
@@ -196,78 +197,77 @@ class BiLed:
     ON = FallbackColor(Rgb.WHITE, 127)
 
 
-LIVE_COLORS_TO_MIDI_VALUES = {10927616: 74, 
-   16149507: 84, 
-   4047616: 76, 
-   6441901: 69, 
-   14402304: 99, 
-   8754719: 19, 
-   16725558: 5, 
-   3947580: 71, 
-   10056267: 15, 
-   8237133: 18, 
-   12026454: 11, 
-   12565097: 73, 
-   13381230: 58, 
-   12243060: 111, 
-   16249980: 13, 
-   13013643: 4, 
-   10208397: 88, 
-   695438: 65, 
-   13821080: 110, 
-   3101346: 46, 
-   16749734: 107, 
-   8962746: 102, 
-   5538020: 79, 
-   13684944: 117, 
-   15064289: 119, 
-   14183652: 94, 
-   11442405: 44, 
-   13408551: 100, 
-   1090798: 78, 
-   11096369: 127, 
-   16753961: 96, 
-   1769263: 87, 
-   5480241: 64, 
-   1698303: 90, 
-   16773172: 97, 
-   7491393: 126, 
-   8940772: 80, 
-   14837594: 10, 
-   8912743: 16, 
-   10060650: 105, 
-   13872497: 14, 
-   16753524: 108, 
-   8092539: 70, 
-   2319236: 39, 
-   1716118: 47, 
-   12349846: 59, 
-   11481907: 121, 
-   15029152: 57, 
-   2490280: 25, 
-   11119017: 112, 
-   10701741: 81, 
-   15597486: 8, 
-   49071: 77, 
-   10851765: 93, 
-   12558270: 48, 
-   32192: 43, 
-   8758722: 103, 
-   10204100: 104, 
-   11958214: 55, 
-   8623052: 66, 
-   16726484: 95, 
-   12581632: 86, 
-   13958625: 28, 
-   12173795: 115, 
-   13482980: 116, 
-   16777215: Rgb.WHITE, 
-   6094824: 33, 
-   13496824: 114, 
-   9611263: 92, 
-   9160191: 36}
-RGB_COLOR_TABLE = (
- (0, 0),
+LIVE_COLORS_TO_MIDI_VALUES = {10927616: 74,
+ 16149507: 84,
+ 4047616: 76,
+ 6441901: 69,
+ 14402304: 99,
+ 8754719: 19,
+ 16725558: 5,
+ 3947580: 71,
+ 10056267: 15,
+ 8237133: 18,
+ 12026454: 11,
+ 12565097: 73,
+ 13381230: 58,
+ 12243060: 111,
+ 16249980: 13,
+ 13013643: 4,
+ 10208397: 88,
+ 695438: 65,
+ 13821080: 110,
+ 3101346: 46,
+ 16749734: 107,
+ 8962746: 102,
+ 5538020: 79,
+ 13684944: 117,
+ 15064289: 119,
+ 14183652: 94,
+ 11442405: 44,
+ 13408551: 100,
+ 1090798: 78,
+ 11096369: 127,
+ 16753961: 96,
+ 1769263: 87,
+ 5480241: 64,
+ 1698303: 90,
+ 16773172: 97,
+ 7491393: 126,
+ 8940772: 80,
+ 14837594: 10,
+ 8912743: 16,
+ 10060650: 105,
+ 13872497: 14,
+ 16753524: 108,
+ 8092539: 70,
+ 2319236: 39,
+ 1716118: 47,
+ 12349846: 59,
+ 11481907: 121,
+ 15029152: 57,
+ 2490280: 25,
+ 11119017: 112,
+ 10701741: 81,
+ 15597486: 8,
+ 49071: 77,
+ 10851765: 93,
+ 12558270: 48,
+ 32192: 43,
+ 8758722: 103,
+ 10204100: 104,
+ 11958214: 55,
+ 8623052: 66,
+ 16726484: 95,
+ 12581632: 86,
+ 13958625: 28,
+ 12173795: 115,
+ 13482980: 116,
+ 16777215: Rgb.WHITE,
+ 6094824: 33,
+ 13496824: 114,
+ 9611263: 92,
+ 9160191: 36}
+RGB_COLOR_TABLE = ((0, 0),
  (1, 1973790),
  (2, 8355711),
  (3, 16777215),

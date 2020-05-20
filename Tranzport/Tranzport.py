@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Tranzport/Tranzport.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Tranzport/Tranzport.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .consts import *
@@ -21,7 +16,7 @@ class Tranzport:
         self.song().view.add_selected_track_listener(self.__on_selected_track_changed)
         self.song().add_loop_listener(self.__set_loop_led)
         self.song().add_tracks_listener(self.__on_tracks_changed)
-        self.application().view.add_is_view_visible_listener('Session', self.__on_view_changed)
+        self.application().view.add_is_view_visible_listener(u'Session', self.__on_view_changed)
         for i in chain(self.song().tracks, self.song().return_tracks):
             i.add_solo_listener(self.__set_any_solo_led)
 
@@ -49,8 +44,8 @@ class Tranzport:
         self.__last_line_one = ()
         self.__last_line_two = ()
         self.send_midi(TRANZ_NATIVE_MODE)
-        self.__display_line_one = self.__translate_string('    Ableton Live    ')
-        self.__display_line_two = self.__translate_string('                    ')
+        self.__display_line_one = self.__translate_string(u'    Ableton Live    ')
+        self.__display_line_two = self.__translate_string(u'                    ')
 
     def application(self):
         u"""returns a reference to the application that we are running in
@@ -75,18 +70,17 @@ class Tranzport:
         TRANZ_LOOP = 86
         TRANZ_PUNCH = 120
         SYSEX_START = (240, 0, 1, 64, 16, 0)
-        SYSEX_END = (247, )
-        CLEAR_LINE = (32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
-                      32, 32, 32, 32)
+        SYSEX_END = (247,)
+        CLEAR_LINE = (32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32)
         LED_OFF = 0
-        self.send_midi(SYSEX_START + (0, ) + CLEAR_LINE + CLEAR_LINE + SYSEX_END)
+        self.send_midi(SYSEX_START + (0,) + CLEAR_LINE + CLEAR_LINE + SYSEX_END)
         self.song().view.remove_selected_scene_listener(self.__on_selected_scene_changed)
         self.song().remove_record_mode_listener(self.__set_record_mode_led)
         self.song().view.remove_selected_track_listener(self.__on_selected_track_changed)
         self.song().remove_loop_listener(self.__set_loop_led)
         self.song().remove_tracks_listener(self.__on_tracks_changed)
         if Live:
-            self.application().view.remove_is_view_visible_listener('Session', self.__on_view_changed)
+            self.application().view.remove_is_view_visible_listener(u'Session', self.__on_view_changed)
         for i in chain(self.song().tracks, self.song().return_tracks):
             i.remove_solo_listener(self.__set_any_solo_led)
 
@@ -108,13 +102,13 @@ class Tranzport:
         u"""Live -> Script
         Live can ask the script for an input port name to find a suitable one.
         """
-        return 'TranzPort'
+        return u'TranzPort'
 
     def suggest_output_port(self):
         u"""Live -> Script
         Live can ask the script for an output port name to find a suitable one.
         """
-        return 'TranzPort'
+        return u'TranzPort'
 
     def can_lock_to_devices(self):
         return False
@@ -192,11 +186,11 @@ class Tranzport:
             if self.__rewind_pressed:
                 self.song().jump_by(-1 * self.__spooling_factor)
         if not self.__display_line_one == self.__last_line_one:
-            self.send_midi(SYSEX_START + (0, ) + self.__display_line_one + SYSEX_END)
+            self.send_midi(SYSEX_START + (0,) + self.__display_line_one + SYSEX_END)
             self.__last_line_one = self.__display_line_one
         self.__show_selected_page()
         if not self.__display_line_two == self.__last_line_two:
-            self.send_midi(SYSEX_START + (20, ) + self.__display_line_two + SYSEX_END)
+            self.send_midi(SYSEX_START + (20,) + self.__display_line_two + SYSEX_END)
             self.__last_line_two = self.__display_line_two
 
     def receive_midi(self, midi_bytes):
@@ -320,10 +314,10 @@ class Tranzport:
             if button == TRANZ_LOOP:
                 if not self.__shift_pressed:
                     self.song().loop = not self.song().loop
-                elif self.application().view.is_view_visible('Session'):
-                    self.application().view.show_view('Arranger')
-                elif self.application().view.is_view_visible('Arranger'):
-                    self.application().view.show_view('Session')
+                elif self.application().view.is_view_visible(u'Session'):
+                    self.application().view.show_view(u'Arranger')
+                elif self.application().view.is_view_visible(u'Arranger'):
+                    self.application().view.show_view(u'Session')
             elif button == TRANZ_PUNCH_IN:
                 if not self.__shift_pressed:
                     self.song().punch_in = not self.song().punch_in
@@ -336,7 +330,7 @@ class Tranzport:
                 elif current_pos > loop_start:
                     self.song().loop_length = current_pos - loop_start
             elif button == TRANZ_PUNCH:
-                if self.application().view.is_view_visible('Session'):
+                if self.application().view.is_view_visible(u'Session'):
                     current_slot = self.song().view.highlighted_clip_slot
                     if not self.__shift_pressed and list(self.song().visible_tracks).count(self.__current_track) > 0:
                         current_slot.fire()
@@ -382,7 +376,7 @@ class Tranzport:
                     if self.song().can_jump_to_next_cue:
                         self.song().jump_to_next_cue()
                 elif self.__selected_page == 0:
-                    if self.application().view.is_view_visible('Session'):
+                    if self.application().view.is_view_visible(u'Session'):
                         index = list(self.song().scenes).index(self.song().view.selected_scene)
                         if index < len(self.song().scenes) - 1:
                             index = index + 1
@@ -425,7 +419,7 @@ class Tranzport:
                     if self.song().can_jump_to_prev_cue:
                         self.song().jump_to_prev_cue()
                 elif self.__selected_page == 0:
-                    if self.application().view.is_view_visible('Session'):
+                    if self.application().view.is_view_visible(u'Session'):
                         index = list(self.song().scenes).index(self.song().view.selected_scene)
                         if index > 0:
                             index = index - 1
@@ -470,7 +464,7 @@ class Tranzport:
                 self.song().redo()
 
     def __on_selected_scene_changed(self):
-        if self.application().view.is_view_visible('Session'):
+        if self.application().view.is_view_visible(u'Session'):
             self.__show_track_and_scene()
 
     def __on_current_song_time_changed(self):
@@ -508,10 +502,10 @@ class Tranzport:
 
     def __show_track_and_scene(self):
         line = ()
-        if self.application().view.is_view_visible('Session'):
+        if self.application().view.is_view_visible(u'Session'):
             line = self.__translate_string(self.__bring_string_to_length(self.__current_track.name, 11))
-            line = line + self.__translate_string('  Scene%2d' % (list(self.song().scenes).index(self.song().view.selected_scene) + 1))
-        elif self.application().view.is_view_visible('Arranger'):
+            line = line + self.__translate_string(u'  Scene%2d' % (list(self.song().scenes).index(self.song().view.selected_scene) + 1))
+        elif self.application().view.is_view_visible(u'Arranger'):
             line = self.__translate_string(self.__bring_string_to_length(self.__current_track.name, 20))
         self.__display_line_one = line
 
@@ -532,34 +526,34 @@ class Tranzport:
     def __show_pos_and_tempo(self):
         beat_time = self.song().get_current_beats_song_time()
         position_str = ()
-        if self.application().view.is_view_visible('Session'):
+        if self.application().view.is_view_visible(u'Session'):
             current_slot = self.song().view.highlighted_clip_slot
-            position_str = self.__translate_string('[No Clip]  ')
+            position_str = self.__translate_string(u'[No Clip]  ')
             if current_slot:
                 if current_slot.clip:
-                    if current_slot.clip.name == '':
-                        position_str = self.__translate_string('[No Name]  ')
+                    if current_slot.clip.name == u'':
+                        position_str = self.__translate_string(u'[No Name]  ')
                     else:
-                        position_str = self.__translate_string(self.__bring_string_to_length(current_slot.clip.name, 9)) + self.__translate_string('  ')
+                        position_str = self.__translate_string(self.__bring_string_to_length(current_slot.clip.name, 9)) + self.__translate_string(u'  ')
         else:
-            position_str = self.__translate_string(str('%3d.' % beat_time.bars)) + self.__translate_string(str('%02d.' % beat_time.beats)) + self.__translate_string(str('%02d  ' % beat_time.ticks))
-        tempo_str = self.__translate_string('%3.2fbpm' % self.song().tempo)
+            position_str = self.__translate_string(str(u'%3d.' % beat_time.bars)) + self.__translate_string(str(u'%02d.' % beat_time.beats)) + self.__translate_string(str(u'%02d  ' % beat_time.ticks))
+        tempo_str = self.__translate_string(u'%3.2fbpm' % self.song().tempo)
         if len(tempo_str) == 8:
-            tempo_str = (32, ) + tempo_str
+            tempo_str = (32,) + tempo_str
         self.__display_line_two = position_str + tempo_str
 
     def __show_vol_and_pan(self):
         volume = self.__current_track.mixer_device.volume
         panning = self.__current_track.mixer_device.panning
         if self.__current_track.has_audio_output:
-            self.__display_line_two = self.__translate_string(self.__string_from_number_with_length(volume, 9)) + self.__translate_string('       ') + self.__translate_string(self.__string_from_number_with_length(panning, 3))
+            self.__display_line_two = self.__translate_string(self.__string_from_number_with_length(volume, 9)) + self.__translate_string(u'       ') + self.__translate_string(self.__string_from_number_with_length(panning, 3))
         else:
-            self.__display_line_two = self.__translate_string('  No Audio Output   ')
+            self.__display_line_two = self.__translate_string(u'  No Audio Output   ')
 
     def __show_loop_settings(self):
         start_time = self.song().get_beats_loop_start()
         length_time = self.song().get_beats_loop_length()
-        self.__display_line_two = self.__translate_string('S%3d.' % start_time.bars) + self.__translate_string('%02d.' % start_time.beats) + self.__translate_string('%02d ' % start_time.ticks) + self.__translate_string('L%2d.' % length_time.bars) + self.__translate_string('%02d.' % length_time.beats) + self.__translate_string('%02d' % length_time.ticks)
+        self.__display_line_two = self.__translate_string(u'S%3d.' % start_time.bars) + self.__translate_string(u'%02d.' % start_time.beats) + self.__translate_string(u'%02d ' % start_time.ticks) + self.__translate_string(u'L%2d.' % length_time.bars) + self.__translate_string(u'%02d.' % length_time.beats) + self.__translate_string(u'%02d' % length_time.ticks)
 
     def __show_send_settings(self):
         result = ()
@@ -569,24 +563,24 @@ class Tranzport:
             elif self.__current_send_index < 0:
                 self.__current_send_index = 0
             current_send = self.__current_track.mixer_device.sends[self.__current_send_index]
-            result = self.__translate_string(self.__string_from_number_with_length(current_send, 8)) + self.__translate_string('  in  ') + self.__translate_string(current_send.name)
+            result = self.__translate_string(self.__string_from_number_with_length(current_send, 8)) + self.__translate_string(u'  in  ') + self.__translate_string(current_send.name)
         else:
-            result = self.__translate_string(' No Sends Available ')
+            result = self.__translate_string(u' No Sends Available ')
         self.__display_line_two = result
 
     def __show_page_select(self):
         index = self.__selected_page
-        if self.application().view.is_view_visible('Session') or index > 0:
+        if self.application().view.is_view_visible(u'Session') or index > 0:
             index = index + 1
-        pages_list = (u'<', ) + PAGES_NAMES[index] + (u'>', )
+        pages_list = (u'<',) + PAGES_NAMES[index] + (u'>',)
         position = 10 - len(pages_list) / 2
         message = ()
         for i in range(position):
-            message = message + (32, )
+            message = message + (32,)
 
         message = message + self.__translate_string(pages_list)
         for i in range(position):
-            message = message + (32, )
+            message = message + (32,)
 
         self.__display_line_two = message
 
@@ -699,11 +693,11 @@ class Tranzport:
         for i in range(length):
             if i < string_length:
                 if i == length - 1:
-                    result = result + (u'>', )
+                    result = result + (u'>',)
                 else:
                     result = result + (text[i],)
             else:
-                result = result + (u' ', )
+                result = result + (u' ',)
 
         return result
 
@@ -715,6 +709,6 @@ class Tranzport:
 
         if len(result) < length:
             for i in range(length - len(result)):
-                result = (u' ', ) + result
+                result = (u' ',) + result
 
         return result

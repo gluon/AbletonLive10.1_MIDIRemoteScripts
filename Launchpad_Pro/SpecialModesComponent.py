@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialModesComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialModesComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModesComponent import ReenterBehaviour, ModesComponent
 
@@ -13,7 +8,6 @@ class SpecialModesComponent(ModesComponent):
         super(SpecialModesComponent, self).on_enabled_changed()
         if not self.is_enabled():
             self._last_selected_mode = None
-        return
 
 
 class SpecialReenterBehaviour(ReenterBehaviour):
@@ -21,7 +15,7 @@ class SpecialReenterBehaviour(ReenterBehaviour):
     When a mode with this behaviour is reentered, enters on_reenter_mode instead
     """
 
-    def __init__(self, mode_name=None, *a, **k):
+    def __init__(self, mode_name = None, *a, **k):
         super(ReenterBehaviour, self).__init__(*a, **k)
         self._mode_name = mode_name
 
@@ -32,7 +26,6 @@ class SpecialReenterBehaviour(ReenterBehaviour):
             if self._mode_name is not None and component.get_mode(self._mode_name):
                 component.push_mode(self._mode_name)
                 component.pop_unselected_modes()
-        return
 
 
 class CancelingReenterBehaviour(SpecialReenterBehaviour):

@@ -1,11 +1,7 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/timeline_navigation.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/timeline_navigation.py
 from __future__ import absolute_import, print_function, unicode_literals
-import logging, math
+import logging
+import math
 from collections import namedtuple, OrderedDict
 from functools import partial
 from itertools import ifilter, imap
@@ -13,7 +9,7 @@ import Live
 from ableton.v2.base import EventObject, const, clamp, depends, find_if, index_if, isclose, lazy_attribute, listenable_property, listens, listens_group, liveobj_valid, nop, task
 from ableton.v2.control_surface.control import EncoderControl
 logger = logging.getLogger(__name__)
-FocusMarker = namedtuple('FocusMarker', ['name', 'position'])
+FocusMarker = namedtuple(u'FocusMarker', [u'name', u'position'])
 
 def ease_out(t, degree):
     return 1 - (1 - t) ** degree
@@ -62,7 +58,7 @@ def inverse_interpolate_region(from_region, to_region, current_region, ease_out_
     return interpolate_inverse(from_region[index], to_region[index], current_region[index], ease_out_degree)
 
 
-class Region(namedtuple('Region', ['start', 'end'])):
+class Region(namedtuple(u'Region', [u'start', u'end'])):
     u"""
     A region with a start and end position in sample time.
     """
@@ -98,14 +94,13 @@ class RegionOfInterest(object):
     not focusable, the identifiers should be None.
     """
 
-    def __init__(self, start_identifier=None, end_identifier=None, getter=None, add_margin=nop, *a, **k):
+    def __init__(self, start_identifier = None, end_identifier = None, getter = None, add_margin = nop, *a, **k):
         assert getter is not None
         super(RegionOfInterest, self).__init__(*a, **k)
         self.start_identifier = start_identifier
         self.end_identifier = end_identifier
         self.add_margin = add_margin
         self._getter = getter
-        return
 
     def bound_by(self, object_identifier):
         return object_identifier in (self.start_identifier, self.end_identifier)
@@ -123,7 +118,7 @@ class ObjectDescription(object):
 
     def __init__(self, regions, focus_name_or_getter, *a, **k):
         super(ObjectDescription, self).__init__(*a, **k)
-        self._regions = (u'timeline', ) + regions + (u'focused_object', )
+        self._regions = (u'timeline',) + regions + (u'focused_object',)
         self._focus_name_or_getter = focus_name_or_getter
 
     @property
@@ -146,7 +141,7 @@ class TimelineNavigation(EventObject):
     u""" Class for managing a visible area of a timeline """
     visible_region = listenable_property.managed(Region(0, 1))
     animate_visible_region = listenable_property.managed(False)
-    focus_marker = listenable_property.managed(FocusMarker('', 0.0))
+    focus_marker = listenable_property.managed(FocusMarker(u'', 0.0))
     show_focus = listenable_property.managed(False)
     ZOOM_SENSITIVITY = 1.5
     TIMELINE_WIDTH_IN_PX = 933
@@ -156,7 +151,7 @@ class TimelineNavigation(EventObject):
     CHANGE_OBJECT_TIME = 0.1
 
     @depends(external_regions_of_interest_creator=const(None), external_focusable_object_descriptions=const(None))
-    def __init__(self, external_regions_of_interest_creator=None, external_focusable_object_descriptions=None, *a, **k):
+    def __init__(self, external_regions_of_interest_creator = None, external_focusable_object_descriptions = None, *a, **k):
         super(TimelineNavigation, self).__init__(*a, **k)
         self._timeline_region = Region(0, 1)
         self.timeline_roi = self.make_region_of_interest(getter=lambda : self._timeline_region, with_margin=False)
@@ -173,7 +168,6 @@ class TimelineNavigation(EventObject):
         self._unsnapping_value = 0
         self._locked_roi = None
         self._last_action = None
-        return
 
     def disconnect(self):
         super(TimelineNavigation, self).disconnect()
@@ -202,7 +196,7 @@ class TimelineNavigation(EventObject):
             self.set_visible_region(self._timeline_region)
             self.notify_timeline_region()
 
-    def make_region_of_interest(self, start_identifier=None, end_identifier=None, getter=None, with_margin=True):
+    def make_region_of_interest(self, start_identifier = None, end_identifier = None, getter = None, with_margin = True):
         return RegionOfInterest(start_identifier, end_identifier, getter, add_margin=self._add_margin_to_region if with_margin else nop)
 
     @lazy_attribute
@@ -212,8 +206,8 @@ class TimelineNavigation(EventObject):
         navigation zooms only between the full timeline and the focused objects
         position. Override additional_regions_of_interest to add more regions to it.
         """
-        rois = {'timeline': self.timeline_roi, 
-           'focused_object': self.focused_object_roi}
+        rois = {u'timeline': self.timeline_roi,
+         u'focused_object': self.focused_object_roi}
         rois.update(self._external_regions_of_interest)
         rois.update(self.additional_regions_of_interest)
         return rois
@@ -229,8 +223,6 @@ class TimelineNavigation(EventObject):
         item = find_if(lambda i: i[1] == roi, self.regions_of_interest.iteritems())
         if item is not None:
             return item[0]
-        else:
-            return
 
     @lazy_attribute
     def focusable_object_descriptions(self):
@@ -255,7 +247,7 @@ class TimelineNavigation(EventObject):
         u""" Returns the proportion between the visible length and the sample length """
         return self.visible_region.length / float(self._timeline_region.length)
 
-    def set_visible_region(self, region, source_action=None, force_animate=False):
+    def set_visible_region(self, region, source_action = None, force_animate = False):
         u"""
         Set the current visible region in the current unit and samples.
         The region is animated, if source action changes.
@@ -291,7 +283,7 @@ class TimelineNavigation(EventObject):
         t = clamp(t + value * self.ZOOM_SENSITIVITY, 0.0, 1.0)
         region = interpolate_region(source, target, t, easing_degree)
         region = self._add_margin_to_zoomed_region(region, focused_region, margin_type)
-        self.set_visible_region(region, force_animate=animate, source_action='zoom')
+        self.set_visible_region(region, force_animate=animate, source_action=u'zoom')
         self.focus_marker = focus_marker
         self.show_focus = True
         self.try_hide_focus_delayed()
@@ -318,8 +310,7 @@ class TimelineNavigation(EventObject):
             obj_description = self.focusable_object_descriptions.get(identifier, None)
             if obj_description is not None:
                 focus_marker = FocusMarker(obj_description.focus_name, region.end if roi.end_identifier == identifier else region.start)
-        return (
-         region, focus_marker, margin_type)
+        return (region, focus_marker, margin_type)
 
     def _add_margin_to_zoomed_region(self, zoom_region, focused_region, margin_type):
         u"""
@@ -335,8 +326,7 @@ class TimelineNavigation(EventObject):
                 else:
                     zoom_region = self._add_margin_to_zoomed_region_end(zoom_region, position)
             else:
-                logger.warn("Focused object not visible. Couldn't add margin to zoomed region. %d not in %r" % (
-                 position, zoom_region))
+                logger.warn(u"Focused object not visible. Couldn't add margin to zoomed region. %d not in %r" % (position, zoom_region))
         return zoom_region
 
     def _add_margin_to_zoomed_region_start(self, region, focused_position):
@@ -388,7 +378,6 @@ class TimelineNavigation(EventObject):
             self._locked_roi = self._source_roi
         else:
             self._locked_roi = None
-        return
 
     @property
     def is_snapped(self):
@@ -402,11 +391,11 @@ class TimelineNavigation(EventObject):
             objects_to_show = self._changed_identifiers & touched_identifiers
             if identifier in self.focusable_object_descriptions:
                 if len(objects_to_show) > 1:
-                    logger.debug('Focus all objects %r' % objects_to_show)
+                    logger.debug(u'Focus all objects %r' % objects_to_show)
                     self._focused_identifier = identifier
                     self._show_all_objects(objects_to_show)
                 else:
-                    logger.debug('Focus object %r' % identifier)
+                    logger.debug(u'Focus object %r' % identifier)
                     animate = len(touched_identifiers) <= 1 and self.object_changed(self._focused_identifier, identifier)
                     self._focused_identifier = identifier
                     self._focus_object_by_identifier(identifier, animate=animate)
@@ -425,8 +414,6 @@ class TimelineNavigation(EventObject):
             if roi.start_identifier == identifier:
                 return roi.region.start
             return roi.region.end
-        else:
-            return
 
     def _zoom_out_or_move_region(self, source_region, target_region):
         u"""
@@ -455,13 +442,12 @@ class TimelineNavigation(EventObject):
         object_region = Region(start, end)
         new_region = self._zoom_out_or_move_region(visible_region_without_margin, object_region)
         if new_region is not None:
-            self.set_visible_region(self._add_margin_to_region(new_region), source_action='show_objects %r' % identifiers)
+            self.set_visible_region(self._add_margin_to_region(new_region), source_action=u'show_objects %r' % identifiers)
             self._request_select_region = True
             self._locked_roi = None
-        self.focus_marker = FocusMarker('', 0.0)
-        return
+        self.focus_marker = FocusMarker(u'', 0.0)
 
-    def _focus_object_by_identifier(self, identifier, animate=False):
+    def _focus_object_by_identifier(self, identifier, animate = False):
         u""" Focuses the object in the timeline and brings it into the visible range.
             The visible length is preserved. The position is aligned to the left or right
             of the visible range, with a certain margin defined by RELATIVE_FOCUS_MARGIN.
@@ -497,7 +483,6 @@ class TimelineNavigation(EventObject):
             self.set_visible_region(Region(clamp(left, timeline_start, timeline_end - visible_length), clamp(right, timeline_start + visible_length, timeline_end)), force_animate=animate)
             self._request_select_region = True
         self.focus_marker = FocusMarker(self.focusable_object_descriptions[identifier].focus_name, region.end if roi.end_identifier == identifier else region.start)
-        return
 
     def touch_object(self, obj):
         is_zoom_object = obj == self.get_zoom_object()
@@ -522,7 +507,6 @@ class TimelineNavigation(EventObject):
         tasks = self._tasks
         if tasks is not None:
             tasks.add(task.sequence(task.wait(self.CHANGE_OBJECT_TIME), task.run(partial(self._remove_changed_object, identifier))))
-        return
 
     def change_object(self, obj):
         identifier = self.get_object_identifier(obj)
@@ -578,25 +562,20 @@ class TimelineNavigation(EventObject):
             self._source_roi = self.regions_of_interest.get(source_roi_name, None)
             self._target_roi = self.regions_of_interest.get(target_roi_name, None)
             self._locked_roi = self.regions_of_interest.get(locked_roi_name, None)
-        return
 
     @lazy_attribute
     @depends(parent_task_group=const(None))
-    def _tasks(self, parent_task_group=None):
+    def _tasks(self, parent_task_group = None):
         if parent_task_group is not None:
             tasks = parent_task_group.add(task.TaskGroup())
             self._has_tasks = True
             return tasks
-        else:
-            return
 
     @lazy_attribute
     def _hide_focus_task(self):
         tasks = self._tasks
         if tasks is not None:
             return tasks.add(task.sequence(task.wait(EncoderControl.TOUCH_TIME), task.run(self.try_hide_focus)))
-        else:
-            return
 
     def _add_margin_to_region(self, region):
         start, end = region
@@ -627,14 +606,12 @@ class TimelineNavigation(EventObject):
     def _make_region_for_focused_object(self):
         if self._focused_identifier is not None:
             return self._make_region_from_position_identifier(self._focused_identifier)
-        else:
-            return Region(0, 0)
+        return Region(0, 0)
 
     def _get_roi_for_focused_identifier(self):
         if self._focused_identifier is not None:
             return map(self.regions_of_interest.get, self.get_object_description(self._focused_identifier).regions)
-        else:
-            return []
+        return []
 
     def _get_unique_regions_of_interest(self):
         u"""
@@ -652,8 +629,7 @@ class TimelineNavigation(EventObject):
         regions_of_interest = self._get_unique_regions_of_interest()
         source_roi = find_if(lambda roi: self.visible_region.inside(roi.region_with_margin), reversed(regions_of_interest[:-1]))
         if source_roi is not None:
-            self._set_source_and_target_roi(source_roi, regions_of_interest[(regions_of_interest.index(source_roi) + 1)])
-        return
+            self._set_source_and_target_roi(source_roi, regions_of_interest[regions_of_interest.index(source_roi) + 1])
 
     def _select_reached_region(self, zoom_in):
         rois = self._get_unique_regions_of_interest()
@@ -661,9 +637,9 @@ class TimelineNavigation(EventObject):
         if i != len(rois):
             if zoom_in:
                 if i < len(rois) - 1:
-                    self._set_source_and_target_roi(rois[i], rois[(i + 1)])
+                    self._set_source_and_target_roi(rois[i], rois[i + 1])
             elif i > 0:
-                self._set_source_and_target_roi(rois[(i - 1)], rois[i])
+                self._set_source_and_target_roi(rois[i - 1], rois[i])
             return True
         return False
 
@@ -680,16 +656,15 @@ class TimelineNavigation(EventObject):
             self._report_current_source_and_target_roi()
 
     def _report_current_source_and_target_roi(self):
-        source_roi_name = ''
-        target_roi_name = ''
+        source_roi_name = u''
+        target_roi_name = u''
         for name, roi in self.regions_of_interest.iteritems():
             if roi == self._source_roi:
                 source_roi_name = name
             elif roi == self._target_roi:
                 target_roi_name = name
 
-        logger.debug('Zooming between roi "%s" and "%s"' % (
-         source_roi_name, target_roi_name))
+        logger.debug(u'Zooming between roi "%s" and "%s"' % (source_roi_name, target_roi_name))
 
 
 class WaveformNavigation(EventObject):
@@ -704,14 +679,13 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
     u""" Extends the TimelineNavigation class by the concept of focusing parameters
         and slices.
     """
-    selected_slice_focus = 'selected_slice'
+    selected_slice_focus = u'selected_slice'
 
-    def __init__(self, simpler=None, *a, **k):
+    def __init__(self, simpler = None, *a, **k):
         super(SimplerWaveformNavigation, self).__init__(*a, **k)
         self._simpler = simpler
         self._enable_focus_objects = True
-        focusable_parameters = [ self._simpler.get_parameter_by_name(n) for n in self.focusable_object_descriptions
-                               ]
+        focusable_parameters = [ self._simpler.get_parameter_by_name(n) for n in self.focusable_object_descriptions ]
         self.__on_playback_mode_changed.subject = simpler
         self.__on_playing_position_enabled_changed.subject = simpler
         self.__on_selected_slice_changed.subject = simpler.positions
@@ -722,7 +696,7 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
         self.__on_parameter_value_changed.replace_subjects(focusable_parameters)
         self._update_waveform_region()
 
-    def set_visible_region(self, region, source_action=None, force_animate=False):
+    def set_visible_region(self, region, source_action = None, force_animate = False):
         super(SimplerWaveformNavigation, self).set_visible_region(region, source_action, force_animate)
         self.visible_region_in_samples = self.get_region_in_samples(self.visible_region)
 
@@ -743,30 +717,22 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
 
     @lazy_attribute
     def additional_regions_of_interest(self):
-        return {'start_end_marker': self.make_region_of_interest(start_identifier='Start', end_identifier='End', getter=lambda : (
-                              self._simpler.positions.start_marker,
-                              self._simpler.positions.end_marker)), 
-           'active_sample': self.make_region_of_interest(start_identifier='S Start', end_identifier='S Length', getter=lambda : (
-                           self._simpler.positions.active_start,
-                           self._simpler.positions.active_end)), 
-           'loop': self.make_region_of_interest(start_identifier='S Loop Length', end_identifier='S Length', getter=lambda : (
-                  self._simpler.positions.loop_start,
-                  self._simpler.positions.loop_end)), 
-           'selected_slice': self.make_region_of_interest(start_identifier=self.selected_slice_focus, end_identifier=None, getter=lambda : (
-                            self._simpler.positions.selected_slice.time,
-                            self.get_next_slice_position()))}
+        return {u'start_end_marker': self.make_region_of_interest(start_identifier=u'Start', end_identifier=u'End', getter=lambda : (self._simpler.positions.start_marker, self._simpler.positions.end_marker)),
+         u'active_sample': self.make_region_of_interest(start_identifier=u'S Start', end_identifier=u'S Length', getter=lambda : (self._simpler.positions.active_start, self._simpler.positions.active_end)),
+         u'loop': self.make_region_of_interest(start_identifier=u'S Loop Length', end_identifier=u'S Length', getter=lambda : (self._simpler.positions.loop_start, self._simpler.positions.loop_end)),
+         u'selected_slice': self.make_region_of_interest(start_identifier=self.selected_slice_focus, end_identifier=None, getter=lambda : (self._simpler.positions.selected_slice.time, self.get_next_slice_position()))}
 
     @lazy_attribute
     def additional_focusable_object_descriptions(self):
-        return {'Start': ObjectDescription((u'start_end_marker', ), 'start_marker'), 
-           'End': ObjectDescription((u'start_end_marker', ), 'end_marker'), 
-           'S Start': ObjectDescription((u'start_end_marker', u'active_sample'), 'position'), 
-           'S Length': ObjectDescription((u'start_end_marker', u'active_sample'), 'position'), 
-           'S Loop Length': ObjectDescription((u'start_end_marker', u'active_sample', u'loop'), 'position'), 
-           self.selected_slice_focus: ObjectDescription((u'start_end_marker', u'selected_slice'), '')}
+        return {u'Start': ObjectDescription((u'start_end_marker',), u'start_marker'),
+         u'End': ObjectDescription((u'start_end_marker',), u'end_marker'),
+         u'S Start': ObjectDescription((u'start_end_marker', u'active_sample'), u'position'),
+         u'S Length': ObjectDescription((u'start_end_marker', u'active_sample'), u'position'),
+         u'S Loop Length': ObjectDescription((u'start_end_marker', u'active_sample', u'loop'), u'position'),
+         self.selected_slice_focus: ObjectDescription((u'start_end_marker', u'selected_slice'), u'')}
 
     def get_object_identifier(self, obj):
-        if hasattr(obj, 'name'):
+        if hasattr(obj, u'name'):
             return obj.name
         return obj
 
@@ -780,13 +746,13 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
         if slice_index == -1:
             next_pos = positions.selected_slice.time + min_visible_length
         elif slice_index + 1 < len(positions.slices):
-            next_pos = max(positions.slices[(slice_index + 1)].time, positions.selected_slice.time + min_visible_length)
+            next_pos = max(positions.slices[slice_index + 1].time, positions.selected_slice.time + min_visible_length)
         else:
             next_pos = max(positions.end_marker, positions.selected_slice.time + min_visible_length)
         return next_pos
 
     def object_changed(self, identifier1, identifier2):
-        if self.selected_slice_focus in (identifier1, identifier2) and self._get_selected_slice_index() == 0 and 'Start' in (identifier1, identifier2):
+        if self.selected_slice_focus in (identifier1, identifier2) and self._get_selected_slice_index() == 0 and u'Start' in (identifier1, identifier2):
             return False
         return identifier1 != identifier2
 
@@ -795,42 +761,42 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
             return super(SimplerWaveformNavigation, self).focus_object(obj)
         return False
 
-    @listens('playback_mode')
+    @listens(u'playback_mode')
     def __on_playback_mode_changed(self):
-        start_end_region = self.regions_of_interest['start_end_marker'].region
+        start_end_region = self.regions_of_interest[u'start_end_marker'].region
         if start_end_region.inside(self.visible_region):
-            self.focus_object(self._simpler.get_parameter_by_name('Start'))
+            self.focus_object(self._simpler.get_parameter_by_name(u'Start'))
         else:
             self._focus_start_end_roi()
 
-    @listens_group('value')
+    @listens_group(u'value')
     def __on_parameter_value_changed(self, parameter):
         self._simpler.positions.update_all()
         self.change_object(parameter)
 
-    @listens('selected_slice')
+    @listens(u'selected_slice')
     def __on_selected_slice_changed(self, _):
         self._focus_selected_slice()
 
-    @listens('playing_position_enabled')
+    @listens(u'playing_position_enabled')
     def __on_playing_position_enabled_changed(self):
         slicing = self._simpler.playback_mode == Live.SimplerDevice.PlaybackMode.slicing
         if slicing and self._simpler.playing_position_enabled:
             self._focus_selected_slice()
 
-    @listens('use_beat_time')
+    @listens(u'use_beat_time')
     def __on_use_beat_time_changed(self, use_beat_time):
         self._update_waveform_region_and_preserve_visible_region()
 
-    @listens('warp_markers')
+    @listens(u'warp_markers')
     def __on_warp_markers_changed(self):
         self._update_waveform_region_and_preserve_visible_region()
 
-    @listens('before_update_all')
+    @listens(u'before_update_all')
     def __on_before_update_all(self):
         self._enable_focus_objects = False
 
-    @listens('after_update_all')
+    @listens(u'after_update_all')
     def __on_after_update_all(self):
         self._enable_focus_objects = True
 
@@ -851,7 +817,7 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
             self.focus_object(self.selected_slice_focus)
 
     def _focus_start_end_roi(self):
-        self.focus_region_of_interest('start_end_marker', self._simpler.get_parameter_by_name('Start'))
+        self.focus_region_of_interest(u'start_end_marker', self._simpler.get_parameter_by_name(u'Start'))
 
     def _get_selected_slice_index(self):
         selected_slice_index = -1
@@ -870,18 +836,18 @@ class ClipTimelineNavigation(TimelineNavigation):
     TimelineNavigation.
     """
     MIN_VISIBLE_BEATS = 1
-    zoom_focus = 'zoom'
-    start_marker_focus = 'start_marker'
-    loop_start_focus = 'loop_start'
-    loop_end_focus = 'loop_end'
+    zoom_focus = u'zoom'
+    start_marker_focus = u'start_marker'
+    loop_start_focus = u'loop_start'
+    loop_end_focus = u'loop_end'
 
-    def __init__(self, clip=None, *a, **k):
+    def __init__(self, clip = None, *a, **k):
         super(ClipTimelineNavigation, self).__init__(*a, **k)
         self._clip = clip
         self._process_object_changes = True
-        self._connect_positions_property('loop_start', self.loop_start_focus)
-        self._connect_positions_property('loop_length', self.loop_end_focus)
-        self._connect_positions_property('start_marker', self.start_marker_focus)
+        self._connect_positions_property(u'loop_start', self.loop_start_focus)
+        self._connect_positions_property(u'loop_length', self.loop_end_focus)
+        self._connect_positions_property(u'start_marker', self.start_marker_focus)
         self.__on_is_recording_changed.subject = clip.positions
         self.__on_before_update_all.subject = clip.positions
         self.__on_after_update_all.subject = clip.positions
@@ -892,19 +858,15 @@ class ClipTimelineNavigation(TimelineNavigation):
 
     @lazy_attribute
     def additional_regions_of_interest(self):
-        return {'start_end_marker': self.make_region_of_interest(start_identifier=self.start_marker_focus, end_identifier=self.loop_end_focus, getter=lambda : (
-                              self._clip.positions.start_marker,
-                              self._clip.positions.loop_end)), 
-           'loop': self.make_region_of_interest(start_identifier=self.loop_start_focus, end_identifier=self.loop_end_focus, getter=lambda : (
-                  self._clip.positions.loop_start,
-                  self._clip.positions.loop_end)), 
-           'start_end': self.make_region_of_interest(getter=self._get_start_end_region)}
+        return {u'start_end_marker': self.make_region_of_interest(start_identifier=self.start_marker_focus, end_identifier=self.loop_end_focus, getter=lambda : (self._clip.positions.start_marker, self._clip.positions.loop_end)),
+         u'loop': self.make_region_of_interest(start_identifier=self.loop_start_focus, end_identifier=self.loop_end_focus, getter=lambda : (self._clip.positions.loop_start, self._clip.positions.loop_end)),
+         u'start_end': self.make_region_of_interest(getter=self._get_start_end_region)}
 
     @lazy_attribute
     def additional_focusable_object_descriptions(self):
-        return {self.start_marker_focus: ObjectDescription((u'start_end', u'start_end_marker'), 'start_marker'), 
-           self.loop_start_focus: ObjectDescription((u'start_end', u'loop'), lambda : 'position' if self._clip.looping else 'start_marker'), 
-           self.loop_end_focus: ObjectDescription((u'start_end', ), 'end_marker')}
+        return {self.start_marker_focus: ObjectDescription((u'start_end', u'start_end_marker'), u'start_marker'),
+         self.loop_start_focus: ObjectDescription((u'start_end', u'loop'), lambda : (u'position' if self._clip.looping else u'start_marker')),
+         self.loop_end_focus: ObjectDescription((u'start_end',), u'end_marker')}
 
     def get_object_identifier(self, obj):
         return obj
@@ -947,18 +909,17 @@ class ClipTimelineNavigation(TimelineNavigation):
 
     def _get_start_end_region(self):
         start_position = min(self._clip.positions.start_marker, self._clip.positions.loop_start)
-        return (
-         start_position, self._clip.positions.loop_end)
+        return (start_position, self._clip.positions.loop_end)
 
-    @listens('is_recording')
+    @listens(u'is_recording')
     def __on_is_recording_changed(self):
         self._update_timeline_region()
 
-    @listens('before_update_all')
+    @listens(u'before_update_all')
     def __on_before_update_all(self):
         self._process_object_changes = False
 
-    @listens('after_update_all')
+    @listens(u'after_update_all')
     def __on_after_update_all(self):
         self._process_object_changes = True
         self._request_select_region = True
@@ -969,11 +930,11 @@ class ClipTimelineNavigation(TimelineNavigation):
 
 class MidiClipTimelineNavigation(ClipTimelineNavigation):
 
-    def __init__(self, clip=None, *a, **k):
+    def __init__(self, clip = None, *a, **k):
         super(MidiClipTimelineNavigation, self).__init__(clip=clip, *a, **k)
         self.__on_clip_end_changed.subject = self._clip.positions
 
-    @listens('end')
+    @listens(u'end')
     def __on_clip_end_changed(self, _):
         if self._process_object_changes:
             self._update_timeline_region()
@@ -987,15 +948,15 @@ class AudioClipTimelineNavigation(ClipTimelineNavigation, WaveformNavigation):
         self.__on_use_beat_time_changed.subject = self._clip.positions
         self._update_timeline_region()
 
-    def set_visible_region(self, region, source_action=None, force_animate=False):
+    def set_visible_region(self, region, source_action = None, force_animate = False):
         super(AudioClipTimelineNavigation, self).set_visible_region(region, source_action, force_animate)
         self.visible_region_in_samples = self.get_region_in_samples(self.visible_region)
 
-    @listens('warp_markers')
+    @listens(u'warp_markers')
     def __on_warp_markers_changed(self):
         self._update_waveform_region_and_preserve_visible_region()
 
-    @listens('use_beat_time')
+    @listens(u'use_beat_time')
     def __on_use_beat_time_changed(self, use_beat_time):
         self._update_waveform_region_and_preserve_visible_region()
 

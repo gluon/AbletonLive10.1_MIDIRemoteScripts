@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialMixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialMixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from itertools import izip_longest
@@ -13,8 +8,7 @@ from _Framework.MixerComponent import MixerComponent
 from _Framework.ChannelStripComponent import ChannelStripComponent
 from _Framework.Control import RadioButtonControl, RadioButtonGroup, ControlList
 from .consts import FADER_TYPE_STANDARD, FADER_TYPE_BIPOLAR, VOLUME_MAP_CHANNEL, PAN_MAP_CHANNEL, SENDS_MAP_CHANNEL, FADER_LAYOUT_SYSEX_BYTE
-SEND_COLORS = (
- (u'Sends.A', u'Sends.AAvail'),
+SEND_COLORS = ((u'Sends.A', u'Sends.AAvail'),
  (u'Sends.B', u'Sends.BAvail'),
  (u'Sends.C', u'Sends.CAvail'),
  (u'Sends.D', u'Sends.DAvail'),
@@ -44,7 +38,7 @@ class SpecialMixerComponent(MixerComponent):
     send_select_buttons = SpecialRadioButtonGroup()
 
     @depends(layout_setup=None)
-    def __init__(self, num_tracks=0, num_returns=0, auto_name=False, invert_mute_feedback=False, layout_setup=None, *a, **k):
+    def __init__(self, num_tracks = 0, num_returns = 0, auto_name = False, invert_mute_feedback = False, layout_setup = None, *a, **k):
         self._layout_setup = layout_setup
         super(SpecialMixerComponent, self).__init__(num_tracks, num_returns, auto_name, invert_mute_feedback, *a, **k)
         self.on_num_sends_changed()
@@ -56,14 +50,14 @@ class SpecialMixerComponent(MixerComponent):
         for strip, control in izip_longest(self._channel_strips, controls or []):
             if control:
                 control.set_channel(VOLUME_MAP_CHANNEL)
-                control.set_light_and_type('Mixer.Volume', FADER_TYPE_STANDARD)
+                control.set_light_and_type(u'Mixer.Volume', FADER_TYPE_STANDARD)
             strip.set_volume_control(control)
 
     def set_pan_controls(self, controls):
         for strip, control in izip_longest(self._channel_strips, controls or []):
             if control:
                 control.set_channel(PAN_MAP_CHANNEL)
-                control.set_light_and_type('Mixer.Pan', FADER_TYPE_BIPOLAR)
+                control.set_light_and_type(u'Mixer.Pan', FADER_TYPE_BIPOLAR)
             strip.set_pan_control(control)
 
     def set_send_controls(self, controls):
@@ -71,40 +65,38 @@ class SpecialMixerComponent(MixerComponent):
         for strip, control in izip_longest(self._channel_strips, controls or []):
             if self.send_index is None or self.send_index not in xrange(8):
                 strip.set_send_controls(None)
-            elif control:
-                control.set_channel(SENDS_MAP_CHANNEL)
-                control.set_light_and_type(SEND_COLORS[self.send_index][0], FADER_TYPE_STANDARD)
             else:
-                strip.set_send_controls((None, ) * self._send_index + (control,))
-
-        return
+                if control:
+                    control.set_channel(SENDS_MAP_CHANNEL)
+                    control.set_light_and_type(SEND_COLORS[self.send_index][0], FADER_TYPE_STANDARD)
+                strip.set_send_controls((None,) * self._send_index + (control,))
 
     def set_arm_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
-                button.set_on_off_values('Mixer.ArmOn', 'Mixer.ArmOff')
+                button.set_on_off_values(u'Mixer.ArmOn', u'Mixer.ArmOff')
             strip.set_arm_button(button)
 
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
-                button.set_on_off_values('Mixer.SoloOn', 'Mixer.SoloOff')
+                button.set_on_off_values(u'Mixer.SoloOn', u'Mixer.SoloOff')
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
-                button.set_on_off_values('Mixer.MuteOff', 'Mixer.MuteOn')
+                button.set_on_off_values(u'Mixer.MuteOff', u'Mixer.MuteOn')
             strip.set_mute_button(button)
 
     def set_track_select_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
-                button.set_on_off_values('Mixer.Selected', 'Mixer.Unselected')
+                button.set_on_off_values(u'Mixer.Selected', u'Mixer.Unselected')
             strip.set_select_button(button)
 
     @send_select_buttons.checked
@@ -128,14 +120,12 @@ class SpecialMixerComponent(MixerComponent):
             for button in self.send_select_buttons:
                 button.is_checked = False
 
-        return
-
 
 class SpecialChanStripComponent(ChannelStripComponent):
 
     def __init__(self, *a, **k):
         super(SpecialChanStripComponent, self).__init__(*a, **k)
-        self.empty_color = 'DefaultButton.Disabled'
+        self.empty_color = u'DefaultButton.Disabled'
 
     def _arm_value(self, value):
         super(SpecialChanStripComponent, self)._arm_value(value)
@@ -146,5 +136,5 @@ class SpecialChanStripComponent(ChannelStripComponent):
         super(SpecialChanStripComponent, self)._select_value(value)
         if self.is_enabled() and value and self._track:
             view = self.application().view
-            if view.is_view_visible('Detail') and not view.is_view_visible('Detail/DeviceChain'):
-                view.show_view('Detail/DeviceChain')
+            if view.is_view_visible(u'Detail') and not view.is_view_visible(u'Detail/DeviceChain'):
+                view.show_view(u'Detail/DeviceChain')

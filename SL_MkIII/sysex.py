@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/sysex.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/sysex.py
 from __future__ import absolute_import, print_function, unicode_literals
 SYSEX_START_BYTE = 240
 SYSEX_END_BYTE = 247
@@ -23,8 +18,7 @@ EMPTY_SCREEN_LAYOUT_BYTE = 0
 KNOB_SCREEN_LAYOUT_BYTE = 1
 BOX_SCREEN_LAYOUT_BYTE = 2
 SOLID_COLOR_LED_BYTE = 1
-STD_MSG_HEADER = (
- SYSEX_START_BYTE,) + NOVATION_MANUFACTURER_ID + SL_MKIII_PRODUCT_ID + (INCONTROL_COMMAND_ID_BYTE,)
+STD_MSG_HEADER = (SYSEX_START_BYTE,) + NOVATION_MANUFACTURER_ID + SL_MKIII_PRODUCT_ID + (INCONTROL_COMMAND_ID_BYTE,)
 SHOW_MESSAGE_MSG_HEADER = STD_MSG_HEADER + (SET_NOTIFICATION_COMMAND_BYTE,)
 SET_SCREEN_LAYOUT_MESSAGE_HEADER = STD_MSG_HEADER + (SET_SCREEN_LAYOUT_COMMAND_BYTE,)
 SET_PROPERTY_MSG_HEADER = STD_MSG_HEADER + (SET_PROPERTY_COMMAND_BYTE,)

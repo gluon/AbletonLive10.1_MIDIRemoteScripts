@@ -1,16 +1,12 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_25_Classic/Axiom.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_25_Classic/Axiom.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Axiom.consts import *
 from _Axiom.Transport import Transport
 from _Axiom.Pads import Pads
 from _Axiom.Encoders import Encoders
 from _Generic.util import DeviceAppointer
-import Live, MidiRemoteScript
+import Live
+import MidiRemoteScript
 
 class Axiom:
     u""" A controller script for the M-Audio Axiom Keyboard/Controller series """
@@ -50,13 +46,13 @@ class Axiom:
         u"""Live -> Script
         Live can ask the script for an input port name to find a suitable one.
         """
-        return str('USB Axiom 25')
+        return str(u'USB Axiom 25')
 
     def suggest_output_port(self):
         u"""Live -> Script
         Live can ask the script for an output port name to find a suitable one.
         """
-        return str('USB Axiom 25')
+        return str(u'USB Axiom 25')
 
     def suggest_map_mode(self, cc_no, channel):
         u"""Live -> Script

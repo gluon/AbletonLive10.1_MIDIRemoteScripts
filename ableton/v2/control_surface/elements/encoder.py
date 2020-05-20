@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/encoder.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/encoder.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import Event, in_range, nop, const, clamp, listens
@@ -30,10 +25,11 @@ def signed_bit_delta(value):
 
 SIGNED_BIT_DEFAULT_DELTA = 20.0
 SIGNED_BIT_VALUE_MAP = (1, 2, 3, 4, 5, 8, 10, 20, 50)
-ENCODER_VALUE_NORMALIZER = {_map_modes.relative_smooth_two_compliment: lambda v: v if v <= 64 else v - 128, 
-   _map_modes.relative_smooth_signed_bit: lambda v: v if v <= 64 else 64 - v, 
-   _map_modes.relative_smooth_binary_offset: lambda v: v - 64, 
-   _map_modes.relative_signed_bit: signed_bit_delta}
+ENCODER_VALUE_NORMALIZER = {_map_modes.relative_smooth_two_compliment: lambda v: (v if v <= 64 else v - 128),
+ _map_modes.relative_smooth_signed_bit: lambda v: (v if v <= 64 else 64 - v),
+ _map_modes.relative_smooth_binary_offset: lambda v: v - 64,
+ _map_modes.relative_signed_bit: signed_bit_delta}
+MAX_14_BIT_CC = 95
 
 def accumulate_relative_two_compliment_chunk(chunk):
     right = 0
@@ -55,7 +51,7 @@ ENCODER_VALUE_ACCUMULATOR = {_map_modes.relative_smooth_two_compliment: accumula
 class EncoderElement(InputControlElement):
     u"""
     Class representing a continuous control on the controller.
-
+    
     The normalized value notifies a delta in the range:
         (-encoder_sensitivity, +encoder_sensitvity)
     """
@@ -63,19 +59,20 @@ class EncoderElement(InputControlElement):
     class ProxiedInterface(InputControlElement.ProxiedInterface):
         normalize_value = nop
 
-    __events__ = (
-     Event(name='normalized_value', signal=InputSignal),)
+    __events__ = (Event(name=u'normalized_value', signal=InputSignal),)
     encoder_sensitivity = 1.0
     allow_receiving_chunks = True
 
-    def __init__(self, msg_type, channel, identifier, map_mode, encoder_sensitivity=None, *a, **k):
+    def __init__(self, msg_type, channel, identifier, map_mode, encoder_sensitivity = None, *a, **k):
         super(EncoderElement, self).__init__(msg_type, channel, identifier, *a, **k)
         if encoder_sensitivity is not None:
             self.encoder_sensitivity = encoder_sensitivity
-        self._map_mode = map_mode
+        if map_mode is _map_modes.absolute_14_bit and identifier > MAX_14_BIT_CC:
+            self._map_mode = _map_modes.absolute
+        else:
+            self._map_mode = map_mode
         self._value_normalizer = ENCODER_VALUE_NORMALIZER.get(map_mode, _not_implemented)
         self._value_accumulator = ENCODER_VALUE_ACCUMULATOR.get(map_mode, None)
-        return
 
     def message_map_mode(self):
         assert self.message_type() is MIDI_CC_TYPE
@@ -100,7 +97,6 @@ class EncoderElement(InputControlElement):
                 self.receive_value(value)
         else:
             super(EncoderElement, self).receive_chunk(chunk)
-        return
 
 
 class TouchEncoderElementBase(EncoderElement):
@@ -113,7 +109,7 @@ class TouchEncoderElementBase(EncoderElement):
         is_pressed = const(False)
         touch_element = const(None)
 
-    __events__ = (u'touch_value', )
+    __events__ = (u'touch_value',)
 
     @property
     def touch_element(self):
@@ -131,12 +127,11 @@ class TouchEncoderElement(CompoundElement, TouchEncoderElementBase):
     properly.
     """
 
-    def __init__(self, msg_type=MIDI_CC_TYPE, channel=0, identifier=0, map_mode=_map_modes.absolute, touch_element=None, *a, **k):
+    def __init__(self, msg_type = MIDI_CC_TYPE, channel = 0, identifier = 0, map_mode = _map_modes.absolute, touch_element = None, *a, **k):
         assert touch_element is not None
         super(TouchEncoderElement, self).__init__(msg_type=msg_type, channel=channel, identifier=identifier, map_mode=map_mode, control_elements=None, *a, **k)
         self._touch_element = self.register_control_element(touch_element)
         self.request_listen_nested_control_elements()
-        return
 
     def on_nested_control_element_value(self, value, control):
         self.notify_touch_value(value)
@@ -145,8 +140,6 @@ class TouchEncoderElement(CompoundElement, TouchEncoderElementBase):
     def touch_element(self):
         if self.owns_control_element(self._touch_element):
             return self._touch_element
-        else:
-            return
 
     def is_pressed(self):
         return self.owns_control_element(self._touch_element) and self._touch_element.is_pressed()
@@ -160,7 +153,7 @@ class TouchEncoderElement(CompoundElement, TouchEncoderElementBase):
 
 class FineGrainWithModifierEncoderElement(WrapperElement):
 
-    def __init__(self, encoder=None, modifier=None, modified_sensitivity=0.1, default_sensitivity=None, *a, **k):
+    def __init__(self, encoder = None, modifier = None, modified_sensitivity = 0.1, default_sensitivity = None, *a, **k):
         assert encoder is not None
         assert modifier is not None
         super(FineGrainWithModifierEncoderElement, self).__init__(wrapped_control=encoder, *a, **k)
@@ -170,7 +163,6 @@ class FineGrainWithModifierEncoderElement(WrapperElement):
         self._modifier = modifier
         self.register_control_elements(modifier, encoder)
         self.__on_modifier_value.subject = self._modifier
-        return
 
     def add_normalized_value_listener(self, listener):
         self._normalized_value_listeners.append(listener)
@@ -185,12 +177,12 @@ class FineGrainWithModifierEncoderElement(WrapperElement):
     def normalized_value_has_listener(self, listener):
         return listener in self._normalized_value_listeners
 
-    @listens('normalized_value')
+    @listens(u'normalized_value')
     def __on_normalized_value(self, value):
         for listener in self._normalized_value_listeners:
             listener(value)
 
-    @listens('value')
+    @listens(u'value')
     def __on_modifier_value(self, value):
         if self.owns_control_element(self._modifier):
             self.on_nested_control_element_value(value, self._modifier)
@@ -217,7 +209,6 @@ class FineGrainWithModifierEncoderElement(WrapperElement):
                 self.wrapped_control.mapping_sensitivity = self._default_sensitivity
         should_listen = self.owns_control_element(self._wrapped_control) and len(self._normalized_value_listeners) > 0
         self.__on_normalized_value.subject = self._wrapped_control if should_listen else None
-        return
 
     def set_sensitivities(self, default, modified):
         self._default_sensitivity = default

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/midi_map.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/midi_map.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .elements import ButtonMatrixElement, ButtonElement, EncoderElement, SliderElement
@@ -31,12 +26,11 @@ class MidiMap(dict):
         assert name not in self.keys()
 
         def one_dimensional_name(base_name, x, _y):
-            return '%s[%d]' % (base_name, x)
+            return u'%s[%d]' % (base_name, x)
 
         def two_dimensional_name(base_name, x, y):
-            return '%s[%d,%d]' % (base_name, x, y)
+            return u'%s[%d,%d]' % (base_name, x, y)
 
         name_factory = two_dimensional_name if len(numbers) > 1 else one_dimensional_name
-        elements = [ [ element_factory(name_factory(name, column, row), channel, identifier, midi_message_type) for column, identifier in enumerate(identifiers) ] for row, identifiers in enumerate(numbers)
-                   ]
+        elements = [ [ element_factory(name_factory(name, column, row), channel, identifier, midi_message_type) for column, identifier in enumerate(identifiers) ] for row, identifiers in enumerate(numbers) ]
         self[name] = ButtonMatrixElement(rows=elements)

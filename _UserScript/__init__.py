@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_UserScript/__init__.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_UserScript/__init__.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ConfigParser import ConfigParser
 from _Generic.GenericScript import GenericScript
@@ -12,28 +7,28 @@ HIDE_SCRIPT = True
 
 def interpret_map_mode(map_mode_name):
     result = Live.MidiMap.MapMode.absolute
-    if map_mode_name == 'Absolute14Bit':
+    if map_mode_name == u'Absolute14Bit':
         result = Live.MidiMap.MapMode.absolute_14_bit
-    elif map_mode_name == 'AccelSignedBit':
+    elif map_mode_name == u'AccelSignedBit':
         result = Live.MidiMap.MapMode.relative_signed_bit
-    elif map_mode_name == 'LinearSignedBit':
+    elif map_mode_name == u'LinearSignedBit':
         result = Live.MidiMap.MapMode.relative_smooth_signed_bit
-    elif map_mode_name == 'AccelSignedBit2':
+    elif map_mode_name == u'AccelSignedBit2':
         result = Live.MidiMap.MapMode.relative_signed_bit2
-    elif map_mode_name == 'LinearSignedBit2':
+    elif map_mode_name == u'LinearSignedBit2':
         result = Live.MidiMap.MapMode.relative_smooth_signed_bit2
-    elif map_mode_name == 'AccelBinaryOffset':
+    elif map_mode_name == u'AccelBinaryOffset':
         result = Live.MidiMap.MapMode.relative_binary_offset
-    elif map_mode_name == 'LinearBinaryOffset':
+    elif map_mode_name == u'LinearBinaryOffset':
         result = Live.MidiMap.MapMode.relative_smooth_binary_offset
-    elif map_mode_name == 'AccelTwoCompliment':
+    elif map_mode_name == u'AccelTwoCompliment':
         result = Live.MidiMap.MapMode.relative_two_compliment
-    elif map_mode_name == 'LinearTwoCompliment':
+    elif map_mode_name == u'LinearTwoCompliment':
         result = Live.MidiMap.MapMode.relative_smooth_two_compliment
     return result
 
 
-def create_instance(c_instance, user_path=''):
+def create_instance(c_instance, user_path = u''):
     u""" The generic script can be customised by using parameters.
         In this case, the user has written a text file with all necessary info.
         Here we read this file and fill the necessary data structures before
@@ -42,105 +37,146 @@ def create_instance(c_instance, user_path=''):
     device_map_mode = Live.MidiMap.MapMode.absolute
     volume_map_mode = Live.MidiMap.MapMode.absolute
     sends_map_mode = Live.MidiMap.MapMode.absolute
-    if not user_path == '':
+    if not user_path == u'':
         file_object = open(user_path)
         if file_object:
             file_data = None
             config_parser = ConfigParser()
             config_parser.readfp(file_object, user_path)
-            device_controls = [
-             (-1, -1), (-1, -1), (-1, -1), (-1, -1),
-             (-1, -1), (-1, -1), (-1, -1), (-1, -1)]
-            transport_controls = {'STOP': -1, 'PLAY': -1, 'REC': -1, 'LOOP': -1, 
-               'RWD': -1, 'FFWD': -1}
-            volume_controls = [
-             (-1, -1), (-1, -1), (-1, -1), (-1, -1),
-             (-1, -1), (-1, -1), (-1, -1), (-1, -1)]
-            trackarm_controls = [
-             -1, -1, -1, -1, -1, -1, -1, -1]
-            bank_controls = {'TOGGLELOCK': -1, 
-               'NEXTBANK': -1, 'PREVBANK': -1, 'BANK1': -1, 
-               'BANK2': -1, 'BANK3': -1, 'BANK4': -1, 'BANK5': -1, 
-               'BANK6': -1, 'BANK7': -1, 'BANK8': -1}
-            controller_descriptions = {'INPUTPORT': '', 'OUTPUTPORT': '', 'CHANNEL': -1}
-            mixer_options = {'NUMSENDS': 2, 
-               'SEND1': [
-                       -1, -1, -1, -1, -1, -1, -1, -1], 
-               'SEND2': [
-                       -1, -1, -1, -1, -1, -1, -1, -1], 
-               'MASTERVOLUME': -1, 
-               'MASTERVOLUMECHANNEL': -1}
+            device_controls = [(-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1)]
+            transport_controls = {u'STOP': -1,
+             u'PLAY': -1,
+             u'REC': -1,
+             u'LOOP': -1,
+             u'RWD': -1,
+             u'FFWD': -1}
+            volume_controls = [(-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1),
+             (-1, -1)]
+            trackarm_controls = [-1,
+             -1,
+             -1,
+             -1,
+             -1,
+             -1,
+             -1,
+             -1]
+            bank_controls = {u'TOGGLELOCK': -1,
+             u'NEXTBANK': -1,
+             u'PREVBANK': -1,
+             u'BANK1': -1,
+             u'BANK2': -1,
+             u'BANK3': -1,
+             u'BANK4': -1,
+             u'BANK5': -1,
+             u'BANK6': -1,
+             u'BANK7': -1,
+             u'BANK8': -1}
+            controller_descriptions = {u'INPUTPORT': u'',
+             u'OUTPUTPORT': u'',
+             u'CHANNEL': -1}
+            mixer_options = {u'NUMSENDS': 2,
+             u'SEND1': [-1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1],
+             u'SEND2': [-1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1,
+                        -1],
+             u'MASTERVOLUME': -1,
+             u'MASTERVOLUMECHANNEL': -1}
             for index in range(8):
-                if config_parser.has_section('DeviceControls'):
+                if config_parser.has_section(u'DeviceControls'):
                     encoder_tuple = [-1, -1]
-                    option_name = 'Encoder' + str(index + 1)
-                    if config_parser.has_option('DeviceControls', option_name):
-                        option_value = config_parser.getint('DeviceControls', option_name)
+                    option_name = u'Encoder' + str(index + 1)
+                    if config_parser.has_option(u'DeviceControls', option_name):
+                        option_value = config_parser.getint(u'DeviceControls', option_name)
                         if option_value in range(128):
                             encoder_tuple[0] = option_value
-                    option_name = 'EncoderChannel' + str(index + 1)
-                    if config_parser.has_option('DeviceControls', option_name):
-                        option_value = config_parser.getint('DeviceControls', option_name)
+                    option_name = u'EncoderChannel' + str(index + 1)
+                    if config_parser.has_option(u'DeviceControls', option_name):
+                        option_value = config_parser.getint(u'DeviceControls', option_name)
                         if option_value in range(128):
                             encoder_tuple[1] = option_value
                     device_controls[index] = tuple(encoder_tuple)
-                    option_name = 'Bank' + str(index + 1) + 'Button'
-                    if config_parser.has_option('DeviceControls', option_name):
-                        option_value = config_parser.getint('DeviceControls', option_name)
+                    option_name = u'Bank' + str(index + 1) + u'Button'
+                    if config_parser.has_option(u'DeviceControls', option_name):
+                        option_value = config_parser.getint(u'DeviceControls', option_name)
                         if option_value in range(128):
-                            option_key = 'BANK' + str(index + 1)
+                            option_key = u'BANK' + str(index + 1)
                             bank_controls[option_key] = option_value
-                if config_parser.has_section('MixerControls'):
+                if config_parser.has_section(u'MixerControls'):
                     volume_tuple = [-1, -1]
-                    option_name = 'VolumeSlider' + str(index + 1)
-                    if config_parser.has_option('MixerControls', option_name):
-                        option_value = config_parser.getint('MixerControls', option_name)
+                    option_name = u'VolumeSlider' + str(index + 1)
+                    if config_parser.has_option(u'MixerControls', option_name):
+                        option_value = config_parser.getint(u'MixerControls', option_name)
                         if option_value in range(128):
                             volume_tuple[0] = option_value
-                    option_name = 'Slider' + str(index + 1) + 'Channel'
-                    if config_parser.has_option('MixerControls', option_name):
-                        option_value = config_parser.getint('MixerControls', option_name)
+                    option_name = u'Slider' + str(index + 1) + u'Channel'
+                    if config_parser.has_option(u'MixerControls', option_name):
+                        option_value = config_parser.getint(u'MixerControls', option_name)
                         if option_value in range(16):
                             volume_tuple[1] = option_value
                     volume_controls[index] = tuple(volume_tuple)
-                    option_name = 'TrackArmButton' + str(index + 1)
-                    if config_parser.has_option('MixerControls', option_name):
-                        option_value = config_parser.getint('MixerControls', option_name)
+                    option_name = u'TrackArmButton' + str(index + 1)
+                    if config_parser.has_option(u'MixerControls', option_name):
+                        option_value = config_parser.getint(u'MixerControls', option_name)
                         if option_value in range(128):
                             trackarm_controls[index] = option_value
-                    option_name = 'Send1Knob' + str(index + 1)
-                    if config_parser.has_option('MixerControls', option_name):
-                        option_value = config_parser.getint('MixerControls', option_name)
+                    option_name = u'Send1Knob' + str(index + 1)
+                    if config_parser.has_option(u'MixerControls', option_name):
+                        option_value = config_parser.getint(u'MixerControls', option_name)
                         if option_value in range(128):
-                            mixer_options['SEND1'][index] = option_value
-                    option_name = 'Send2Knob' + str(index + 1)
-                    if config_parser.has_option('MixerControls', option_name):
-                        option_value = config_parser.getint('MixerControls', option_name)
+                            mixer_options[u'SEND1'][index] = option_value
+                    option_name = u'Send2Knob' + str(index + 1)
+                    if config_parser.has_option(u'MixerControls', option_name):
+                        option_value = config_parser.getint(u'MixerControls', option_name)
                         if option_value in range(128):
-                            mixer_options['SEND2'][index] = option_value
-                if config_parser.has_section('Globals'):
-                    if config_parser.has_option('Globals', 'GlobalChannel'):
-                        option_value = config_parser.getint('Globals', 'GlobalChannel')
+                            mixer_options[u'SEND2'][index] = option_value
+                if config_parser.has_section(u'Globals'):
+                    if config_parser.has_option(u'Globals', u'GlobalChannel'):
+                        option_value = config_parser.getint(u'Globals', u'GlobalChannel')
                         if option_value in range(16):
-                            controller_descriptions['CHANNEL'] = option_value
-                    if config_parser.has_option('Globals', 'InputName'):
-                        controller_descriptions['INPUTPORT'] = config_parser.get('Globals', 'InputName')
-                    if config_parser.has_option('Globals', 'OutputName'):
-                        controller_descriptions['OUTPUTPORT'] = config_parser.get('Globals', 'OutputName')
+                            controller_descriptions[u'CHANNEL'] = option_value
+                    if config_parser.has_option(u'Globals', u'InputName'):
+                        controller_descriptions[u'INPUTPORT'] = config_parser.get(u'Globals', u'InputName')
+                    if config_parser.has_option(u'Globals', u'OutputName'):
+                        controller_descriptions[u'OUTPUTPORT'] = config_parser.get(u'Globals', u'OutputName')
                     pad_translation = []
                     for pad in range(16):
                         pad_info = []
                         note = -1
                         channel = -1
-                        option_name = 'Pad' + str(pad + 1) + 'Note'
-                        if config_parser.has_option('Globals', option_name):
-                            note = config_parser.getint('Globals', option_name)
+                        option_name = u'Pad' + str(pad + 1) + u'Note'
+                        if config_parser.has_option(u'Globals', option_name):
+                            note = config_parser.getint(u'Globals', option_name)
                             if note in range(128):
-                                option_name = 'Pad' + str(pad + 1) + 'Channel'
-                                if config_parser.has_option('Globals', option_name):
-                                    channel = config_parser.getint('Globals', option_name)
-                                if channel is -1 and controller_descriptions['CHANNEL'] is not -1:
-                                    channel = controller_descriptions['CHANNEL']
+                                option_name = u'Pad' + str(pad + 1) + u'Channel'
+                                if config_parser.has_option(u'Globals', option_name):
+                                    channel = config_parser.getint(u'Globals', option_name)
+                                if channel is -1 and controller_descriptions[u'CHANNEL'] is not -1:
+                                    channel = controller_descriptions[u'CHANNEL']
                                 if channel in range(16):
                                     pad_info.append(pad % 4)
                                     pad_info.append(int(pad / 4))
@@ -149,60 +185,60 @@ def create_instance(c_instance, user_path=''):
                                     pad_translation.append(tuple(pad_info))
 
                     if len(pad_translation) > 0:
-                        controller_descriptions['PAD_TRANSLATION'] = tuple(pad_translation)
-                if config_parser.has_section('DeviceControls'):
-                    if config_parser.has_option('DeviceControls', 'NextBankButton'):
-                        option_value = config_parser.getint('DeviceControls', 'NextBankButton')
+                        controller_descriptions[u'PAD_TRANSLATION'] = tuple(pad_translation)
+                if config_parser.has_section(u'DeviceControls'):
+                    if config_parser.has_option(u'DeviceControls', u'NextBankButton'):
+                        option_value = config_parser.getint(u'DeviceControls', u'NextBankButton')
                         if option_value in range(128):
-                            bank_controls['NEXTBANK'] = option_value
-                    if config_parser.has_option('DeviceControls', 'PrevBankButton'):
-                        option_value = config_parser.getint('DeviceControls', 'PrevBankButton')
+                            bank_controls[u'NEXTBANK'] = option_value
+                    if config_parser.has_option(u'DeviceControls', u'PrevBankButton'):
+                        option_value = config_parser.getint(u'DeviceControls', u'PrevBankButton')
                         if option_value in range(128):
-                            bank_controls['PREVBANK'] = option_value
-                    if config_parser.has_option('DeviceControls', 'LockButton'):
-                        option_value = config_parser.getint('DeviceControls', 'LockButton')
+                            bank_controls[u'PREVBANK'] = option_value
+                    if config_parser.has_option(u'DeviceControls', u'LockButton'):
+                        option_value = config_parser.getint(u'DeviceControls', u'LockButton')
                         if option_value in range(128):
-                            bank_controls['TOGGLELOCK'] = option_value
-                    if config_parser.has_option('DeviceControls', 'EncoderMapMode'):
-                        device_map_mode = interpret_map_mode(config_parser.get('DeviceControls', 'EncoderMapMode'))
-                if config_parser.has_section('MixerControls'):
-                    if config_parser.has_option('MixerControls', 'MasterVolumeSlider'):
-                        option_value = config_parser.getint('MixerControls', 'MasterVolumeSlider')
+                            bank_controls[u'TOGGLELOCK'] = option_value
+                    if config_parser.has_option(u'DeviceControls', u'EncoderMapMode'):
+                        device_map_mode = interpret_map_mode(config_parser.get(u'DeviceControls', u'EncoderMapMode'))
+                if config_parser.has_section(u'MixerControls'):
+                    if config_parser.has_option(u'MixerControls', u'MasterVolumeSlider'):
+                        option_value = config_parser.getint(u'MixerControls', u'MasterVolumeSlider')
                         if option_value in range(128):
-                            mixer_options['MASTERVOLUME'] = option_value
-                    if config_parser.has_option('MixerControls', 'MasterSliderChannel'):
-                        option_value = config_parser.getint('MixerControls', 'MasterSliderChannel')
+                            mixer_options[u'MASTERVOLUME'] = option_value
+                    if config_parser.has_option(u'MixerControls', u'MasterSliderChannel'):
+                        option_value = config_parser.getint(u'MixerControls', u'MasterSliderChannel')
                         if option_value in range(16):
-                            mixer_options['MASTERVOLUMECHANNEL'] = option_value
-                    if config_parser.has_option('MixerControls', 'VolumeMapMode'):
-                        volume_map_mode = interpret_map_mode(config_parser.get('MixerControls', 'VolumeMapMode'))
-                    if config_parser.has_option('MixerControls', 'SendsMapMode'):
-                        sends_map_mode = interpret_map_mode(config_parser.get('MixerControls', 'SendsMapMode'))
-                        mixer_options['SENDMAPMODE'] = sends_map_mode
-                if config_parser.has_section('TransportControls'):
-                    if config_parser.has_option('TransportControls', 'StopButton'):
-                        option_value = config_parser.getint('TransportControls', 'StopButton')
+                            mixer_options[u'MASTERVOLUMECHANNEL'] = option_value
+                    if config_parser.has_option(u'MixerControls', u'VolumeMapMode'):
+                        volume_map_mode = interpret_map_mode(config_parser.get(u'MixerControls', u'VolumeMapMode'))
+                    if config_parser.has_option(u'MixerControls', u'SendsMapMode'):
+                        sends_map_mode = interpret_map_mode(config_parser.get(u'MixerControls', u'SendsMapMode'))
+                        mixer_options[u'SENDMAPMODE'] = sends_map_mode
+                if config_parser.has_section(u'TransportControls'):
+                    if config_parser.has_option(u'TransportControls', u'StopButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'StopButton')
                         if option_value in range(128):
-                            transport_controls['STOP'] = option_value
-                    if config_parser.has_option('TransportControls', 'PlayButton'):
-                        option_value = config_parser.getint('TransportControls', 'PlayButton')
+                            transport_controls[u'STOP'] = option_value
+                    if config_parser.has_option(u'TransportControls', u'PlayButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'PlayButton')
                         if option_value in range(128):
-                            transport_controls['PLAY'] = option_value
-                    if config_parser.has_option('TransportControls', 'RecButton'):
-                        option_value = config_parser.getint('TransportControls', 'RecButton')
+                            transport_controls[u'PLAY'] = option_value
+                    if config_parser.has_option(u'TransportControls', u'RecButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'RecButton')
                         if option_value in range(128):
-                            transport_controls['REC'] = option_value
-                    if config_parser.has_option('TransportControls', 'LoopButton'):
-                        option_value = config_parser.getint('TransportControls', 'LoopButton')
+                            transport_controls[u'REC'] = option_value
+                    if config_parser.has_option(u'TransportControls', u'LoopButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'LoopButton')
                         if option_value in range(128):
-                            transport_controls['LOOP'] = option_value
-                    if config_parser.has_option('TransportControls', 'RwdButton'):
-                        option_value = config_parser.getint('TransportControls', 'RwdButton')
+                            transport_controls[u'LOOP'] = option_value
+                    if config_parser.has_option(u'TransportControls', u'RwdButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'RwdButton')
                         if option_value in range(128):
-                            transport_controls['RWD'] = option_value
-                    if config_parser.has_option('TransportControls', 'FfwdButton'):
-                        option_value = config_parser.getint('TransportControls', 'FfwdButton')
+                            transport_controls[u'RWD'] = option_value
+                    if config_parser.has_option(u'TransportControls', u'FfwdButton'):
+                        option_value = config_parser.getint(u'TransportControls', u'FfwdButton')
                         if option_value in range(128):
-                            transport_controls['FFWD'] = option_value
+                            transport_controls[u'FFWD'] = option_value
 
     return GenericScript(c_instance, device_map_mode, volume_map_mode, tuple(device_controls), transport_controls, tuple(volume_controls), tuple(trackarm_controls), bank_controls, controller_descriptions, mixer_options)

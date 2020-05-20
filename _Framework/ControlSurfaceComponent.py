@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ControlSurfaceComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ControlSurfaceComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from . import Task
@@ -16,7 +11,7 @@ class ControlSurfaceComponent(ControlManager, Subject):
     u"""
     Base class for all classes encapsulating functions in Live
     """
-    name = ''
+    name = u''
     canonical_parent = None
     is_private = False
     _show_msg_callback = dependency(show_message=None)
@@ -24,7 +19,7 @@ class ControlSurfaceComponent(ControlManager, Subject):
     _layer = None
 
     @depends(register_component=None, song=None)
-    def __init__(self, name='', register_component=None, song=None, layer=None, is_enabled=True, is_root=False, *a, **k):
+    def __init__(self, name = u'', register_component = None, song = None, layer = None, is_enabled = True, is_root = False, *a, **k):
         assert callable(register_component)
         super(ControlSurfaceComponent, self).__init__(*a, **k)
         self.name = name
@@ -39,7 +34,6 @@ class ControlSurfaceComponent(ControlManager, Subject):
         if layer is not None:
             self._layer = layer
         register_component(self)
-        return
 
     def disconnect(self):
         if self._has_task_group:
@@ -55,7 +49,7 @@ class ControlSurfaceComponent(ControlManager, Subject):
         if self._layer:
             if self.is_enabled():
                 grabbed = self._layer.grab(self)
-                assert grabbed, 'Only one component can use a layer at atime'
+                assert grabbed, u'Only one component can use a layer at atime'
             else:
                 self._layer.release(self)
         if self._has_task_group:
@@ -104,7 +98,7 @@ class ControlSurfaceComponent(ControlManager, Subject):
 
     @lazy_attribute
     @depends(parent_task_group=None)
-    def _tasks(self, parent_task_group=None):
+    def _tasks(self, parent_task_group = None):
         tasks = parent_task_group.add(Task.TaskGroup())
         if not self._is_enabled:
             tasks.pause()
@@ -121,11 +115,11 @@ class ControlSurfaceComponent(ControlManager, Subject):
             self._layer = new_layer
             if new_layer and self.is_enabled():
                 grabbed = new_layer.grab(self)
-                assert grabbed, 'Only one component can use a layer at atime'
+                assert grabbed, u'Only one component can use a layer at atime'
 
     layer = property(_get_layer, _set_layer)
 
-    def is_enabled(self, explicit=False):
+    def is_enabled(self, explicit = False):
         u"""
         Returns whether the component is enabled.
         If 'explicit' is True the parent state is ignored.
@@ -163,7 +157,7 @@ class ControlSurfaceComponent(ControlManager, Subject):
         pass
 
     @depends(parent_task_group=None)
-    def _register_timer_callback(self, callback, parent_task_group=None):
+    def _register_timer_callback(self, callback, parent_task_group = None):
         u"""
         DEPRECATED. Use tasks instead
         """
@@ -175,10 +169,9 @@ class ControlSurfaceComponent(ControlManager, Subject):
             return Task.RUNNING
 
         parent_task_group.add(Task.FuncTask(wrapper, callback))
-        return
 
     @depends(parent_task_group=None)
-    def _unregister_timer_callback(self, callback, parent_task_group=None):
+    def _unregister_timer_callback(self, callback, parent_task_group = None):
         u"""
         DEPRECATED. Use tasks instead
         """
@@ -186,4 +179,3 @@ class ControlSurfaceComponent(ControlManager, Subject):
         task = parent_task_group.find(callback)
         assert task is not None
         parent_task_group.remove(task)
-        return

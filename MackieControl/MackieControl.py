@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/MackieControl.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/MackieControl.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .consts import *
 from .MainDisplay import MainDisplay
@@ -13,7 +8,8 @@ from .ChannelStrip import ChannelStrip, MasterChannelStrip
 from .ChannelStripController import ChannelStripController
 from .SoftwareController import SoftwareController
 from .Transport import Transport
-import Live, MidiRemoteScript
+import Live
+import MidiRemoteScript
 
 class MackieControl:
     u"""Main class that establishes the Mackie Control <-> Live interaction. It acts
@@ -65,7 +61,7 @@ class MackieControl:
         try:
             from MackieControlXT.MackieControlXT import MackieControlXT
         except:
-            print('failed to load the MackieControl XT script (might not be installed)')
+            print(u'failed to load the MackieControl XT script (might not be installed)')
 
         found_self = False
         right_extensions = []
@@ -86,8 +82,14 @@ class MackieControl:
 
     def request_firmware_version(self):
         if not self._received_firmware_version:
-            self.send_midi((
-             240, 0, 0, 102, SYSEX_DEVICE_TYPE, 19, 0, 247))
+            self.send_midi((240,
+             0,
+             0,
+             102,
+             SYSEX_DEVICE_TYPE,
+             19,
+             0,
+             247))
 
     def application(self):
         u"""returns a reference to the application that we are running in"""
@@ -195,10 +197,10 @@ class MackieControl:
         return False
 
     def suggest_input_port(self):
-        return ''
+        return u''
 
     def suggest_output_port(self):
-        return ''
+        return u''
 
     def suggest_map_mode(self, cc_no, channel):
         result = Live.MidiMap.MapMode.absolute

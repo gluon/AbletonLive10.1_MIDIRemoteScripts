@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_APC/MixerComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_APC/MixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ChannelStripComponent import ChannelStripComponent as ChannelStripComponentBase
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
@@ -28,16 +23,14 @@ class ChanStripComponent(ChannelStripComponentBase):
                 self._toggle_fold_ticks_delay = TRACK_FOLD_DELAY
             else:
                 self._toggle_fold_ticks_delay = -1
-        return
 
     def _on_timer(self):
-        if self.is_enabled() and self._track != None and self._toggle_fold_ticks_delay > -1:
-            if not self._track.is_foldable:
-                raise AssertionError
+        if self.is_enabled() and self._track != None:
+            if self._toggle_fold_ticks_delay > -1:
+                assert self._track.is_foldable
                 if self._toggle_fold_ticks_delay == 0:
                     self._track.fold_state = not self._track.fold_state
                 self._toggle_fold_ticks_delay -= 1
-        return
 
 
 class MixerComponent(MixerComponentBase):

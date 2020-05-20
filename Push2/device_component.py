@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_component.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from collections import namedtuple
 from functools import partial
@@ -29,24 +24,19 @@ def make_vector(items):
 def parameter_sensitivities(device_class, parameter):
     sensitivities = {}
     try:
-        param_name = parameter.name if liveobj_valid(parameter) else ''
+        param_name = parameter.name if liveobj_valid(parameter) else u''
         sensitivities = PARAMETER_SENSITIVITIES[device_class][param_name]
     except KeyError:
         pass
 
-    for key, getter in (
-     (
-      DEFAULT_SENSITIVITY_KEY, parameter_mapping_sensitivity),
-     (
-      FINE_GRAINED_SENSITIVITY_KEY, fine_grain_parameter_mapping_sensitivity)):
+    for key, getter in ((DEFAULT_SENSITIVITY_KEY, parameter_mapping_sensitivity), (FINE_GRAINED_SENSITIVITY_KEY, fine_grain_parameter_mapping_sensitivity)):
         if key not in sensitivities:
             sensitivities[key] = getter(parameter)
 
     return sensitivities
 
 
-ButtonRange = namedtuple('ButtonRange', [
- 'left_index', 'right_index'])
+ButtonRange = namedtuple(u'ButtonRange', [u'left_index', u'right_index'])
 
 class Push2DeviceProvider(DeviceProviderBase):
     allow_update_callback = const(True)
@@ -60,7 +50,7 @@ class GenericDeviceComponent(DeviceComponentBase):
     parameter_touch_buttons = control_list(ButtonControl, control_count=8)
     shift_button = ButtonControl()
 
-    def __init__(self, visualisation_real_time_data=None, delete_button=None, *a, **k):
+    def __init__(self, visualisation_real_time_data = None, delete_button = None, *a, **k):
         super(GenericDeviceComponent, self).__init__(*a, **k)
         self._visualisation_real_time_data = visualisation_real_time_data
         self._delete_button = delete_button
@@ -151,11 +141,11 @@ class GenericDeviceComponent(DeviceComponentBase):
 
     @listenable_property
     def options(self):
-        return getattr(self._bank, 'options', [None] * OPTIONS_PER_BANK)
+        return getattr(self._bank, u'options', [None] * OPTIONS_PER_BANK)
 
     @property
     def bank_view_description(self):
-        return getattr(self._bank, 'bank_view_description', '')
+        return getattr(self._bank, u'bank_view_description', u'')
 
     @listenable_property
     def visualisation_visible(self):
@@ -171,10 +161,9 @@ class GenericDeviceComponent(DeviceComponentBase):
 
     @property
     def _shrink_parameters(self):
-        return [
-         False] * 8
+        return [False] * 8
 
-    @listens('options')
+    @listens(u'options')
     def __on_options_changed(self):
         self.notify_options()
 
@@ -195,13 +184,12 @@ class DeviceComponentWithTrackColorViewData(GenericDeviceComponent):
         self.__on_track_mute_changed.subject = parent_track
         self.__on_track_muted_via_solo_changed.subject = parent_track
         self.__on_track_or_chain_color_changed.subject = device.canonical_parent if liveobj_valid(device) else None
-        return
 
     def _initial_visualisation_view_data(self):
-        view_data = {'IsActive': self._is_active_for_visualisation()}
+        view_data = {u'IsActive': self._is_active_for_visualisation()}
         track_color = self._track_color_for_visualisation()
         if track_color is not None:
-            view_data['TrackColor'] = track_color
+            view_data[u'TrackColor'] = track_color
         return view_data
 
     def _is_active_for_visualisation(self):
@@ -219,52 +207,53 @@ class DeviceComponentWithTrackColorViewData(GenericDeviceComponent):
         if liveobj_valid(canonical_parent) and canonical_parent.color_index is not None:
             color = COLOR_INDEX_TO_SCREEN_COLOR[canonical_parent.color_index]
             return color.as_remote_script_color()
-        else:
-            return
 
-    @listens('is_active')
+    @listens(u'is_active')
     def __on_device_active_changed(self):
         self._update_is_active()
 
-    @listens('mute')
+    @listens(u'mute')
     def __on_track_mute_changed(self):
         self._update_is_active()
 
-    @listens('muted_via_solo')
+    @listens(u'muted_via_solo')
     def __on_track_muted_via_solo_changed(self):
         self._update_is_active()
 
     def _update_is_active(self):
         if self.is_enabled():
-            self._update_visualisation_view_data({'IsActive': self._is_active_for_visualisation()})
+            self._update_visualisation_view_data({u'IsActive': self._is_active_for_visualisation()})
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_track_or_chain_color_changed(self):
         if self.is_enabled():
             track_color = self._track_color_for_visualisation()
             if track_color is not None:
-                self._update_visualisation_view_data({'TrackColor': track_color})
-        return
+                self._update_visualisation_view_data({u'TrackColor': track_color})
 
 
-ENVELOPE_FEATURES_FOR_PARAMETER = {'Attack': set(['AttackLine', 'AttackNode', 'DecayLine']), 
-   'Decay': set(['DecayLine', 'DecayNode', 'SustainLine']), 
-   'Sustain': set(['DecayLine', 'DecayNode', 'SustainLine', 'SustainNode', 'ReleaseLine']), 
-   'Release': set(['ReleaseLine', 'ReleaseNode']), 
-   'Init': set(['InitNode', 'AttackLine']), 
-   'Initial': set(['InitNode', 'AttackLine']), 
-   'Peak': set(['AttackLine', 'AttackNode', 'DecayLine']), 
-   'End': set(['ReleaseLine', 'ReleaseNode']), 
-   'Final': set(['ReleaseLine', 'ReleaseNode']), 
-   'A Slope': set(['AttackLine']), 
-   'D Slope': set(['DecayLine']), 
-   'R Slope': set(['ReleaseLine']), 
-   'Fade In': set(['FadeInLine', 'FadeInNode', 'SustainLine']), 
-   'Fade Out': set(['FadeOutLine', 'FadeOutNode'])}
+ENVELOPE_FEATURES_FOR_PARAMETER = {u'Attack': set([u'AttackLine', u'AttackNode', u'DecayLine']),
+ u'Decay': set([u'DecayLine', u'DecayNode', u'SustainLine']),
+ u'Sustain': set([u'DecayLine',
+              u'DecayNode',
+              u'SustainLine',
+              u'SustainNode',
+              u'ReleaseLine']),
+ u'Release': set([u'ReleaseLine', u'ReleaseNode']),
+ u'Init': set([u'InitNode', u'AttackLine']),
+ u'Initial': set([u'InitNode', u'AttackLine']),
+ u'Peak': set([u'AttackLine', u'AttackNode', u'DecayLine']),
+ u'End': set([u'ReleaseLine', u'ReleaseNode']),
+ u'Final': set([u'ReleaseLine', u'ReleaseNode']),
+ u'A Slope': set([u'AttackLine']),
+ u'D Slope': set([u'DecayLine']),
+ u'R Slope': set([u'ReleaseLine']),
+ u'Fade In': set([u'FadeInLine', u'FadeInNode', u'SustainLine']),
+ u'Fade Out': set([u'FadeOutLine', u'FadeOutNode'])}
 
 def normalize_envelope_parameter_name(parameter_name, envelope_prefixes):
-    find_envelope_prefix = re.compile(('^({}) ').format(('|').join(envelope_prefixes)))
-    return re.sub(find_envelope_prefix, '', parameter_name)
+    find_envelope_prefix = re.compile(u'^({}) '.format(u'|'.join(envelope_prefixes)))
+    return re.sub(find_envelope_prefix, u'', parameter_name)
 
 
 def extend_with_envelope_features_for_parameter(features, parameter, envelope_prefixes):

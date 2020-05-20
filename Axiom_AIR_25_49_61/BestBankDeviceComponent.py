@@ -1,13 +1,8 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/BestBankDeviceComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/BestBankDeviceComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.DeviceComponent import DeviceComponent
 from _Generic.Devices import parameter_bank_names, parameter_banks, DEVICE_DICT, BANK_NAME_DICT, DEVICE_BOB_DICT
-BOP_BANK_NAME = 'Best of Parameters'
+BOP_BANK_NAME = u'Best of Parameters'
 
 class BestBankDeviceComponent(DeviceComponent):
     u""" Special Device component that uses the best of bank of a device as default """
@@ -23,8 +18,7 @@ class BestBankDeviceComponent(DeviceComponent):
             current_banks = self._device_banks[device_name]
             if len(current_banks) > 1:
                 current_banks = self._device_best_banks[device_name] + current_banks
-                new_bank_names[device_name] = (
-                 BOP_BANK_NAME,) + self._device_bank_names[device_name]
+                new_bank_names[device_name] = (BOP_BANK_NAME,) + self._device_bank_names[device_name]
             new_banks[device_name] = current_banks
 
         self._device_banks = new_banks
@@ -38,7 +32,6 @@ class BestBankDeviceComponent(DeviceComponent):
 
         self._parameter_controls = controls
         self.update()
-        return
 
     def _number_of_parameter_banks(self):
         result = 0

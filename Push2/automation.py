@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/automation.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/automation.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 from Live import DeviceParameter
@@ -13,7 +8,7 @@ from pushbase.automation_component import AutomationComponent as AutomationCompo
 
 class StepAutomationParameter(InternalParameterBase):
 
-    def __init__(self, parameter=None, *a, **k):
+    def __init__(self, parameter = None, *a, **k):
         assert liveobj_valid(parameter)
         super(StepAutomationParameter, self).__init__(name=parameter.name, *a, **k)
         self._parameter = parameter
@@ -84,7 +79,7 @@ class AutomationComponent(AutomationComponentBase):
 
     @property
     def deviceType(self):
-        device_type = 'default'
+        device_type = u'default'
         device = self.device
         if liveobj_valid(device):
             device = self.parameter_provider.device()
@@ -94,18 +89,17 @@ class AutomationComponent(AutomationComponentBase):
     @listenable_property
     def device(self):
         device = None
-        if hasattr(self.parameter_provider, 'device'):
+        if hasattr(self.parameter_provider, u'device'):
             device = self.parameter_provider.device()
         return device
 
     def _on_parameter_provider_changed(self, provider):
         self.notify_device()
-        self.__on_device_changed.subject = provider if getattr(self.parameter_provider, 'device', None) is not None else None
-        return
+        self.__on_device_changed.subject = provider if getattr(self.parameter_provider, u'device', None) is not None else None
 
     @listenable_property
     def parameters(self):
-        return map(lambda info: info.parameter if info else None, self._parameter_infos)
+        return map(lambda info: (info.parameter if info else None), self._parameter_infos)
 
     @property
     def parameter_infos(self):
@@ -144,9 +138,7 @@ class AutomationComponent(AutomationComponentBase):
     def _parameter_for_index(self, parameters, index):
         if parameters[index]:
             return parameters[index].original_parameter
-        else:
-            return
 
-    @listens('device')
+    @listens(u'device')
     def __on_device_changed(self):
         self.notify_device()

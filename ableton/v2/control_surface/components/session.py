@@ -1,14 +1,10 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/session.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import count
 from ...base import EventObject, in_range, product, listens, listens_group
 from ..component import Component
+from ..control import ButtonControl
 from .scene import SceneComponent
 
 class SessionComponent(Component):
@@ -18,17 +14,20 @@ class SessionComponent(Component):
     """
     _session_component_ends_initialisation = True
     scene_component_type = SceneComponent
+    managed_select_button = ButtonControl(color=u'Session.Select', pressed_color=u'Session.SelectPressed')
+    managed_delete_button = ButtonControl(color=u'Session.Delete', pressed_color=u'Session.DeletePressed')
+    managed_duplicate_button = ButtonControl(color=u'Session.Duplicate', pressed_color=u'Session.DuplicatePressed')
 
-    def __init__(self, session_ring=None, auto_name=False, *a, **k):
+    def __init__(self, session_ring = None, auto_name = False, *a, **k):
         super(SessionComponent, self).__init__(*a, **k)
         assert session_ring is not None
         self._session_ring = session_ring
         self.__on_offsets_changed.subject = self._session_ring
         self._stop_all_button = None
         self._stop_track_clip_buttons = None
-        self._stop_clip_triggered_value = 'Session.StopClipTriggered'
-        self._stop_clip_value = 'Session.StopClip'
-        self._stop_clip_disabled_value = 'Session.StopClipDisabled'
+        self._stop_clip_triggered_value = u'Session.StopClipTriggered'
+        self._stop_clip_value = u'Session.StopClip'
+        self._stop_clip_disabled_value = u'Session.StopClipDisabled'
         self._track_slots = self.register_disconnectable(EventObject())
         self._selected_scene = self._create_scene()
         self._scenes = [ self._create_scene() for _ in xrange(self._session_ring.num_scenes) ]
@@ -39,7 +38,6 @@ class SessionComponent(Component):
         self.__on_track_list_changed.subject = self.song
         self.__on_scene_list_changed.subject = self.song
         self.__on_selected_scene_changed.subject = self.song.view
-        return
 
     def _end_initialisation(self):
         self.__on_selected_scene_changed()
@@ -56,18 +54,18 @@ class SessionComponent(Component):
         return self._selected_scene
 
     def _auto_name(self):
-        self.name = 'Session_Control'
-        self.selected_scene().name = 'Selected_Scene'
+        self.name = u'Session_Control'
+        self.selected_scene().name = u'Selected_Scene'
         for track_index in xrange(self._session_ring.num_tracks):
             clip_slot = self.selected_scene().clip_slot(track_index)
-            clip_slot.name = 'Selected_Scene_Clip_Slot_%d' % track_index
+            clip_slot.name = u'Selected_Scene_Clip_Slot_%d' % track_index
 
         for scene_index in xrange(self._session_ring.num_scenes):
             scene = self.scene(scene_index)
-            scene.name = 'Scene_%d' % scene_index
+            scene.name = u'Scene_%d' % scene_index
             for track_index in xrange(self._session_ring.num_tracks):
                 clip_slot = scene.clip_slot(track_index)
-                clip_slot.name = '%d_Clip_Slot_%d' % (track_index, scene_index)
+                clip_slot.name = u'%d_Clip_Slot_%d' % (track_index, scene_index)
 
     def set_stop_all_clips_button(self, button):
         self._stop_all_button = button
@@ -78,6 +76,26 @@ class SessionComponent(Component):
         self._stop_track_clip_buttons = buttons
         self.__on_stop_track_value.replace_subjects(buttons or [])
         self._update_stop_track_clip_buttons()
+
+    def set_managed_select_button(self, button):
+        self.managed_select_button.set_control_element(button)
+        self.set_modifier_button(button, u'select')
+
+    def set_managed_delete_button(self, button):
+        self.managed_delete_button.set_control_element(button)
+        self.set_modifier_button(button, u'delete')
+
+    def set_managed_duplicate_button(self, button):
+        self.managed_duplicate_button.set_control_element(button)
+        self.set_modifier_button(button, u'duplicate')
+
+    def set_modifier_button(self, button, name, clip_slots_only = False):
+        for y in xrange(self._session_ring.num_scenes):
+            scene = self.scene(y)
+            if not clip_slots_only:
+                getattr(scene, u'set_{}_button'.format(name))(button)
+            for x in xrange(self._session_ring.num_tracks):
+                getattr(scene.clip_slot(x), u'set_{}_button'.format(name))(button)
 
     def set_clip_launch_buttons(self, buttons):
         assert not buttons or buttons.width() == self._session_ring.num_tracks and buttons.height() == self._session_ring.num_scenes
@@ -93,23 +111,20 @@ class SessionComponent(Component):
                 slot = scene.clip_slot(x)
                 slot.set_launch_button(None)
 
-        return
-
     def set_scene_launch_buttons(self, buttons):
-        assert not buttons or buttons.width() == self._session_ring.num_scenes and buttons.height() == 1
+        num_scenes = self._session_ring.num_scenes
+        assert not buttons or buttons.width() == num_scenes and buttons.height() == 1 or buttons.height() == num_scenes and buttons.width() == 1
         if buttons:
-            for button, (x, _) in buttons.iterbuttons():
+            for x, button in enumerate(buttons):
                 scene = self.scene(x)
                 scene.set_launch_button(button)
 
         else:
-            for x in xrange(self._session_ring.num_scenes):
-                scene = self.scene(x)
+            for index in xrange(self._session_ring.num_scenes):
+                scene = self.scene(index)
                 scene.set_launch_button(None)
 
-        return
-
-    @listens('offset')
+    @listens(u'offset')
     def __on_offsets_changed(self, *a):
         if self.is_enabled():
             self._reassign_scenes_and_tracks()
@@ -118,7 +133,7 @@ class SessionComponent(Component):
         self._reassign_tracks()
         self._reassign_scenes()
 
-    def set_rgb_mode(self, color_palette, color_table, clip_slots_only=False):
+    def set_rgb_mode(self, color_palette, color_table, clip_slots_only = False):
         u"""
         Put the session into rgb mode by providing a color table and a color palette.
         color_palette is a dictionary, mapping custom Live colors to MIDI ids. This can be
@@ -150,19 +165,18 @@ class SessionComponent(Component):
             for index in xrange(self._session_ring.num_tracks):
                 self._update_stop_clips_led(index)
 
-    @listens('scenes')
+    @listens(u'scenes')
     def __on_scene_list_changed(self):
         self._reassign_scenes()
 
-    @listens('visible_tracks')
+    @listens(u'visible_tracks')
     def __on_track_list_changed(self):
         self._reassign_tracks()
 
-    @listens('selected_scene')
+    @listens(u'selected_scene')
     def __on_selected_scene_changed(self):
         if self._selected_scene != None:
             self._selected_scene.set_scene(self.song.view.selected_scene)
-        return
 
     def _update_stop_all_clips_button(self):
         if self.is_enabled():
@@ -174,25 +188,21 @@ class SessionComponent(Component):
         scenes = self.song.scenes
         for index, scene in enumerate(self._scenes):
             scene_index = self._session_ring.scene_offset + index
-            if len(scenes) > scene_index:
-                scene.set_scene(scenes[scene_index])
-                scene.set_track_offset(self._session_ring.track_offset)
-            else:
-                self._scenes[index].set_scene(None)
+            scene.set_scene(scenes[scene_index] if len(scenes) > scene_index else None)
+            scene.set_track_offset(self._session_ring.track_offset)
 
         if self._selected_scene != None:
             self._selected_scene.set_track_offset(self._session_ring.track_offset)
-        return
 
     def _reassign_tracks(self):
         tracks_to_use = self._session_ring.tracks_to_use()
-        tracks = map(lambda t: t if isinstance(t, Live.Track.Track) else None, tracks_to_use)
+        tracks = map(lambda t: (t if isinstance(t, Live.Track.Track) else None), tracks_to_use)
         self.__on_fired_slot_index_changed.replace_subjects(tracks, count())
         self.__on_playing_slot_index_changed.replace_subjects(tracks, count())
         self._update_stop_all_clips_button()
         self._update_stop_track_clip_buttons()
 
-    @listens('value')
+    @listens(u'value')
     def __on_stop_all_value(self, value):
         self._stop_all_value(value)
 
@@ -202,7 +212,7 @@ class SessionComponent(Component):
                 self.song.stop_all_clips()
             self._update_stop_all_clips_button()
 
-    @listens_group('value')
+    @listens_group(u'value')
     def __on_stop_track_value(self, value, button):
         if self.is_enabled():
             if value is not 0 or not button.is_momentary():
@@ -211,15 +221,25 @@ class SessionComponent(Component):
                 if in_range(track_index, 0, len(tracks)) and tracks[track_index] in self.song.tracks:
                     tracks[track_index].stop_all_clips()
 
-    @listens_group('fired_slot_index')
+    @listens_group(u'fired_slot_index')
     def __on_fired_slot_index_changed(self, track_index):
-        button_index = track_index - self._session_ring.track_offset
-        self._update_stop_clips_led(button_index)
+        self._on_fired_slot_index_changed(track_index)
 
-    @listens_group('playing_slot_index')
+    def _on_fired_slot_index_changed(self, track_index):
+        session_ring = self._session_ring
+        button_index = track_index - session_ring.track_offset
+        if in_range(button_index, 0, session_ring.num_tracks):
+            self._update_stop_clips_led(button_index)
+
+    @listens_group(u'playing_slot_index')
     def __on_playing_slot_index_changed(self, track_index):
-        button_index = track_index - self._session_ring.track_offset
-        self._update_stop_clips_led(button_index)
+        self._on_playing_slot_index_changed(track_index)
+
+    def _on_playing_slot_index_changed(self, track_index):
+        session_ring = self._session_ring
+        button_index = track_index - session_ring.track_offset
+        if in_range(button_index, 0, session_ring.num_tracks):
+            self._update_stop_clips_led(button_index)
 
     def _update_stop_clips_led(self, index):
         tracks_to_use = self._session_ring.tracks_to_use()
@@ -242,4 +262,3 @@ class SessionComponent(Component):
                     button.send_value(value_to_send)
                 else:
                     button.set_light(value_to_send)
-        return

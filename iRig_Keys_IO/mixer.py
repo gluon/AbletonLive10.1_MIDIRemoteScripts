@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/iRig_Keys_IO/mixer.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/iRig_Keys_IO/mixer.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import forward_property, liveobj_valid
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
@@ -11,7 +6,7 @@ from ableton.v2.control_surface.control import ButtonControl
 from .scroll import ScrollComponent
 
 class MixerComponent(MixerComponentBase):
-    track_scroll_encoder = forward_property('_track_scrolling')('scroll_encoder')
+    track_scroll_encoder = forward_property(u'_track_scrolling')(u'scroll_encoder')
     selected_track_arm_button = ButtonControl()
 
     def __init__(self, *a, **k):
@@ -38,18 +33,18 @@ class MixerComponent(MixerComponentBase):
         return self.song.view.selected_track != self._provider.tracks_to_use()[0]
 
     def _can_select_next_track(self):
-        return self.song.view.selected_track != self._provider.tracks_to_use()[(-1)]
+        return self.song.view.selected_track != self._provider.tracks_to_use()[-1]
 
     def _select_prev_track(self):
         selected_track = self.song.view.selected_track
         tracks = self._provider.tracks_to_use()
         assert selected_track in tracks
         index = list(tracks).index(selected_track)
-        self.song.view.selected_track = tracks[(index - 1)]
+        self.song.view.selected_track = tracks[index - 1]
 
     def _select_next_track(self):
         selected_track = self.song.view.selected_track
         tracks = self._provider.tracks_to_use()
         assert selected_track in tracks
         index = list(tracks).index(selected_track)
-        self.song.view.selected_track = tracks[(index + 1)]
+        self.song.view.selected_track = tracks[index + 1]

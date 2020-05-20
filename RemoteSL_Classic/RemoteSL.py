@@ -1,11 +1,7 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/RemoteSL_Classic/RemoteSL.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/RemoteSL_Classic/RemoteSL.py
 from __future__ import absolute_import, print_function, unicode_literals
-import Live, MidiRemoteScript
+import Live
+import MidiRemoteScript
 from .EffectController import EffectController
 from .MixerController import MixerController
 from .DisplayController import DisplayController
@@ -23,10 +19,7 @@ class RemoteSL:
         self.__display_controller = DisplayController(self)
         self.__effect_controller = EffectController(self, self.__display_controller)
         self.__mixer_controller = MixerController(self, self.__display_controller)
-        self.__components = [
-         self.__effect_controller,
-         self.__mixer_controller,
-         self.__display_controller]
+        self.__components = [self.__effect_controller, self.__mixer_controller, self.__display_controller]
         self.__update_hardware_delay = -1
         self._device_appointer = DeviceAppointer(song=self.song(), appointed_device_setter=self._set_appointed_device)
 
@@ -54,13 +47,13 @@ class RemoteSL:
         u"""Live -> Script
         Live can ask the script for an input port name to find a suitable one.
         """
-        return 'RemoteSL'
+        return u'RemoteSL'
 
     def suggest_output_port(self):
         u"""Live -> Script
         Live can ask the script for an output port name to find a suitable one.
         """
-        return 'RemoteSL'
+        return u'RemoteSL'
 
     def can_lock_to_devices(self):
         u"""Live -> Script
@@ -187,7 +180,7 @@ class RemoteSL:
             elif note in mx_notes:
                 self.__mixer_controller.receive_midi_note(note, velocity)
             else:
-                print('unknown MIDI message %s' % str(midi_bytes))
+                print(u'unknown MIDI message %s' % str(midi_bytes))
         elif midi_bytes[0] & 240 == CC_STATUS:
             channel = midi_bytes[0] & 15
             cc_no = midi_bytes[1]
@@ -197,7 +190,7 @@ class RemoteSL:
             elif cc_no in mx_ccs:
                 self.__mixer_controller.receive_midi_cc(cc_no, cc_value)
             else:
-                print('unknown MIDI message %s' % str(midi_bytes))
+                print(u'unknown MIDI message %s' % str(midi_bytes))
         elif midi_bytes[0] == 240:
             if len(midi_bytes) == 13 and midi_bytes[1:4] == (0, 32, 41):
                 if midi_bytes[8] == ABLETON_PID and midi_bytes[10] == 1:
@@ -212,4 +205,4 @@ class RemoteSL:
 
                     self.request_rebuild_midi_map()
         else:
-            print('unknown MIDI message %s' % str(midi_bytes))
+            print(u'unknown MIDI message %s' % str(midi_bytes))

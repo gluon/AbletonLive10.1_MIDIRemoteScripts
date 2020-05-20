@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey/SpecialMixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey/SpecialMixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.MixerComponent import MixerComponent
 
@@ -15,7 +10,6 @@ class SpecialMixerComponent(MixerComponent):
         self._strip_mute_solo_buttons = None
         self._mute_solo_flip_button = None
         self._mute_solo_is_flipped = False
-        return
 
     def disconnect(self):
         MixerComponent.disconnect(self)
@@ -23,7 +17,6 @@ class SpecialMixerComponent(MixerComponent):
             self._mute_solo_flip_button.remove_value_listener(self._mute_solo_flip_value)
             self._mute_solo_flip_button = None
         self._strip_mute_solo_buttons = None
-        return
 
     def tracks_to_use(self):
         return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
@@ -43,8 +36,6 @@ class SpecialMixerComponent(MixerComponent):
             strip.set_mute_button(button)
             strip.set_solo_button(None)
 
-        return
-
     def _mute_solo_flip_value(self, value):
         if self._strip_mute_solo_buttons != None:
             if value == 0:
@@ -58,5 +49,3 @@ class SpecialMixerComponent(MixerComponent):
                     else:
                         strip.set_solo_button(None)
                         strip.set_mute_button(self._strip_mute_solo_buttons[index])
-
-        return

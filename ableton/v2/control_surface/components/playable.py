@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/playable.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/playable.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import listenable_property
 from ..component import Component
@@ -63,13 +58,13 @@ class PlayableComponent(Component):
         self._on_matrix_released(button)
 
     def _on_matrix_pressed(self, button):
-        self.pressed_pads = apply_to_list(self.pressed_pads, 'append', button)
+        self.pressed_pads = apply_to_list(self.pressed_pads, u'append', button)
         if len(self.pressed_pads) == 1:
             self._update_control_from_script()
 
     def _on_matrix_released(self, button):
         if button in self.pressed_pads:
-            self.pressed_pads = apply_to_list(self.pressed_pads, 'remove', button)
+            self.pressed_pads = apply_to_list(self.pressed_pads, u'remove', button)
             if not self.pressed_pads:
                 self._update_control_from_script()
         self._update_led_feedback()
@@ -88,15 +83,14 @@ class PlayableComponent(Component):
             self._update_button_color(button)
 
     def _update_button_color(self, button):
-        button.color = 'DefaultButton.Off'
+        button.color = u'DefaultButton.Off'
 
     def _button_should_be_enabled(self, button):
         identifier, _ = self._note_translation_for_button(button)
         return identifier < 128
 
     def _note_translation_for_button(self, button):
-        return (
-         button.identifier, button.channel)
+        return (button.identifier, button.channel)
 
     def _update_note_translations(self):
         for button in self.matrix:

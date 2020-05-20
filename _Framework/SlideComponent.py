@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SlideComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SlideComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .SubjectSlot import subject_slot, Subject
 from .CompoundComponent import CompoundComponent
@@ -15,8 +10,7 @@ class Slideable(Subject):
     Models of an entity that has a position in a 1-D discrete axis,
     and that has some natural steps (called pages) of this axis.
     """
-    __subject_events__ = (u'page_offset', u'page_length', u'position', u'position_count',
-                          u'contents')
+    __subject_events__ = (u'page_offset', u'page_length', u'position', u'position_count', u'contents')
 
     def contents_range(self, pmin, pmax):
         u"""
@@ -51,7 +45,7 @@ class Slideable(Subject):
 
 class SlideComponent(CompoundComponent, Scrollable):
 
-    def __init__(self, slideable=None, *a, **k):
+    def __init__(self, slideable = None, *a, **k):
         super(SlideComponent, self).__init__(*a, **k)
         slideable = slideable or self
         self._slideable = slideable
@@ -121,7 +115,7 @@ class SlideComponent(CompoundComponent, Scrollable):
         self._position_scroll.update()
         self._page_scroll.update()
 
-    @subject_slot('position')
+    @subject_slot(u'position')
     def _on_position_changed(self):
         self._position_scroll.update()
         self._page_scroll.update()

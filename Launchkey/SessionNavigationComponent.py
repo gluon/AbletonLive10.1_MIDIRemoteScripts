@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey/SessionNavigationComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey/SessionNavigationComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.CompoundComponent import CompoundComponent
 from _Framework.ScrollComponent import ScrollComponent
@@ -59,8 +54,6 @@ class ArmingTrackScrollComponent(ScrollComponent):
         can_arm_track = track != None and track.has_midi_input and track.can_be_armed and not track.arm
         if can_arm_track:
             return track
-        else:
-            return
 
     def _try_arm(self):
         track_to_arm = self._track_to_arm()
@@ -76,7 +69,6 @@ class ArmingTrackScrollComponent(ScrollComponent):
 
                 track_to_arm.arm = True
                 track_to_arm.view.select_instrument()
-        return
 
     def _arm_task(self, delta):
         result_state = Task.KILLED
@@ -98,11 +90,11 @@ class SessionNavigationComponent(CompoundComponent):
         self._scroll_tracks, self._scroll_scenes = self.register_components(ArmingTrackScrollComponent(TrackScroller()), ScrollComponent(BasicSceneScroller()))
         song = self.song()
         view = song.view
-        self.register_slot(song, self._scroll_tracks.update, 'visible_tracks')
-        self.register_slot(song, self._scroll_tracks.update, 'return_tracks')
-        self.register_slot(song, self._scroll_scenes.update, 'scenes')
-        self.register_slot(view, self._scroll_tracks.update, 'selected_track')
-        self.register_slot(view, self._scroll_scenes.update, 'selected_scene')
+        self.register_slot(song, self._scroll_tracks.update, u'visible_tracks')
+        self.register_slot(song, self._scroll_tracks.update, u'return_tracks')
+        self.register_slot(song, self._scroll_scenes.update, u'scenes')
+        self.register_slot(view, self._scroll_tracks.update, u'selected_track')
+        self.register_slot(view, self._scroll_scenes.update, u'selected_scene')
 
     def set_next_track_button(self, button):
         self._scroll_tracks.set_scroll_down_button(button)

@@ -1,11 +1,7 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/FireOne/FireOne.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/FireOne/FireOne.py
 from __future__ import absolute_import, print_function, unicode_literals
-import Live, MidiRemoteScript
+import Live
+import MidiRemoteScript
 NOTE_OFF_STATUS = 128
 NOTE_ON_STATUS = 144
 CC_STATUS = 176
@@ -19,8 +15,11 @@ STOP_NOTE = 93
 PLAY_NOTE = 94
 REC_NOTE = 95
 SHIFT_NOTE = 70
-FIRE_ONE_TRANSPORT = [
- RWD_NOTE, FFWD_NOTE, STOP_NOTE, PLAY_NOTE, REC_NOTE]
+FIRE_ONE_TRANSPORT = [RWD_NOTE,
+ FFWD_NOTE,
+ STOP_NOTE,
+ PLAY_NOTE,
+ REC_NOTE]
 FIRE_ONE_F_KEYS = range(54, 64)
 FIRE_ONE_CHANNEL = 0
 
@@ -71,13 +70,13 @@ class FireOne:
         u"""Live -> Script
         Live can ask the script for an input port name to find a suitable one.
         """
-        return str('FireOne Control')
+        return str(u'FireOne Control')
 
     def suggest_output_port(self):
         u"""Live -> Script
         Live can ask the script for an output port name to find a suitable one.
         """
-        return str('FireOne Control')
+        return str(u'FireOne Control')
 
     def suggest_map_mode(self, cc_no, channel):
         u"""Live -> Script
@@ -231,7 +230,7 @@ class FireOne:
         assert cc_value in range(128)
         moved_forward = cc_value in range(1, 64)
         if not self.__shift_pressed:
-            if self.application().view.is_view_visible('Session'):
+            if self.application().view.is_view_visible(u'Session'):
                 index = list(self.song().scenes).index(self.song().view.selected_scene)
                 if moved_forward:
                     if index < len(self.song().scenes) - 1:
@@ -245,7 +244,7 @@ class FireOne:
                     value -= 64
                     value *= -1
                 self.song().jump_by(value)
-        elif self.application().view.is_view_visible('Session'):
+        elif self.application().view.is_view_visible(u'Session'):
             tracks = self.song().visible_tracks
             index = list(tracks).index(self.song().view.selected_track)
             if moved_forward:
@@ -274,4 +273,3 @@ class FireOne:
                     track.arm = not track.arm
             else:
                 track.mute = not track.mute
-        return

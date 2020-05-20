@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/device_parameters.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/device_parameters.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.control_surface import InternalParameterBase
@@ -24,7 +19,6 @@ class DeviceParameterComponent(DisplayingDeviceParameterComponent):
     def __init__(self, *a, **k):
         self._parameter_controls = None
         super(DeviceParameterComponent, self).__init__(*a, **k)
-        return
 
     def set_parameter_controls(self, encoders):
         super(DeviceParameterComponent, self).set_parameter_controls(encoders)
@@ -43,8 +37,6 @@ class DeviceParameterComponent(DisplayingDeviceParameterComponent):
     def _update_color_fields(self):
         for color_field_index, parameter_info in izip_longest(xrange(WIDTH), self._parameter_provider.parameters[:WIDTH]):
             parameter = parameter_info.parameter if parameter_info else None
-            color = 'Device.On' if parameter else 'DefaultButton.Disabled'
+            color = u'Device.On' if parameter else u'DefaultButton.Disabled'
             self.parameter_color_fields[color_field_index].color = color
             self.encoder_color_fields[color_field_index].color = color
-
-        return

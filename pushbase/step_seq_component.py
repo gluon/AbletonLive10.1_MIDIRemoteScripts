@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/step_seq_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/step_seq_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain, starmap
 from ableton.v2.base import forward_property, listenable_property, listens, liveobj_valid
@@ -24,7 +19,7 @@ class StepSeqComponent(Component):
     this layout.
     """
 
-    def __init__(self, clip_creator=None, skin=None, grid_resolution=None, note_editor_component=None, instrument_component=None, *a, **k):
+    def __init__(self, clip_creator = None, skin = None, grid_resolution = None, note_editor_component = None, instrument_component = None, *a, **k):
         super(StepSeqComponent, self).__init__(*a, **k)
         assert clip_creator is not None
         assert skin is not None
@@ -49,19 +44,20 @@ class StepSeqComponent(Component):
         self._on_modify_all_notes_changed.subject = self._note_editor
         self._detail_clip = None
         self._playhead = None
-        self._playhead_component = PlayheadComponent(parent=self, grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, notes=chain(*starmap(range, (
-         (92, 100), (84, 92),
-         (76, 84), (68, 76)))), triplet_notes=chain(*starmap(range, (
-         (92, 98), (84, 90),
-         (76, 82), (68, 74)))), feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS)
+        self._playhead_component = PlayheadComponent(parent=self, grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, notes=chain(*starmap(range, ((92, 100),
+         (84, 92),
+         (76, 84),
+         (68, 76)))), triplet_notes=chain(*starmap(range, ((92, 98),
+         (84, 90),
+         (76, 82),
+         (68, 74)))), feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS)
         self._accent_component = AccentComponent(parent=self)
         self.__on_accent_mode_changed.subject = self._accent_component
         self._skin = skin
-        self._playhead_color = 'NoteEditor.Playhead'
-        return
+        self._playhead_color = u'NoteEditor.Playhead'
 
-    next_loop_page_button = forward_property('_loop_selector')('next_page_button')
-    prev_loop_page_button = forward_property('_loop_selector')('prev_page_button')
+    next_loop_page_button = forward_property(u'_loop_selector')(u'next_page_button')
+    prev_loop_page_button = forward_property(u'_loop_selector')(u'prev_page_button')
 
     def set_playhead(self, playhead):
         self._playhead = playhead
@@ -79,7 +75,7 @@ class StepSeqComponent(Component):
         return self._playhead_color
 
     def _set_playhead_color(self, value):
-        self._playhead_color = 'NoteEditor.' + value
+        self._playhead_color = u'NoteEditor.' + value
         self._update_playhead_color()
 
     playhead_color = property(_get_playhead_color, _set_playhead_color)
@@ -100,33 +96,33 @@ class StepSeqComponent(Component):
     def row_start_times(self):
         return self._note_editor.get_row_start_times()
 
-    @listens('index')
+    @listens(u'index')
     def __on_grid_resolution_changed(self, *a):
         if self.is_enabled():
             self.notify_row_start_times()
             self.notify_step_length()
 
-    @listens('page_index')
+    @listens(u'page_index')
     def _on_page_index_changed(self):
         if self.is_enabled():
             self.notify_row_start_times()
 
-    @listens('page_length')
+    @listens(u'page_length')
     def _on_page_length_changed(self):
         if self.is_enabled():
             self.notify_row_start_times()
 
-    @listens('active_steps')
+    @listens(u'active_steps')
     def _on_active_steps_changed(self):
         if self.is_enabled():
             self.notify_editing_note_regions()
 
-    @listens('modify_all_notes')
+    @listens(u'modify_all_notes')
     def _on_modify_all_notes_changed(self):
         if self.is_enabled():
             self.notify_editing_note_regions()
 
-    @listens('activated')
+    @listens(u'activated')
     def __on_accent_mode_changed(self):
         self._note_editor.full_velocity = self._accent_component.activated
 
@@ -181,7 +177,7 @@ class StepSeqComponent(Component):
             self.notify_row_start_times()
             self.notify_step_length()
 
-    @listens('detail_clip')
+    @listens(u'detail_clip')
     def _on_detail_clip_changed(self):
         clip = self.song.view.detail_clip
         clip = clip if liveobj_valid(clip) and clip.is_midi_clip else None
@@ -189,15 +185,14 @@ class StepSeqComponent(Component):
         self._note_editor.set_detail_clip(clip)
         self._loop_selector.set_detail_clip(clip)
         self._playhead_component.set_clip(self._detail_clip)
-        return
 
-    @listens('selected_notes')
+    @listens(u'selected_notes')
     def _on_selected_notes_changed(self, notes):
         if self.is_enabled():
             self._note_editor.editing_notes = notes
             self.notify_editable_pitches()
 
-    @listens('pressed_pads')
+    @listens(u'pressed_pads')
     def _on_pressed_pads_changed(self, _):
         self._note_editor.modify_all_notes_enabled = len(self._instrument.pressed_pads) > 0
 

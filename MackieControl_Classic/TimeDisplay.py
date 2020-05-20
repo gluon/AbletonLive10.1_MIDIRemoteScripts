@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl_Classic/TimeDisplay.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl_Classic/TimeDisplay.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .MackieControlComponent import *
 
@@ -40,7 +35,7 @@ class TimeDisplay(MackieControlComponent):
             self.show_beats()
 
     def clear_display(self):
-        time_string = [ ' ' for i in range(10) ]
+        time_string = [ u' ' for i in range(10) ]
         self.__send_time_string(time_string, show_points=False)
         self.send_midi((NOTE_ON_STATUS, SELECT_BEATS_NOTE, BUTTON_STATE_OFF))
         self.send_midi((NOTE_ON_STATUS, SELECT_SMPTE_NOTE, BUTTON_STATE_OFF))
@@ -63,7 +58,7 @@ class TimeDisplay(MackieControlComponent):
     def __send_time_string(self, time_string, show_points):
         assert len(time_string) >= 10
         for c in range(0, 10):
-            char = time_string[(9 - c)].upper()
+            char = time_string[9 - c].upper()
             char_code = g7_seg_led_conv_table[char]
             if show_points and c in (3, 5, 7):
                 char_code += 64

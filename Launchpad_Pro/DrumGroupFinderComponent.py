@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/DrumGroupFinderComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/DrumGroupFinderComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap, chain
 import Live
@@ -17,10 +12,10 @@ class DrumGroupFinderComponent(ControlSurfaceComponent, Subject):
     for the first available drum-rack (deep-first), updating as the
     device list changes.
     """
-    __subject_events__ = (u'drum_group', )
+    __subject_events__ = (u'drum_group',)
     _drum_group = None
 
-    def __init__(self, target_track_component, layer=None, is_enabled=True, *a, **k):
+    def __init__(self, target_track_component, layer = None, is_enabled = True, *a, **k):
         super(DrumGroupFinderComponent, self).__init__(*a, **k)
         self._target_track_component = target_track_component
         self._on_track_changed.subject = self._target_track_component
@@ -40,15 +35,15 @@ class DrumGroupFinderComponent(ControlSurfaceComponent, Subject):
         """
         return self._target_track_component.target_track
 
-    @subject_slot_group('devices')
+    @subject_slot_group(u'devices')
     def _on_devices_changed(self, chain):
         self.update()
 
-    @subject_slot_group('chains')
+    @subject_slot_group(u'chains')
     def _on_chains_changed(self, chain):
         self.update()
 
-    @subject_slot('target_track')
+    @subject_slot(u'target_track')
     def _on_track_changed(self):
         self.update()
 
@@ -93,4 +88,3 @@ def find_drum_group_device(track_or_chain):
             return instrument
         if instrument.can_have_chains:
             return find_if(bool, imap(find_drum_group_device, instrument.chains))
-    return

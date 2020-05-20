@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/notification_component.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/notification_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from weakref import ref
 import Live
@@ -14,16 +9,15 @@ from .model.repr import strip_formatted_string
 
 class NotificationComponent(Component):
 
-    def __init__(self, default_notification_time=2.5, *a, **k):
+    def __init__(self, default_notification_time = 2.5, *a, **k):
         super(NotificationComponent, self).__init__(*a, **k)
         self._visible = False
-        self._message = ''
+        self._message = u''
         self.show_notification = self._show_notification
         self._notification_timer = None
         self._default_notification_time = default_notification_time
         self._dummy_control_element = ControlElement()
         self._dummy_control_element.reset = nop
-        return
 
     def disconnect(self):
         self.hide_notification()
@@ -38,7 +32,7 @@ class NotificationComponent(Component):
     def message(self):
         return self._message
 
-    def _show_notification(self, text, blink_text=None, notification_time=None):
+    def _show_notification(self, text, blink_text = None, notification_time = None):
         text = strip_restriction_markup_and_format(text)
         self._message = strip_formatted_string(text)
         if notification_time is None:
@@ -62,7 +56,6 @@ class NotificationComponent(Component):
         if self._visible:
             self._visible = False
             self.notify_visible()
-        return
 
     def use_single_line(self, *a):
         u"""

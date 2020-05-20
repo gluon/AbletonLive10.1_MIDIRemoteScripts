@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/note_editor_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/note_editor_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from bisect import bisect
 from contextlib import contextmanager
@@ -40,18 +35,17 @@ def note_muted(note):
 ONE_YEAR_AT_120BPM_IN_BEATS = 63072000.0
 DEFAULT_VELOCITY = 100
 DEFAULT_START_NOTE = 36
-DEFAULT_VELOCITY_RANGE_THRESHOLDS = [
- 127, 100, 0]
-VELOCITY_RANGE_INDEX_TO_COLOR = ['Full', 'High', 'Low']
+DEFAULT_VELOCITY_RANGE_THRESHOLDS = [127, 100, 0]
+VELOCITY_RANGE_INDEX_TO_COLOR = [u'Full', u'High', u'Low']
 BEAT_TIME_EPSILON = 1e-05
 
-def color_for_note(note, velocity_range_thresholds=None):
+def color_for_note(note, velocity_range_thresholds = None):
     thresholds = velocity_range_thresholds or DEFAULT_VELOCITY_RANGE_THRESHOLDS
     if not note_muted(note):
         velocity_range_index = index_if(lambda threshold: note_velocity(note) >= threshold, thresholds)
         return VELOCITY_RANGE_INDEX_TO_COLOR[velocity_range_index]
     else:
-        return 'Muted'
+        return u'Muted'
 
 
 def most_significant_note(notes):
@@ -103,16 +97,14 @@ class TimeStep(object):
     def filter_notes(self, notes):
         return filter(self.includes_note, notes)
 
-    def clamp(self, time, extra_time=0.0):
+    def clamp(self, time, extra_time = 0.0):
         return clamp(time + extra_time, self.left_boundary(), self.right_boundary())
 
     def includes_time(self, time):
         return in_range(time - self.start + self.offset, 0, self.length)
 
     def connected_time_ranges(self):
-        return [
-         (
-          self.start - self.offset, self.length)]
+        return [(self.start - self.offset, self.length)]
 
 
 class NullVelocityProvider(EventObject):
@@ -125,14 +117,13 @@ class NullVelocityProvider(EventObject):
         pass
 
 
-def min_max_for_notes(notes, start_time, min_max_values=None):
+def min_max_for_notes(notes, start_time, min_max_values = None):
     for note in notes:
         note_values = list(note[:4])
         note_values[1] -= start_time
         for index, value in enumerate(note_values):
             if not min_max_values:
-                min_max_values = [
-                 (99999, -99999)] * 4
+                min_max_values = [(99999, -99999)] * 4
             min_value, max_value = min_max_values[index]
             min_max_values[index] = (min(value, min_value), max(value, max_value))
 
@@ -156,12 +147,11 @@ def remove_single_note(clip, time, notes, length):
 
 
 class NoteEditorComponent(Component):
-    __events__ = (u'page_length', u'active_note_regions', u'active_steps', u'notes_changed',
-                  u'modify_all_notes')
-    matrix = control_matrix(PadControl, channel=PLAYHEAD_FEEDBACK_CHANNELS[0], sensitivity_profile='loop', mode=PlayableControl.Mode.listenable)
-    mute_button = ButtonControl(color='DefaultButton.Transparent')
+    __events__ = (u'page_length', u'active_note_regions', u'active_steps', u'notes_changed', u'modify_all_notes')
+    matrix = control_matrix(PadControl, channel=PLAYHEAD_FEEDBACK_CHANNELS[0], sensitivity_profile=u'loop', mode=PlayableControl.Mode.listenable)
+    mute_button = ButtonControl(color=u'DefaultButton.Transparent')
 
-    def __init__(self, clip_creator=None, grid_resolution=None, skin_base_key='NoteEditor', velocity_range_thresholds=None, velocity_provider=None, get_notes_handler=get_single_note, remove_notes_handler=remove_single_note, duplicate_all_notes=False, *a, **k):
+    def __init__(self, clip_creator = None, grid_resolution = None, skin_base_key = u'NoteEditor', velocity_range_thresholds = None, velocity_provider = None, get_notes_handler = get_single_note, remove_notes_handler = remove_single_note, duplicate_all_notes = False, *a, **k):
         assert skin_base_key is not None
         super(NoteEditorComponent, self).__init__(*a, **k)
         self._duplicate_all_notes = duplicate_all_notes
@@ -183,8 +173,7 @@ class NoteEditorComponent(Component):
         self._modify_all_notes_enabled = False
         self._step_tap_tasks = {}
         self._clip_notes = []
-        self._pitches = [
-         DEFAULT_START_NOTE]
+        self._pitches = [DEFAULT_START_NOTE]
         self._grid_resolution = grid_resolution
         self.__on_resolution_changed.subject = self._grid_resolution
         self.set_step_duplicator(None)
@@ -193,11 +182,10 @@ class NoteEditorComponent(Component):
         self._velocity_offset = 0
         self._triplet_factor = 1.0
         self._update_from_grid()
-        self.background_color = self._skin_base_key + '.StepEmpty'
+        self.background_color = self._skin_base_key + u'.StepEmpty'
         self._velocity_range_thresholds = velocity_range_thresholds or DEFAULT_VELOCITY_RANGE_THRESHOLDS
         self._velocity_provider = velocity_provider or NullVelocityProvider()
         self.__on_provided_velocity_changed.subject = self._velocity_provider
-        return
 
     @property
     def page_index(self):
@@ -215,8 +203,7 @@ class NoteEditorComponent(Component):
     def notes_in_selected_step(self):
         time_steps = []
         if self._modify_all_notes_enabled:
-            time_steps = [
-             TimeStep(0.0, ONE_YEAR_AT_120BPM_IN_BEATS)]
+            time_steps = [TimeStep(0.0, ONE_YEAR_AT_120BPM_IN_BEATS)]
         else:
             time_steps = [ self._time_step(self.get_step_start_time(start_time)) for start_time in chain(self._pressed_steps, self._modified_steps) ]
         time_steps_with_notes = [ time_step.filter_notes(self._clip_notes) for time_step in time_steps ]
@@ -292,8 +279,7 @@ class NoteEditorComponent(Component):
             trigger = partial(self._trigger_modification, (x, y), done=True)
             return self._tasks.add(task.sequence(task.wait(defaults.MOMENTARY_DELAY), task.run(trigger))).kill()
 
-        self._step_tap_tasks = dict([ ((x, y), trigger_modification_task(x, y)) for x, y in product(xrange(self._get_width()), xrange(self._get_height()))
-                                    ])
+        self._step_tap_tasks = dict([ ((x, y), trigger_modification_task(x, y)) for x, y in product(xrange(self._get_width()), xrange(self._get_height())) ])
         if matrix and last_page_length != self.page_length:
             self._on_clip_notes_changed()
             self.notify_page_length()
@@ -317,7 +303,7 @@ class NoteEditorComponent(Component):
             time_start = self._page_index * time_length
         return (time_start - self._time_step(0).offset, time_length)
 
-    @listens('notes')
+    @listens(u'notes')
     def _on_clip_notes_changed(self):
         u""" get notes from clip for offline array """
         if liveobj_valid(self._sequencer_clip) and self._can_edit():
@@ -333,8 +319,7 @@ class NoteEditorComponent(Component):
         update offline array of button LED values, based on note
         velocity and mute states
         """
-        step_colors = [
-         self._skin_base_key + '.StepDisabled'] * self._get_step_count()
+        step_colors = [self._skin_base_key + u'.StepDisabled'] * self._get_step_count()
 
         def coords_to_index(coord):
             return coord[0] + coord[1] * self._get_width()
@@ -347,18 +332,18 @@ class NoteEditorComponent(Component):
             if len(notes) > 0:
                 last_editing_notes = []
                 if index in selected_indices:
-                    color = self._skin_base_key + '.StepSelected'
+                    color = self._skin_base_key + u'.StepSelected'
                 elif index in editing_indices:
                     note_color = self._determine_color(notes)
-                    color = self._skin_base_key + '.StepEditing.' + note_color
+                    color = self._skin_base_key + u'.StepEditing.' + note_color
                     last_editing_notes = notes
                 else:
                     note_color = self._determine_color(notes)
-                    color = self._skin_base_key + '.Step.' + note_color
+                    color = self._skin_base_key + u'.Step.' + note_color
             elif any(imap(time_step.overlaps_note, last_editing_notes)):
-                color = self._skin_base_key + '.StepEditing.' + note_color
+                color = self._skin_base_key + u'.StepEditing.' + note_color
             elif index in editing_indices or index in selected_indices:
-                color = self._skin_base_key + '.StepSelected'
+                color = self._skin_base_key + u'.StepSelected'
                 last_editing_notes = []
             else:
                 color = self.background_color
@@ -378,8 +363,7 @@ class NoteEditorComponent(Component):
         indices = range(steps_per_page)
         if is_triplet_quantization(self._triplet_factor):
             indices = filter(lambda k: k % 8 not in (6, 7), indices)
-        return [ (self._time_step(first_time + k * step_length), index) for k, index in enumerate(indices)
-               ]
+        return [ (self._time_step(first_time + k * step_length), index) for k, index in enumerate(indices) ]
 
     def _update_editor_matrix_leds(self):
         if self.is_enabled():
@@ -401,8 +385,7 @@ class NoteEditorComponent(Component):
         return self._grid_resolution.step_length
 
     def get_row_start_times(self):
-        return [ self.get_step_start_time((0, row)) for row in xrange(self._get_height())
-               ]
+        return [ self.get_step_start_time((0, row)) for row in xrange(self._get_height()) ]
 
     def _update_from_grid(self):
         quantization, is_triplet = self._grid_resolution.clip_grid
@@ -418,7 +401,7 @@ class NoteEditorComponent(Component):
     def mute_button(self, button):
         self._trigger_modification(immediate=True)
 
-    @listens('index')
+    @listens(u'index')
     def __on_resolution_changed(self, *a):
         self._release_active_steps()
         self._update_from_grid()
@@ -453,26 +436,23 @@ class NoteEditorComponent(Component):
         width = self._get_width() * self._triplet_factor if is_triplet_quantization(self._triplet_factor) else self._get_width()
         return x < width and y < self._get_height()
 
-    @listens('velocity')
+    @listens(u'velocity')
     def __on_provided_velocity_changed(self):
         if len(self._pressed_steps) + len(self._modified_steps) > 0:
             self._provided_velocity = self._velocity_provider.velocity
             self._trigger_modification(immediate=True)
             self._provided_velocity = None
-        return
 
     def _get_step_time_range(self, step):
         time = self.get_step_start_time(step)
-        return (
-         time, time + self._get_step_length())
+        return (time, time + self._get_step_length())
 
     @property
     def editing_note_regions(self):
         active_time_spans = self.active_time_spans
         editing_notes = set(self.notes_in_selected_step)
         if len(editing_notes) > 1:
-            editing_notes = [
-             -1]
+            editing_notes = [-1]
         return list(product(editing_notes, list(active_time_spans)))
 
     @property
@@ -483,8 +463,7 @@ class NoteEditorComponent(Component):
 
             def time_span(step):
                 time_step = self._time_step(self.get_step_start_time(step))
-                return (
-                 time_step.left_boundary(), time_step.right_boundary())
+                return (time_step.left_boundary(), time_step.right_boundary())
 
             return imap(time_span, chain(self._pressed_steps, self._modified_steps))
 
@@ -508,18 +487,17 @@ class NoteEditorComponent(Component):
             start = note_start_time(beginning_note)
             end = start + note_length(beginning_note)
             if len(notes) > 1:
-                end_note = notes[(-1)]
+                end_note = notes[-1]
                 end = note_start_time(end_note) + note_length(end_note)
             return (start, end)
         else:
-            return (
-             time, time + self._get_step_length())
+            return (time, time + self._get_step_length())
 
     def _release_active_steps(self):
         for step in self._pressed_steps + self._modified_steps:
             self._on_release_step(step, do_delete_notes=False)
 
-    def _on_release_step(self, step, do_delete_notes=True):
+    def _on_release_step(self, step, do_delete_notes = True):
         self._step_tap_tasks[step].kill()
         if step in self._pressed_steps:
             if do_delete_notes:
@@ -541,17 +519,15 @@ class NoteEditorComponent(Component):
             return map(lambda step: self.get_step_start_time(step), steps)
 
         time = self.get_step_start_time(step)
-        all_steps_with_notes = [ time_step for time_step, index in self._visible_steps() if time_step.filter_notes(self._clip_notes)
-                               ]
+        all_steps_with_notes = [ time_step for time_step, index in self._visible_steps() if time_step.filter_notes(self._clip_notes) ]
         all_time_step_starts = map(lambda ts: ts.start, all_steps_with_notes)
         if all_time_step_starts:
             insert_point = bisect(all_time_step_starts, time)
             if insert_point > 0:
-                prev_filled_step = all_steps_with_notes[(insert_point - 1)]
+                prev_filled_step = all_steps_with_notes[insert_point - 1]
                 notes_in_modified_steps = steps_to_note_start(self._modified_steps)
                 if prev_filled_step.start in notes_in_modified_steps:
                     return prev_filled_step
-        return
 
     def _add_step_to_duplicator(self, step):
         nudge_offset = 0
@@ -598,8 +574,7 @@ class NoteEditorComponent(Component):
         time = self.get_step_start_time(step)
         notes = self._time_step(time).filter_notes(self._clip_notes)
         pitches = [ note_pitch(note) for note in notes ]
-        return (
-         time, notes, pitches)
+        return (time, notes, pitches)
 
     def toggle_pitch_for_all_modified_steps(self, pitch):
         assert liveobj_valid(self._sequencer_clip)
@@ -615,12 +590,16 @@ class NoteEditorComponent(Component):
     def _add_new_note_in_step(self, step, pitch, time):
         mute = self.mute_button.is_pressed
         velocity = 127 if self.full_velocity else self._velocity_provider.velocity
-        note = (pitch, time, self._get_step_length(), velocity, mute)
+        note = (pitch,
+         time,
+         self._get_step_length(),
+         velocity,
+         mute)
         self._sequencer_clip.set_notes((note,))
         self._sequencer_clip.deselect_all_notes()
         self._trigger_modification(step, done=True)
 
-    def _add_or_modify_note_in_step(self, step, pitch, modify_existing=True):
+    def _add_or_modify_note_in_step(self, step, pitch, modify_existing = True):
         u"""
         Add note in given step if there are none in there, otherwise
         select the step for potential deletion or modification
@@ -645,13 +624,13 @@ class NoteEditorComponent(Component):
                 self._remove_notes_handler(self._sequencer_clip, time, self._pitches, length)
 
     def set_nudge_offset(self, value):
-        self._modify_note_property('_nudge_offset', value)
+        self._modify_note_property(u'_nudge_offset', value)
 
     def set_length_offset(self, value):
-        self._modify_note_property('_length_offset', value)
+        self._modify_note_property(u'_length_offset', value)
 
     def set_velocity_offset(self, value):
-        self._modify_note_property('_velocity_offset', value)
+        self._modify_note_property(u'_velocity_offset', value)
 
     def _modify_note_property(self, note_property, value):
         if self.is_enabled():
@@ -678,13 +657,13 @@ class NoteEditorComponent(Component):
         """
         self._trigger_modification(done=True)
 
-    def _trigger_modification(self, step=None, done=False, immediate=False):
+    def _trigger_modification(self, step = None, done = False, immediate = False):
         u"""
         Because the modification of notes is slow, we
         accumulate modification events and perform all of them
         alltogether in a task. Call this function whenever a given set
         of steps (or potentially all steps) are to be modified.
-
+        
         If done=True, we just notify that the given steps have been
         modified without actually executing the task.
         """
@@ -693,13 +672,12 @@ class NoteEditorComponent(Component):
             needs_update = bool(self._pressed_steps)
             self._modified_steps += self._pressed_steps
             self._pressed_steps = []
-        elif step not in self._modified_steps:
-            self._modified_steps.append(step)
         else:
+            if step not in self._modified_steps:
+                self._modified_steps.append(step)
             if step in self._pressed_steps:
                 self._pressed_steps.remove(step)
             needs_update = True
-
         if not done:
             if immediate:
                 self._do_modification()
@@ -709,7 +687,6 @@ class NoteEditorComponent(Component):
                 self._modify_task.restart()
         if needs_update:
             self._update_editor_matrix()
-        return
 
     def _reset_modifications(self):
         self._velocity_offset = 0
@@ -771,7 +748,7 @@ class NoteEditorComponent(Component):
         Return a modified version of the passed in note taking into
         account current modifiers. If the note is not within
         the given step, returns the note as-is.
-
+        
         If the time_step is inside a loop, the last part of the loop
         is considered as being the same as the part just before the
         loop, so the resulting note may, in this case, jump between
@@ -792,18 +769,19 @@ class NoteEditorComponent(Component):
             else:
                 velocity = clamp(velocity + self._velocity_offset, 1, 127)
             mute = not step_mute if self.mute_button.is_pressed else mute
-        return (
-         pitch, time, length, velocity, mute)
+        return (pitch,
+         time,
+         length,
+         velocity,
+         mute)
 
     def get_min_max_note_values(self):
         if self._modify_all_notes_enabled and len(self._clip_notes) > 0:
             return min_max_for_notes(self._clip_notes, 0.0)
-        else:
-            if len(self._pressed_steps) + len(self._modified_steps) > 0:
-                min_max_values = None
-                for step in chain(self._modified_steps, self._pressed_steps):
-                    start_time = self.get_step_start_time(step)
-                    min_max_values = min_max_for_notes(self._time_step(start_time).filter_notes(self._clip_notes), start_time, min_max_values)
+        if len(self._pressed_steps) + len(self._modified_steps) > 0:
+            min_max_values = None
+            for step in chain(self._modified_steps, self._pressed_steps):
+                start_time = self.get_step_start_time(step)
+                min_max_values = min_max_for_notes(self._time_step(start_time).filter_notes(self._clip_notes), start_time, min_max_values)
 
-                return min_max_values
-            return
+            return min_max_values

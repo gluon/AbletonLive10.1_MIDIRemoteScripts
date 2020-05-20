@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/transport.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/transport.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
@@ -20,8 +15,10 @@ class TransportComponent(Component):
     u"""
     Class encapsulating all functions in Live's transport section.
     """
-    _play_toggle = ToggleButtonControl(toggled_color='Transport.PlayOn', untoggled_color='Transport.PlayOff')
-    _stop_button = ButtonControl()
+    play_button = ToggleButtonControl(toggled_color=u'Transport.PlayOn', untoggled_color=u'Transport.PlayOff')
+    stop_button = ButtonControl()
+    continue_playing_button = ButtonControl()
+    tap_tempo_button = ButtonControl(color=u'DefaultButton.On', pressed_color=u'DefaultButton.Off')
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
@@ -37,44 +34,44 @@ class TransportComponent(Component):
         self._end_undo_step_task = self._tasks.add(task.sequence(task.wait(1.5), task.run(self.song.end_undo_step)))
         self._end_undo_step_task.kill()
         song = self.song
-        self._loop_toggle = ToggleComponent('loop', song, parent=self)
-        self._punch_in_toggle = ToggleComponent('punch_in', song, is_momentary=True, parent=self)
-        self._punch_out_toggle = ToggleComponent('punch_out', song, is_momentary=True, parent=self)
-        self._record_toggle = ToggleComponent('record_mode', song, parent=self)
-        self._nudge_down_toggle = ToggleComponent('nudge_down', song, is_momentary=True, parent=self)
-        self._nudge_up_toggle = ToggleComponent('nudge_up', song, is_momentary=True, parent=self)
-        self._metronome_toggle = ToggleComponent('metronome', song, parent=self)
-        self._arrangement_overdub_toggle = ToggleComponent('arrangement_overdub', song, parent=self)
-        self._overdub_toggle = ToggleComponent('overdub', song, parent=self)
+        self._loop_toggle = ToggleComponent(u'loop', song, parent=self)
+        self._punch_in_toggle = ToggleComponent(u'punch_in', song, is_momentary=True, parent=self)
+        self._punch_out_toggle = ToggleComponent(u'punch_out', song, is_momentary=True, parent=self)
+        self._record_toggle = ToggleComponent(u'record_mode', song, parent=self)
+        self._nudge_down_toggle = ToggleComponent(u'nudge_down', song, is_momentary=True, parent=self)
+        self._nudge_up_toggle = ToggleComponent(u'nudge_up', song, is_momentary=True, parent=self)
+        self._metronome_toggle = ToggleComponent(u'metronome', song, parent=self)
+        self._arrangement_overdub_toggle = ToggleComponent(u'arrangement_overdub', song, parent=self)
+        self._overdub_toggle = ToggleComponent(u'overdub', song, parent=self)
         self.__on_is_playing_changed.subject = song
         self.__on_is_playing_changed()
-        return
 
-    @listens('is_playing')
+    @continue_playing_button.pressed
+    def continue_playing_button(self, _):
+        song = self.song
+        if not song.is_playing:
+            song.continue_playing()
+        else:
+            song.stop_playing()
+
+    @listens(u'is_playing')
     def __on_is_playing_changed(self):
         self._update_button_states()
 
     def _update_button_states(self):
-        self._play_toggle.is_toggled = self.song.is_playing
+        self.play_button.is_toggled = self.song.is_playing
         self._update_stop_button_color()
 
     def _update_stop_button_color(self):
-        self._stop_button.color = self._play_toggle.toggled_color if self._play_toggle.is_toggled else self._play_toggle.untoggled_color
+        self.stop_button.color = self.play_button.toggled_color if self.play_button.is_toggled else self.play_button.untoggled_color
 
-    @_stop_button.released
+    @stop_button.released
     def _on_stop_button_released(self, button):
         self.song.is_playing = False
 
-    def set_stop_button(self, button):
-        self._update_stop_button_color()
-        self._stop_button.set_control_element(button)
-
-    @_play_toggle.toggled
+    @play_button.toggled
     def _on_play_button_toggled(self, is_toggled, button):
         self.song.is_playing = is_toggled
-
-    def set_play_button(self, button):
-        self._play_toggle.set_control_element(button)
 
     def set_seek_buttons(self, ffwd_button, rwd_button):
         if self._ffwd_button != ffwd_button:
@@ -111,12 +108,6 @@ class TransportComponent(Component):
     def set_record_button(self, button):
         self._record_toggle.set_toggle_button(button)
 
-    def set_tap_tempo_button(self, button):
-        if self._tap_tempo_button != button:
-            self._tap_tempo_button = button
-            self.__tap_tempo_value.subject = button
-            self._update_tap_tempo_button()
-
     def set_loop_button(self, button):
         self._loop_toggle.set_toggle_button(button)
 
@@ -135,7 +126,7 @@ class TransportComponent(Component):
     def set_overdub_button(self, button):
         self._overdub_toggle.set_toggle_button(button)
 
-    def set_tempo_control(self, control, fine_control=None):
+    def set_tempo_control(self, control, fine_control = None):
         assert not control or control.message_map_mode() is Live.MidiMap.MapMode.absolute
         assert not fine_control or fine_control.message_map_mode() is Live.MidiMap.MapMode.absolute
         if self._tempo_control != control:
@@ -155,12 +146,7 @@ class TransportComponent(Component):
             self._fine_tempo_needs_pickup = True
             self._prior_fine_tempo_value = -1
 
-    def update(self):
-        super(TransportComponent, self).update()
-        if self.is_enabled():
-            self._update_tap_tempo_button()
-
-    @listens('value')
+    @listens(u'value')
     def __ffwd_value_slot(self, value):
         self._ffwd_value(value)
 
@@ -172,7 +158,7 @@ class TransportComponent(Component):
         elif self.is_enabled():
             self.song.current_song_time += 1
 
-    @listens('value')
+    @listens(u'value')
     def __rwd_value_slot(self, value):
         self._rwd_value(value)
 
@@ -190,27 +176,20 @@ class TransportComponent(Component):
         song.current_song_time = max(0.0, song.current_song_time + speed * delta)
         return task.RUNNING
 
-    @listens('value')
-    def __tap_tempo_value(self, value):
-        if self.is_enabled():
-            if value or not self._tap_tempo_button.is_momentary():
-                if not self._end_undo_step_task.is_running:
-                    self.song.begin_undo_step()
-                self._end_undo_step_task.restart()
-                self.song.tap_tempo()
-            self._update_tap_tempo_button()
+    @tap_tempo_button.pressed
+    def tap_tempo_button(self, _):
+        if not self._end_undo_step_task.is_running:
+            self.song.begin_undo_step()
+        self._end_undo_step_task.restart()
+        self.song.tap_tempo()
 
-    def _update_tap_tempo_button(self):
-        if self.is_enabled() and self._tap_tempo_button:
-            self._tap_tempo_button.set_light(True)
-
-    @listens('value')
+    @listens(u'value')
     def __tempo_value(self, value):
         if self.is_enabled():
             fraction = (TEMPO_TOP - TEMPO_BOTTOM) / 127.0
             self.song.tempo = fraction * value + TEMPO_BOTTOM
 
-    @listens('value')
+    @listens(u'value')
     def __tempo_fine_value(self, value):
         if self.is_enabled():
             if self._fine_tempo_needs_pickup:

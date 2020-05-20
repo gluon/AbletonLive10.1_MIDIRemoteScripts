@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_Mini32/AxiomAirMini32.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_Mini32/AxiomAirMini32.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurface import ControlSurface
@@ -24,11 +19,22 @@ ENGAGE_HYPERCONTROL = (32, 60, 247)
 DISABLE_HYPERCONTROL = (32, 0, 247)
 NUM_TRACKS = 8
 GLOBAL_CHANNEL = 15
-PAD_TRANSLATIONS = (
- (0, 0, 85, 14), (1, 0, 86, 14), (2, 0, 87, 14), (3, 0, 88, 14),
- (0, 1, 81, 14), (1, 1, 82, 14), (2, 1, 83, 14), (3, 1, 84, 14),
- (0, 2, 85, 15), (1, 2, 86, 15), (2, 2, 87, 15), (3, 2, 88, 15),
- (0, 3, 81, 15), (1, 3, 82, 15), (2, 3, 83, 15), (3, 3, 84, 15))
+PAD_TRANSLATIONS = ((0, 0, 85, 14),
+ (1, 0, 86, 14),
+ (2, 0, 87, 14),
+ (3, 0, 88, 14),
+ (0, 1, 81, 14),
+ (1, 1, 82, 14),
+ (2, 1, 83, 14),
+ (3, 1, 84, 14),
+ (0, 2, 85, 15),
+ (1, 2, 86, 15),
+ (2, 2, 87, 15),
+ (3, 2, 88, 15),
+ (0, 3, 81, 15),
+ (1, 3, 82, 15),
+ (2, 3, 83, 15),
+ (3, 3, 84, 15))
 
 def make_button(cc_no):
     is_momentary = True
@@ -45,8 +51,8 @@ class AxiomAirMini32(ControlSurface):
     def __init__(self, c_instance):
         ControlSurface.__init__(self, c_instance)
         with self.component_guard():
-            self._suggested_input_port = 'HyperControl'
-            self._suggested_output_port = 'HyperControl'
+            self._suggested_input_port = u'HyperControl'
+            self._suggested_output_port = u'HyperControl'
             self.set_pad_translations(PAD_TRANSLATIONS)
             stop_button = make_button(116)
             play_button = make_button(117)
@@ -73,9 +79,7 @@ class AxiomAirMini32(ControlSurface):
             mixer_encoder_modes = EncoderMixerModeSelector(mixer)
             mixer_encoder_modes.set_mode_toggle(mixer_modes_toggle)
             mixer_or_device = MixerOrDeviceModeSelector(encoders, select_button, nav_up_button, nav_down_button, nav_left_button, nav_right_button, mixer, session, device, mixer_encoder_modes, device_nav)
-            mixer_or_device.set_mode_buttons((mixer_modes_toggle,
-             mixer_or_device_toggle,
-             hypercontrol_mode_toggle))
+            mixer_or_device.set_mode_buttons((mixer_modes_toggle, mixer_or_device_toggle, hypercontrol_mode_toggle))
 
     def refresh_state(self):
         ControlSurface.refresh_state(self)
@@ -117,4 +121,3 @@ class SpecialChanStripComponent(ChannelStripComponent):
             if self._arm_button != None:
                 self._arm_button.add_value_listener(self._arm_value)
             self.update()
-        return

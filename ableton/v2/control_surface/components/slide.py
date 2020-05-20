@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/slide.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/slide.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import clamp, listens, EventObject
 from ..component import Component
@@ -19,7 +14,7 @@ class Slideable(EventObject):
     def contents_range(self, pmin, pmax):
         u"""
         Tells whether there are any contents in the (min, max) range,
-        wheren min and max are floats in the (0, position_count)
+        wherein min and max are floats in the (0, position_count)
         range. Can be left unimplemented.
         """
         pos_count = self.position_count
@@ -49,7 +44,7 @@ class Slideable(EventObject):
 
 class SlideComponent(Component, Scrollable):
 
-    def __init__(self, slideable=None, *a, **k):
+    def __init__(self, slideable = None, *a, **k):
         super(SlideComponent, self).__init__(*a, **k)
         slideable = slideable or self
         self._slideable = slideable
@@ -121,7 +116,7 @@ class SlideComponent(Component, Scrollable):
         self._position_scroll.update()
         self._page_scroll.update()
 
-    @listens('position')
+    @listens(u'position')
     def __on_position_changed(self):
         self._position_scroll.update()
         self._page_scroll.update()

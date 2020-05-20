@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/view_control_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/view_control_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import BasicTrackScroller, BasicSceneScroller
@@ -19,11 +14,11 @@ class ViewControlComponent(Component):
         self._scene_scroller = BasicSceneScroller()
         song = self.song
         view = song.view
-        self.register_slot(song, self._update_track_encoder, 'visible_tracks')
-        self.register_slot(song, self._update_track_encoder, 'return_tracks')
-        self.register_slot(view, self._update_track_encoder, 'selected_track')
-        self.register_slot(song, self._update_scene_encoder, 'scenes')
-        self.register_slot(view, self._update_scene_encoder, 'selected_scene')
+        self.register_slot(song, self._update_track_encoder, u'visible_tracks')
+        self.register_slot(song, self._update_track_encoder, u'return_tracks')
+        self.register_slot(view, self._update_track_encoder, u'selected_track')
+        self.register_slot(song, self._update_scene_encoder, u'scenes')
+        self.register_slot(view, self._update_scene_encoder, u'selected_scene')
 
     @track_encoder.value
     def track_encoder(self, value, _):

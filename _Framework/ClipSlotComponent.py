@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ClipSlotComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ClipSlotComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .ControlSurfaceComponent import ControlSurfaceComponent
@@ -13,14 +8,10 @@ from .Util import in_range
 def find_nearest_color(rgb_table, src_hex_color):
 
     def hex_to_channels(color_in_hex):
-        return (
-         (color_in_hex & 16711680) >> 16,
-         (color_in_hex & 65280) >> 8,
-         color_in_hex & 255)
+        return ((color_in_hex & 16711680) >> 16, (color_in_hex & 65280) >> 8, color_in_hex & 255)
 
     def squared_distance(color):
-        return sum([ (a - b) ** 2 for a, b in zip(hex_to_channels(src_hex_color), hex_to_channels(color[1]))
-                   ])
+        return sum([ (a - b) ** 2 for a, b in zip(hex_to_channels(src_hex_color), hex_to_channels(color[1])) ])
 
     return min(rgb_table, key=squared_distance)[0]
 
@@ -45,7 +36,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
         self._delete_button = None
         self._select_button = None
         self._duplicate_button = None
-        return
 
     def on_enabled_changed(self):
         self.update()
@@ -64,7 +54,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
             self._on_arm_value_changed.subject = track
             self._on_implicit_arm_value_changed.subject = track
         self.update()
-        return
 
     def set_launch_button(self, button):
         self._launch_button_value.subject = button
@@ -102,11 +91,10 @@ class ClipSlotComponent(ControlSurfaceComponent):
         assert palette != None
         self._stopped_value = None
         self._clip_palette = palette
-        return
 
     def set_clip_rgb_table(self, rgb_table):
         u""" A list of velocity, hex-rgb color pairs that is used, if the color could not
-            be matched to the clip palette """
+        be matched to the clip palette """
         self._clip_rgb_table = rgb_table
 
     def has_clip(self):
@@ -128,7 +116,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
                     button.set_light(value_to_send)
         else:
             self._update_requests += 1
-        return
 
     def _color_value(self, color):
         try:
@@ -138,8 +125,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
                 return find_nearest_color(self._clip_rgb_table, color)
             else:
                 return self._stopped_value
-
-        return
 
     def _track_is_armed(self, track):
         return track != None and track.can_be_armed and any([track.arm, track.implicit_arm])
@@ -158,62 +143,60 @@ class ClipSlotComponent(ControlSurfaceComponent):
                 return self._started_value
             if slot_or_clip.color != None:
                 return self._color_value(slot_or_clip.color)
-            if getattr(slot_or_clip, 'controls_other_clips', True) and self._stopped_value != None:
+            if getattr(slot_or_clip, u'controls_other_clips', True) and self._stopped_value != None:
                 return self._stopped_value
             if self._track_is_armed(track) and self._clip_slot.has_stop_button and self._record_button_value != None:
                 return self._record_button_value
-        return
 
     def _update_clip_property_slots(self):
         clip = self._clip_slot.clip if self._clip_slot else None
         self._on_clip_playing_state_changed.subject = clip
         self._on_recording_state_changed.subject = clip
         self._on_clip_color_changed.subject = clip
-        return
 
-    @subject_slot('has_clip')
+    @subject_slot(u'has_clip')
     def _on_clip_state_changed(self):
         self._update_clip_property_slots()
         self.update()
 
-    @subject_slot('controls_other_clips')
+    @subject_slot(u'controls_other_clips')
     def _on_controls_other_clips_changed(self):
         self._update_clip_property_slots()
         self.update()
 
-    @subject_slot('color')
+    @subject_slot(u'color')
     def _on_clip_color_changed(self):
         self.update()
 
-    @subject_slot('color')
+    @subject_slot(u'color')
     def _on_clip_slot_color_changed(self):
         self.update()
 
-    @subject_slot('playing_status')
+    @subject_slot(u'playing_status')
     def _on_slot_playing_state_changed(self):
         self.update()
 
-    @subject_slot('playing_status')
+    @subject_slot(u'playing_status')
     def _on_clip_playing_state_changed(self):
         self.update()
 
-    @subject_slot('is_recording')
+    @subject_slot(u'is_recording')
     def _on_recording_state_changed(self):
         self.update()
 
-    @subject_slot('arm')
+    @subject_slot(u'arm')
     def _on_arm_value_changed(self):
         self.update()
 
-    @subject_slot('implicit_arm')
+    @subject_slot(u'implicit_arm')
     def _on_implicit_arm_value_changed(self):
         self.update()
 
-    @subject_slot('has_stop_button')
+    @subject_slot(u'has_stop_button')
     def _on_has_stop_button_changed(self):
         self.update()
 
-    @subject_slot('is_triggered')
+    @subject_slot(u'is_triggered')
     def _on_slot_triggered_changed(self):
         if not self.has_clip():
             song = self.song()
@@ -222,7 +205,7 @@ class ClipSlotComponent(ControlSurfaceComponent):
                 view.highlighted_clip_slot = self._clip_slot
             self.update()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _launch_button_value(self, value):
         if self.is_enabled():
             if self._select_button and self._select_button.is_pressed() and value:
@@ -236,7 +219,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
                         self._do_delete_clip()
                 else:
                     self._do_launch_clip(value)
-        return
 
     def _do_delete_clip(self):
         if self._clip_slot and self._clip_slot.has_clip:
@@ -246,7 +228,6 @@ class ClipSlotComponent(ControlSurfaceComponent):
         if self._clip_slot != None:
             if self.song().view.highlighted_clip_slot != self._clip_slot:
                 self.song().view.highlighted_clip_slot = self._clip_slot
-        return
 
     def _do_duplicate_clip(self):
         if self._clip_slot and self._clip_slot.has_clip:

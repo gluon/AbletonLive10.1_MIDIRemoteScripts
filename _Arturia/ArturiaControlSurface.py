@@ -1,15 +1,10 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Arturia/ArturiaControlSurface.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Arturia/ArturiaControlSurface.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from _Framework import Task
 from _Framework.ControlSurface import ControlSurface
 SETUP_MSG_PREFIX = (240, 0, 32, 107, 127, 66)
-SETUP_MSG_SUFFIX = (247, )
+SETUP_MSG_SUFFIX = (247,)
 WRITE_COMMAND = 2
 LOAD_MEMORY_COMMAND = 5
 STORE_IN_MEMORY_COMMAND = 6
@@ -33,12 +28,11 @@ ENCODER_TWOS_COMPLEMENT_MODE_OPTION = 2
 ON_VALUE = 127
 OFF_VALUE = 0
 LIVE_MODE_MSG_HARDWARE_ID_BYTE = 16
-BUTTON_MSG_TYPES = {'note': BUTTON_NOTE_MODE, 
-   'cc': BUTTON_CC_MODE}
+BUTTON_MSG_TYPES = {u'note': BUTTON_NOTE_MODE,
+ u'cc': BUTTON_CC_MODE}
 SETUP_HARDWARE_DELAY = 1.0
 INDIVIDUAL_MESSAGE_DELAY = 0.001
-LIVE_MODE_MSG_HEAD = SETUP_MSG_PREFIX + (
- WRITE_COMMAND,
+LIVE_MODE_MSG_HEAD = SETUP_MSG_PREFIX + (WRITE_COMMAND,
  WORKING_MEMORY_ID,
  LIVE_MODE_PROPERTY,
  LIVE_MODE_MSG_HARDWARE_ID_BYTE)
@@ -63,7 +57,7 @@ class ArturiaControlSurface(ControlSurface):
         """
         raise NotImplementedError
 
-    def _setup_hardware_encoder(self, hardware_id, identifier, channel=0):
+    def _setup_hardware_encoder(self, hardware_id, identifier, channel = 0):
         u"""
         Set up a relative encoder using a twos complement coding scheme
         """
@@ -72,7 +66,7 @@ class ArturiaControlSurface(ControlSurface):
         self._set_channel(hardware_id, channel)
         self._set_twos_complement_mode(hardware_id)
 
-    def _setup_hardware_slider(self, hardware_id, identifier, channel=0):
+    def _setup_hardware_slider(self, hardware_id, identifier, channel = 0):
         u"""
         Set up a simple hardware fader
         """
@@ -80,7 +74,7 @@ class ArturiaControlSurface(ControlSurface):
         self._set_identifier(hardware_id, identifier)
         self._set_channel(hardware_id, channel)
 
-    def _setup_hardware_button(self, hardware_id, identifier, channel=0, is_momentary=True, msg_type='note'):
+    def _setup_hardware_button(self, hardware_id, identifier, channel = 0, is_momentary = True, msg_type = u'note'):
         u"""
         Set up a momentary button sending MIDI notes
         """
@@ -90,7 +84,7 @@ class ArturiaControlSurface(ControlSurface):
         self._set_channel(hardware_id, channel)
         self._set_momentary_mode(hardware_id, is_momentary)
 
-    def _set_encoder_cc_msg_type(self, hardware_id, is_relative=False):
+    def _set_encoder_cc_msg_type(self, hardware_id, is_relative = False):
         self._collect_setup_message(MODE_PROPERTY, hardware_id, ENCODER_CC_MODE if not is_relative else ENCODER_RELATIVE_CC_MODE)
 
     def _set_button_msg_type(self, hardware_id, msg_type):
@@ -127,20 +121,21 @@ class ArturiaControlSurface(ControlSurface):
         assert property is not None
         assert hardware_id is not None
         assert value is not None
-        msg = SETUP_MSG_PREFIX + (WRITE_COMMAND, WORKING_MEMORY_ID, property, hardware_id, value) + SETUP_MSG_SUFFIX
+        msg = SETUP_MSG_PREFIX + (WRITE_COMMAND,
+         WORKING_MEMORY_ID,
+         property,
+         hardware_id,
+         value) + SETUP_MSG_SUFFIX
         self._messages_to_send.append(msg)
-        return
 
     def _setup_hardware(self):
-        sequence_to_run = [
-         None] * (len(self._messages_to_send) * 2)
+        sequence_to_run = [None] * (len(self._messages_to_send) * 2)
         sequence_to_run[::2] = [ Task.run(partial(self._send_midi, msg)) for msg in self._messages_to_send ]
         sequence_to_run[1::2] = [ Task.wait(INDIVIDUAL_MESSAGE_DELAY) for _ in self._messages_to_send ]
         for subsequence in split_list(sequence_to_run, 40):
             self._tasks.add(Task.sequence(*subsequence))
 
         self._messages_to_send = []
-        return
 
     def port_settings_changed(self):
         super(ArturiaControlSurface, self).port_settings_changed()

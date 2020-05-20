@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/compressor.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/compressor.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends, EventObject, listenable_property, listens, liveobj_valid, mixin
 from ableton.v2.control_surface import EnumWrappingParameter, LiveObjectDecorator, get_parameter_by_name
@@ -20,26 +15,17 @@ class CompressorDeviceDecorator(LiveObjectDecorator, EventObject):
 
     def __init__(self, *a, **k):
         super(CompressorDeviceDecorator, self).__init__(*a, **k)
-        for event, func in (
-         (
-          'input_routing_type', self.notify_input_routing_type_index),
-         (
-          'input_routing_channel', self.notify_input_routing_channel_index)):
+        for event, func in ((u'input_routing_type', self.notify_input_routing_type_index), (u'input_routing_channel', self.notify_input_routing_channel_index)):
             self.register_slot(event_name=event, subject=self._live_object, listener=func)
 
         make_option = lambda option_name, parameter_name: DeviceOnOffOption(name=option_name, property_host=get_parameter_by_name(self, parameter_name))
-        self._options = tuple([ self.register_disconnectable(make_option(option_name, param_name)) for option_name, param_name in (
-         (u'Auto Release', u'Auto Release On/Off'),
+        self._options = tuple([ self.register_disconnectable(make_option(option_name, param_name)) for option_name, param_name in ((u'Auto Release', u'Auto Release On/Off'),
          (u'Makeup', u'Makeup'),
          (u'Listen', u'S/C Listen'),
-         (u'Sidechain', u'S/C On'))
-                              ])
+         (u'Sidechain', u'S/C On')) ])
         make_parameter = lambda name, values, index: EnumWrappingParameter(name=name, parent=self, values_host=self, index_property_host=self, values_property=values, index_property=index)
-        self._position_parameter = make_parameter('Position', 'input_channel_positions', 'input_channel_position_index')
-        self._additional_parameters = self.register_disconnectables((
-         make_parameter('Input Type', 'available_input_routing_types', 'input_routing_type_index'),
-         make_parameter('Input Channel', 'available_input_routing_channels', 'input_routing_channel_index'),
-         self._position_parameter))
+        self._position_parameter = make_parameter(u'Position', u'input_channel_positions', u'input_channel_position_index')
+        self._additional_parameters = self.register_disconnectables((make_parameter(u'Input Type', u'available_input_routing_types', u'input_routing_type_index'), make_parameter(u'Input Channel', u'available_input_routing_channels', u'input_routing_channel_index'), self._position_parameter))
 
     def set_routing_infrastructure(self, input_router, type_list, channel_list, position_list):
         self._input_router = input_router
@@ -75,9 +61,9 @@ class CompressorDeviceDecorator(LiveObjectDecorator, EventObject):
 
     @property
     def available_input_routing_channels(self):
-        return tuple([ t.name for t in self._channel_list.targets ] or [''])
+        return tuple([ t.name for t in self._channel_list.targets ] or [u''])
 
-    @listens('has_input_channel_position')
+    @listens(u'has_input_channel_position')
     def __on_has_positions_changed(self, has_positions):
         self._position_parameter.is_enabled = has_positions
         self.notify_input_channel_position_index()
@@ -95,8 +81,7 @@ class CompressorDeviceDecorator(LiveObjectDecorator, EventObject):
 
     @listenable_property
     def input_channel_positions(self):
-        return tuple(self._input_router.input_channel_positions if self._input_router.has_input_channel_position else [
-         ''])
+        return tuple(self._input_router.input_channel_positions if self._input_router.has_input_channel_position else [u''])
 
     @property
     def options(self):
@@ -129,7 +114,7 @@ class CompressorInputRouterMixin(object):
 
         @listenable_property
         def input_routing_type(self):
-            return
+            return None
 
         @listenable_property
         def available_input_routing_channels(self):
@@ -137,7 +122,7 @@ class CompressorInputRouterMixin(object):
 
         @listenable_property
         def input_routing_channel(self):
-            return
+            return None
 
     _compressor = None
     _null_routing_host = NullRoutingHost()
@@ -156,9 +141,7 @@ class CompressorInputRouterMixin(object):
         self.notify_routing_targets()
 
     def _register_listeners(self):
-        self._registered_listeners = [
-         self.register_slot(subject=self._get_routing_host(), event_name='available_%ss' % self._current_target_property, listener=self.notify_routing_targets),
-         self.register_slot(subject=self._get_routing_host(), event_name=self._current_target_property, listener=self.__on_target_changed)]
+        self._registered_listeners = [self.register_slot(subject=self._get_routing_host(), event_name=u'available_%ss' % self._current_target_property, listener=self.notify_routing_targets), self.register_slot(subject=self._get_routing_host(), event_name=self._current_target_property, listener=self.__on_target_changed)]
 
     def _unregister_listeners(self):
         for listener in self._registered_listeners:
@@ -175,23 +158,21 @@ class CompressorInputRouterMixin(object):
 class CompressorDeviceComponent(DeviceComponentWithTrackColorViewData):
 
     @depends(real_time_mapper=None, register_real_time_data=None)
-    def __init__(self, real_time_mapper=None, register_real_time_data=None, *a, **k):
+    def __init__(self, real_time_mapper = None, register_real_time_data = None, *a, **k):
         super(CompressorDeviceComponent, self).__init__(*a, **k)
-        self._input_channel_router, self._input_type_router = self.register_disconnectables([
-         mixin(CompressorInputRouterMixin, InputChannelRouter)(song=self.song),
-         mixin(CompressorInputRouterMixin, InputTypeRouter)(song=self.song)])
+        self._input_channel_router, self._input_type_router = self.register_disconnectables([mixin(CompressorInputRouterMixin, InputChannelRouter)(song=self.song), mixin(CompressorInputRouterMixin, InputTypeRouter)(song=self.song)])
         self._input_router = self.register_disconnectable(InputChannelAndPositionRouter(input_channel_router=self._input_channel_router, input_type_router=self._input_type_router))
         self._type_list = self.register_disconnectable(RoutingTypeList(parent_task_group=self._tasks, router=self._input_type_router))
         self._channel_list = self.register_disconnectable(RoutingChannelList(parent_task_group=self._tasks, rt_channel_assigner=RoutingMeterRealTimeChannelAssigner(real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, parent=self), router=self._input_router))
         self._positions_list = self.register_disconnectable(RoutingChannelPositionList(input_channel_router=self._input_router))
 
     def _parameter_touched(self, parameter):
-        if liveobj_valid(self._decorated_device) and liveobj_valid(parameter) and parameter.name == 'Threshold':
-            self._update_visualisation_view_data({'AdjustingThreshold': True})
+        if liveobj_valid(self._decorated_device) and liveobj_valid(parameter) and parameter.name == u'Threshold':
+            self._update_visualisation_view_data({u'AdjustingThreshold': True})
 
     def _parameter_released(self, parameter):
-        if liveobj_valid(self._decorated_device) and liveobj_valid(parameter) and parameter.name == 'Threshold':
-            self._update_visualisation_view_data({'AdjustingThreshold': False})
+        if liveobj_valid(self._decorated_device) and liveobj_valid(parameter) and parameter.name == u'Threshold':
+            self._update_visualisation_view_data({u'AdjustingThreshold': False})
 
     def _set_device_for_subcomponents(self, device):
         super(CompressorDeviceComponent, self)._set_device_for_subcomponents(device)
@@ -208,9 +189,9 @@ class CompressorDeviceComponent(DeviceComponentWithTrackColorViewData):
 
     def _initial_visualisation_view_data(self):
         view_data = super(CompressorDeviceComponent, self)._initial_visualisation_view_data()
-        view_data['AdjustingThreshold'] = False
-        view_data['VisualisationLeft'] = VisualisationGuides.light_left_x(0)
-        view_data['VisualisationWidth'] = VisualisationGuides.button_right_x(3) - VisualisationGuides.light_left_x(0)
+        view_data[u'AdjustingThreshold'] = False
+        view_data[u'VisualisationLeft'] = VisualisationGuides.light_left_x(0)
+        view_data[u'VisualisationWidth'] = VisualisationGuides.button_right_x(3) - VisualisationGuides.light_left_x(0)
         return view_data
 
     @property

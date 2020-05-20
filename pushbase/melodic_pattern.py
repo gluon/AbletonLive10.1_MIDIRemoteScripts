@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/melodic_pattern.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/melodic_pattern.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import NamedTuple, lazy_attribute, memoize, find_if
 from . import consts
@@ -11,17 +6,16 @@ from .matrix_maps import FEEDBACK_CHANNELS
 import Live
 CIRCLE_OF_FIFTHS = tuple([ 7 * k % 12 for k in range(12) ])
 ROOT_NOTES = CIRCLE_OF_FIFTHS[0:6] + CIRCLE_OF_FIFTHS[-1:5:-1]
-NOTE_NAMES = (u'C', u'D\u266d', u'D', u'E\u266d', u'E', u'F', u'G\u266d', u'G', u'A\u266d',
-              u'A', u'B\u266d', u'B')
+NOTE_NAMES = (u'C', u'D\u266d', u'D', u'E\u266d', u'E', u'F', u'G\u266d', u'G', u'A\u266d', u'A', u'B\u266d', u'B')
 
 def pitch_index_to_string(index):
     if 0 <= index < 128:
-        return NOTE_NAMES[(index % 12)] + str(index / 12 - 2)
+        return NOTE_NAMES[index % 12] + str(index / 12 - 2)
     return consts.CHAR_ELLIPSIS
 
 
 class Scale(NamedTuple):
-    name = ''
+    name = u''
     notes = []
 
     def to_root_note(self, root_note):
@@ -35,7 +29,7 @@ class Scale(NamedTuple):
         return self.name
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return unicode(self).encode(u'utf-8')
 
     def __eq__(self, other):
         if isinstance(other, Scale):
@@ -52,12 +46,11 @@ def scale_by_name(name):
 class NoteInfo(NamedTuple):
     index = None
     channel = 0
-    color = 'NoteInvalid'
+    color = u'NoteInvalid'
 
 
 class MelodicPattern(NamedTuple):
-    steps = [
-     0, 0]
+    steps = [0, 0]
     scale = range(12)
     root_note = 0
     origin = [0, 0]
@@ -96,9 +89,8 @@ class MelodicPattern(NamedTuple):
         scale = self.extended_scale
         scale_size = len(scale)
         octave = index / scale_size
-        note = scale[(index % scale_size)]
-        return (
-         octave, note)
+        note = scale[index % scale_size]
+        return (octave, note)
 
     def _octave_and_note(self, x, y):
         index = self.steps[0] * (self.origin[0] + x) + self.steps[1] * (self.origin[1] + y)
@@ -106,13 +98,13 @@ class MelodicPattern(NamedTuple):
 
     def _color_for_note(self, note):
         if note == self.scale[0]:
-            return 'NoteBase'
+            return u'NoteBase'
+        elif note in self.scale:
+            return u'NoteScale'
         else:
-            if note in self.scale:
-                return 'NoteScale'
-            return 'NoteNotScale'
+            return u'NoteNotScale'
 
-    def _get_note_info(self, (octave, note), root_note, channel=0):
+    def _get_note_info(self, (octave, note), root_note, channel = 0):
         note_index = 12 * octave + note + root_note
         if 0 <= note_index <= 127:
             return NoteInfo(index=note_index, channel=channel, color=self._color_for_note(note))

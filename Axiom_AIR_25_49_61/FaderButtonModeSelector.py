@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/FaderButtonModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/FaderButtonModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from .consts import *
@@ -22,7 +17,6 @@ class FaderButtonModeSelector(ModeSelectorComponent):
         self._flashing_button_on = True
         self._flashing_reset_delay = 0
         self._register_timer_callback(self._on_timer)
-        return
 
     def disconnect(self):
         self._unregister_timer_callback(self._on_timer)
@@ -30,7 +24,6 @@ class FaderButtonModeSelector(ModeSelectorComponent):
         self._mixer = None
         self._fader_buttons = None
         self._flashing_button = None
-        return
 
     def number_of_modes(self):
         return self._number_of_modes
@@ -75,7 +68,6 @@ class FaderButtonModeSelector(ModeSelectorComponent):
                     self._mode_toggle.send_value(RED_FULL, True)
             else:
                 self._mode_toggle.send_value(GRN_FULL, True)
-        return
 
     def _on_timer(self):
         if self.is_enabled():
@@ -85,7 +77,6 @@ class FaderButtonModeSelector(ModeSelectorComponent):
                 else:
                     self._flash()
                     self._flashing_reset_delay = 5
-        return
 
     def _toggle_value(self, value):
         if self.is_enabled():

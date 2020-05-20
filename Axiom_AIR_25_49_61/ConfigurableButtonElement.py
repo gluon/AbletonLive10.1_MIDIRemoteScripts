@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/ConfigurableButtonElement.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/ConfigurableButtonElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonElement import ButtonElement
 from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE, MIDI_CC_STATUS
@@ -11,9 +6,9 @@ from .consts import *
 
 class ConfigurableButtonElement(ButtonElement):
     u""" Special button class that can be configured with custom on- and off-values
-        and can send and receive on different channels with different message types """
+    and can send and receive on different channels with different message types """
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, send_channel=None, identifier_send_offset=0, send_msg_type=None):
+    def __init__(self, is_momentary, msg_type, channel, identifier, send_channel = None, identifier_send_offset = 0, send_msg_type = None):
         ButtonElement.__init__(self, is_momentary, msg_type, channel, identifier)
         self._send_channel = send_channel
         self._send_msg_type = send_msg_type
@@ -45,7 +40,7 @@ class ConfigurableButtonElement(ButtonElement):
     def reset(self):
         self.send_value(self._off_value)
 
-    def add_value_listener(self, callback, identify_sender=False):
+    def add_value_listener(self, callback, identify_sender = False):
         if not self._is_notifying:
             ButtonElement.add_value_listener(self, callback, identify_sender)
         else:
@@ -60,7 +55,7 @@ class ConfigurableButtonElement(ButtonElement):
 
         self._pending_listeners = []
 
-    def send_value(self, value, force=False):
+    def send_value(self, value, force = False):
         if force or self._force_next_value or value != self._last_sent_value:
             data_byte1 = self._original_identifier + self._identifier_send_offset
             data_byte2 = value
@@ -75,10 +70,8 @@ class ConfigurableButtonElement(ButtonElement):
             elif self._msg_type == MIDI_CC_TYPE:
                 status_byte += MIDI_CC_STATUS
             if self.send_midi((status_byte, data_byte1, data_byte2)):
-                self._last_sent_message = (
-                 value, None)
+                self._last_sent_message = (value, None)
                 if self._report_output:
                     is_input = True
                     self._report_value(value, not is_input)
         self._force_next_value = False
-        return

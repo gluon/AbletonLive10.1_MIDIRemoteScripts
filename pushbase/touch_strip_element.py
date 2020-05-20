@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_strip_element.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_strip_element.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import in_range, nop, NamedTuple, clamp
@@ -33,7 +28,7 @@ class SimpleBehaviour(TouchStripBehaviour):
     Behaviour with custom mode.
     """
 
-    def __init__(self, mode=TouchStripModes.PITCHBEND, *a, **k):
+    def __init__(self, mode = TouchStripModes.PITCHBEND, *a, **k):
         super(SimpleBehaviour, self).__init__(*a, **k)
         self._mode = mode
 
@@ -109,17 +104,17 @@ class TouchStripElement(InputControlElement):
 
     state_count = 24
 
-    def __init__(self, touch_button=None, mode_element=None, light_element=None, *a, **k):
+    def __init__(self, touch_button = None, mode_element = None, light_element = None, *a, **k):
         assert mode_element is not None
         assert light_element is not None
         super(TouchStripElement, self).__init__(MIDI_PB_TYPE, 0, 0, *a, **k)
         self._mode_element = mode_element
         self._light_element = light_element
         self._touch_button = touch_button
-        self._touch_slot = self.register_slot(touch_button, None, 'value')
+        self._touch_slot = self.register_slot(touch_button, None, u'value')
+        self._force_next_behaviour = False
         self._behaviour = None
         self.behaviour = None
-        return
 
     @property
     def touch_button(self):
@@ -128,22 +123,21 @@ class TouchStripElement(InputControlElement):
     def _get_mode(self):
         if self._behaviour != None:
             return self._behaviour.mode
-        else:
-            return
 
     def set_mode(self, mode):
         if not in_range(mode, 0, TouchStripModes.COUNT):
-            raise IndexError('Invalid Touch Strip Mode %d' % mode)
+            raise IndexError(u'Invalid Touch Strip Mode %d' % mode)
         self.behaviour = SimpleBehaviour(mode=mode)
 
     mode = property(_get_mode, set_mode)
 
     def _set_behaviour(self, behaviour):
         behaviour = behaviour or DEFAULT_BEHAVIOUR
-        if behaviour != self._behaviour:
+        if behaviour != self._behaviour or self._force_next_behaviour:
             self._behaviour = behaviour
             self._touch_slot.listener = behaviour.handle_touch
             self._mode_element.send_value(behaviour.mode)
+        self._force_next_behaviour = False
 
     def _get_behaviour(self):
         return self._behaviour
@@ -158,19 +152,22 @@ class TouchStripElement(InputControlElement):
 
     def reset(self):
         self.behaviour = None
-        return
+
+    def clear_send_cache(self):
+        self._force_next_behaviour = True
+        super(TouchStripElement, self).clear_send_cache()
 
     def notify_value(self, value):
         notify = super(TouchStripElement, self).notify_value
         self._behaviour.handle_value(value, notify)
 
-    def turn_on_index(self, index, on_state=TouchStripStates.STATE_FULL, off_state=TouchStripStates.STATE_OFF):
+    def turn_on_index(self, index, on_state = TouchStripStates.STATE_FULL, off_state = TouchStripStates.STATE_OFF):
         assert in_range(index, 0, self.state_count)
         states = [off_state] * self.state_count
         states[index] = on_state
         self.send_state(states)
 
-    def turn_off(self, off_state=TouchStripStates.STATE_OFF):
+    def turn_off(self, off_state = TouchStripStates.STATE_OFF):
         self.send_state((off_state,) * self.state_count)
 
     def send_state(self, state):

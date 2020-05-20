@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/session_component.py
-# Compiled at: 2019-04-29 19:37:39
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/session_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import imap
@@ -20,11 +15,10 @@ TRIGGERED_CLIP_BLINK_SPEED = 24
 
 class DecoratingCopyHandler(ClipSlotCopyHandler):
 
-    def __init__(self, decorator_factory=None, *a, **k):
+    def __init__(self, decorator_factory = None, *a, **k):
         assert decorator_factory is not None
         super(DecoratingCopyHandler, self).__init__(*a, **k)
         self._decorator_factory = decorator_factory
-        return
 
     def _on_duplicated(self, source_clip_slot, target_clip_slot):
         super(DecoratingCopyHandler, self)._on_duplicated(source_clip_slot, target_clip_slot)
@@ -42,14 +36,13 @@ class ClipSlotComponent(SpecialClipSlotComponent):
     _decorator_factory = None
     select_color_button = ButtonControl()
 
-    def __init__(self, color_chooser=None, *a, **k):
+    def __init__(self, color_chooser = None, *a, **k):
         super(ClipSlotComponent, self).__init__(*a, **k)
         self._color_chooser = color_chooser
 
     @select_color_button.released
     def select_color_button(self, button):
         self._color_chooser.object = None
-        return
 
     def _on_launch_button_pressed(self):
         if self.select_color_button.is_pressed and self._color_chooser is not None:
@@ -58,15 +51,14 @@ class ClipSlotComponent(SpecialClipSlotComponent):
                 self._color_chooser.object = ClipProxy(clip)
         else:
             super(ClipSlotComponent, self)._on_launch_button_pressed()
-        return
 
     def _feedback_value(self, track, slot_or_clip):
         clip_color = self._color_value(slot_or_clip)
         if slot_or_clip.is_triggered and not slot_or_clip.will_record_on_start:
             if isinstance(slot_or_clip, Live.Clip.Clip):
                 return Blink(color1=CLIP_PLAYING_COLOR, color2=IndexedColor(clip_color), speed=TRIGGERED_CLIP_BLINK_SPEED)
-            return 'Session.EmptySlotTriggeredPlay'
-        if slot_or_clip.is_playing:
+            return u'Session.EmptySlotTriggeredPlay'
+        elif slot_or_clip.is_playing:
             animate_to_color = RECORDING_COLOR if slot_or_clip.is_recording else IndexedColor(clip_color)
             return Pulse(color1=IndexedColor.from_push_index(clip_color, 2), color2=animate_to_color, speed=PLAYING_CLIP_PULSE_SPEED)
         else:
@@ -87,7 +79,7 @@ class ClipSlotComponent(SpecialClipSlotComponent):
 class SceneComponent(SpecialSceneComponent):
     clip_slot_component_type = ClipSlotComponent
 
-    def __init__(self, color_chooser=None, *a, **k):
+    def __init__(self, color_chooser = None, *a, **k):
         self._color_chooser = color_chooser
         super(SceneComponent, self).__init__(*a, **k)
 
@@ -95,10 +87,10 @@ class SceneComponent(SpecialSceneComponent):
         scene_index = list(self.song.scenes).index(self._scene)
 
         def slot_for_track(mixable):
-            if not hasattr(mixable, 'clip_slots') or len(mixable.clip_slots) == 0:
-                return
-            return mixable.clip_slots[scene_index]
-            return
+            if not hasattr(mixable, u'clip_slots') or len(mixable.clip_slots) == 0:
+                return None
+            else:
+                return mixable.clip_slots[scene_index]
 
         return imap(slot_for_track, self._session_ring.controlled_tracks())
 
@@ -109,7 +101,7 @@ class SceneComponent(SpecialSceneComponent):
 class SessionComponent(SpecialSessionComponent):
     scene_component_type = SceneComponent
 
-    def __init__(self, color_chooser=None, *a, **k):
+    def __init__(self, color_chooser = None, *a, **k):
         self._color_chooser = color_chooser
         super(SessionComponent, self).__init__(*a, **k)
 

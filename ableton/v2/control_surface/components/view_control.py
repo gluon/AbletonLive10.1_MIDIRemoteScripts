@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/view_control.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/view_control.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import depends, in_range, liveobj_valid
@@ -15,7 +10,7 @@ VIEWS = (u'Browser', u'Arranger', u'Session', u'Detail', u'Detail/Clip', u'Detai
 class _DeltaSongScroller(Scrollable):
 
     @depends(song=None)
-    def __init__(self, song=None, *a, **k):
+    def __init__(self, song = None, *a, **k):
         super(_DeltaSongScroller, self).__init__(*a, **k)
         self._song = song
 
@@ -38,12 +33,11 @@ class _DeltaSongScroller(Scrollable):
 
 
 def all_tracks(song):
-    return list(tuple(song.visible_tracks) + tuple(song.return_tracks) + (
-     song.master_track,))
+    return list(tuple(song.visible_tracks) + tuple(song.return_tracks) + (song.master_track,))
 
 
 def next_item(seq, item, delta):
-    return seq[(list(seq).index(item) + delta)]
+    return seq[list(seq).index(item) + delta]
 
 
 def has_next_item(seq, item, delta):
@@ -125,13 +119,13 @@ class ViewControlComponent(Component):
         self._scroll_scenes = ScrollComponent(self._create_scene_scroller(), parent=self)
         song = self.song
         view = song.view
-        self.register_slot(song, self._scroll_tracks.update, 'visible_tracks')
-        self.register_slot(song, self._scroll_tracks.update, 'return_tracks')
-        self.register_slot(song, self._scroll_scenes.update, 'scenes')
-        self.register_slot(song, self._scroll_scene_list.update, 'scenes')
-        self.register_slot(view, self._scroll_tracks.update, 'selected_track')
-        self.register_slot(view, self._scroll_scenes.update, 'selected_scene')
-        self.register_slot(view, self._scroll_scene_list.update, 'selected_scene')
+        self.register_slot(song, self._scroll_tracks.update, u'visible_tracks')
+        self.register_slot(song, self._scroll_tracks.update, u'return_tracks')
+        self.register_slot(song, self._scroll_scenes.update, u'scenes')
+        self.register_slot(song, self._scroll_scene_list.update, u'scenes')
+        self.register_slot(view, self._scroll_tracks.update, u'selected_track')
+        self.register_slot(view, self._scroll_scenes.update, u'selected_scene')
+        self.register_slot(view, self._scroll_scene_list.update, u'selected_scene')
 
     def _create_track_scroller(self):
         return TrackScroller()
@@ -161,19 +155,19 @@ class ViewControlComponent(Component):
         assert view in VIEWS
         app_view = self.application.view
         try:
-            if view == 'Detail/DeviceChain' or 'Detail/Clip':
-                if not app_view.is_view_visible('Detail'):
-                    app_view.show_view('Detail')
+            if view == u'Detail/DeviceChain' or u'Detail/Clip':
+                if not app_view.is_view_visible(u'Detail'):
+                    app_view.show_view(u'Detail')
             if not app_view.is_view_visible(view):
                 app_view.show_view(view)
         except RuntimeError:
             pass
 
     def focus_view(self, view):
-        if not view in VIEWS:
-            raise AssertionError
-            app_view = self.application.view
-            if not ((view == 'Detail/DeviceChain' or 'Detail/Clip') and app_view.is_view_visible('Detail')):
-                app_view.show_view('Detail')
+        assert view in VIEWS
+        app_view = self.application.view
+        if view == u'Detail/DeviceChain' or u'Detail/Clip':
+            if not app_view.is_view_visible(u'Detail'):
+                app_view.show_view(u'Detail')
         if not app_view.is_view_visible(view):
             app_view.focus_view(view)

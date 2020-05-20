@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control/SpecialMixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control/SpecialMixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from _Framework.MixerComponent import MixerComponent
@@ -13,12 +8,12 @@ from _Framework.Util import clamp
 
 class SendSelectButtonBehaviour(LatchingBehaviour):
 
-    def __init__(self, mixer=None, *a, **k):
+    def __init__(self, mixer = None, *a, **k):
         super(SendSelectButtonBehaviour, self).__init__(*a, **k)
         self._mixer = mixer
 
     def press_immediate(self, component, mode):
-        if component.selected_mode == 'sends':
+        if component.selected_mode == u'sends':
             self._mixer.selected_send_index += 2
         else:
             super(SendSelectButtonBehaviour, self).press_immediate(component, mode)
@@ -27,19 +22,18 @@ class SendSelectButtonBehaviour(LatchingBehaviour):
 class SpecialMixerComponent(MixerComponent):
     __subject_events__ = (u'selected_send_index', u'selected_mixer_mode')
 
-    def __init__(self, num_tracks, mode_layer=None, pan_volume_layer=None, sends_layer=None, *a, **k):
+    def __init__(self, num_tracks, mode_layer = None, pan_volume_layer = None, sends_layer = None, *a, **k):
         super(SpecialMixerComponent, self).__init__(num_tracks, *a, **k)
         self.set_enabled(False)
         self._send_controls = None
         self._selected_send_index = 0
         self._modes = self.register_component(ModesComponent())
-        self._modes.add_mode('pan_volume', [LayerMode(self, pan_volume_layer)])
-        self._modes.add_mode('sends', [LayerMode(self, sends_layer)], behaviour=SendSelectButtonBehaviour(self))
-        self._modes.selected_mode = 'pan_volume'
+        self._modes.add_mode(u'pan_volume', [LayerMode(self, pan_volume_layer)])
+        self._modes.add_mode(u'sends', [LayerMode(self, sends_layer)], behaviour=SendSelectButtonBehaviour(self))
+        self._modes.selected_mode = u'pan_volume'
         self._modes.layer = mode_layer
         self._on_visible_tracks.subject = self.song()
         self._on_selected_mixer_mode.subject = self._modes
-        return
 
     def _get_selected_send_index(self):
         return self._selected_send_index
@@ -81,18 +75,15 @@ class SpecialMixerComponent(MixerComponent):
 
     def _update_send_controls(self):
         for index, channel_strip in enumerate(self._channel_strips):
-            send_controls = [ self._send_controls.get_button(index, i) for i in (1,
-                                                                                 0) ] if self._send_controls else [None]
+            send_controls = [ self._send_controls.get_button(index, i) for i in (1, 0) ] if self._send_controls else [None]
             skipped_sends = [ None for _ in xrange(self._selected_send_index) ]
             channel_strip.set_send_controls(skipped_sends + send_controls)
 
-        return
-
-    @subject_slot('visible_tracks')
+    @subject_slot(u'visible_tracks')
     def _on_visible_tracks(self):
         self._clamp_send_index()
         self._update_send_controls()
 
-    @subject_slot('selected_mode')
+    @subject_slot(u'selected_mode')
     def _on_selected_mixer_mode(self, mode):
         self.notify_selected_mixer_mode(mode)

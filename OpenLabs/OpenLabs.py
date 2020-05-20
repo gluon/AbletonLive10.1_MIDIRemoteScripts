@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/OpenLabs/OpenLabs.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/OpenLabs/OpenLabs.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurface import ControlSurface
@@ -26,13 +21,24 @@ class OpenLabs(ControlSurface):
         ControlSurface.__init__(self, c_instance)
         with self.component_guard():
             self._suppress_session_highlight = True
-            self._suggested_input_port = 'Open Labs Midi Driver'
-            self._suggested_output_port = ''
-            self.set_pad_translations((
-             (0, 0, 12, 15), (1, 0, 13, 15), (2, 0, 14, 15), (3, 0, 15, 15),
-             (0, 1, 8, 15), (1, 1, 9, 15), (2, 1, 10, 15), (3, 1, 11, 15),
-             (0, 2, 4, 15), (1, 2, 5, 15), (2, 2, 6, 15), (3, 2, 7, 15),
-             (0, 3, 0, 15), (1, 3, 1, 15), (2, 3, 2, 15), (3, 3, 3, 15)))
+            self._suggested_input_port = u'Open Labs Midi Driver'
+            self._suggested_output_port = u''
+            self.set_pad_translations(((0, 0, 12, 15),
+             (1, 0, 13, 15),
+             (2, 0, 14, 15),
+             (3, 0, 15, 15),
+             (0, 1, 8, 15),
+             (1, 1, 9, 15),
+             (2, 1, 10, 15),
+             (3, 1, 11, 15),
+             (0, 2, 4, 15),
+             (1, 2, 5, 15),
+             (2, 2, 6, 15),
+             (3, 2, 7, 15),
+             (0, 3, 0, 15),
+             (1, 3, 1, 15),
+             (2, 3, 2, 15),
+             (3, 3, 3, 15)))
             self._setup_mixer_control()
             self._setup_device_and_transport_control()
 

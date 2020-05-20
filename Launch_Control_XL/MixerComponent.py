@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control_XL/MixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launch_Control_XL/MixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from _Framework.Control import control_list, ButtonControl
@@ -11,8 +6,8 @@ from _Framework.ChannelStripComponent import ChannelStripComponent as ChannelStr
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):
-    send_lights = control_list(ButtonControl, control_count=2, color='Mixer.Sends', disabled_color='Mixer.NoTrack')
-    pan_light = ButtonControl(color='Mixer.Pans', disabled_color='Mixer.NoTrack')
+    send_lights = control_list(ButtonControl, control_count=2, color=u'Mixer.Sends', disabled_color=u'Mixer.NoTrack')
+    pan_light = ButtonControl(color=u'Mixer.Pans', disabled_color=u'Mixer.NoTrack')
 
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
@@ -42,8 +37,6 @@ class MixerComponent(MixerComponentBase):
                 skipped_sends = [ None for _ in xrange(self.send_index) ]
                 channel_strip.set_send_controls(skipped_sends + send_controls)
 
-        return
-
     def set_send_lights(self, lights):
         for index, channel_strip in enumerate(self._channel_strips):
             elements = None
@@ -51,8 +44,6 @@ class MixerComponent(MixerComponentBase):
                 lights.reset()
                 elements = None if self.send_index is None else [ lights.get_button(index, i) for i in xrange(2) ]
             channel_strip.send_lights.set_control_element(elements)
-
-        return
 
     def set_pan_lights(self, lights):
         for strip, light in izip_longest(self._channel_strips, lights or []):
@@ -66,14 +57,12 @@ class MixerComponent(MixerComponentBase):
             index -= 1
         super(MixerComponent, self)._set_send_index(index)
         self._update_send_buttons()
-        return
 
     send_index = property(_get_send_index, _set_send_index)
 
     def _update_send_buttons(self):
         self.next_sends_button.enabled = self.send_index is not None and self.send_index < self.num_sends - 2
         self.prev_sends_button.enabled = self.send_index is not None and self.send_index > 0
-        return
 
     @next_sends_button.pressed
     def next_sends_button(self, button):
@@ -86,23 +75,23 @@ class MixerComponent(MixerComponentBase):
     def set_track_select_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.TrackSelected', 'Mixer.TrackUnselected')
+                button.set_on_off_values(u'Mixer.TrackSelected', u'Mixer.TrackUnselected')
             strip.set_select_button(button)
 
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.SoloOn', 'Mixer.SoloOff')
+                button.set_on_off_values(u'Mixer.SoloOn', u'Mixer.SoloOff')
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.MuteOn', 'Mixer.MuteOff')
+                button.set_on_off_values(u'Mixer.MuteOn', u'Mixer.MuteOff')
             strip.set_mute_button(button)
 
     def set_arm_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
             if button:
-                button.set_on_off_values('Mixer.ArmSelected', 'Mixer.ArmUnselected')
+                button.set_on_off_values(u'Mixer.ArmSelected', u'Mixer.ArmUnselected')
             strip.set_arm_button(button)

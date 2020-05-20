@@ -1,15 +1,10 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_item.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_item.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import Proxy
 
 class BrowserItem(object):
 
-    def __init__(self, name='', icon='', children=None, is_loadable=False, is_selected=False, is_device=False, contained_item=None, enable_wrapping=True, *a, **k):
+    def __init__(self, name = u'', icon = u'', children = None, is_loadable = False, is_selected = False, is_device = False, contained_item = None, enable_wrapping = True, *a, **k):
         super(BrowserItem, self).__init__(*a, **k)
         self._name = name
         self._icon = icon
@@ -19,7 +14,6 @@ class BrowserItem(object):
         self._is_device = is_device
         self._contained_item = contained_item
         self._enable_wrapping = enable_wrapping
-        return
 
     @property
     def name(self):
@@ -61,13 +55,12 @@ class BrowserItem(object):
     def uri(self):
         if self._contained_item is not None:
             return self._contained_item.uri
-        else:
-            return self._name
+        return self._name
 
 
 class ProxyBrowserItem(Proxy):
 
-    def __init__(self, enable_wrapping=True, icon='', *a, **k):
+    def __init__(self, enable_wrapping = True, icon = u'', *a, **k):
         super(ProxyBrowserItem, self).__init__(*a, **k)
         self._enable_wrapping = enable_wrapping
         self._icon = icon

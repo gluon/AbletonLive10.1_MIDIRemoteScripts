@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/ChannelStrip.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/ChannelStrip.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .MackieControlComponent import *
 from itertools import chain
@@ -28,7 +23,6 @@ class ChannelStrip(MackieControlComponent):
         self.__within_track_added_or_deleted = False
         self.__within_destroy = False
         self.set_bank_and_channel_offset(offset=0, show_return_tracks=False, within_track_added_or_deleted=False)
-        return
 
     def destroy(self):
         self.__within_destroy = True
@@ -41,7 +35,6 @@ class ChannelStrip(MackieControlComponent):
         self.refresh_state()
         MackieControlComponent.destroy(self)
         self.__within_destroy = False
-        return
 
     def set_channel_strip_controller(self, channel_strip_controller):
         self.__channel_strip_controller = channel_strip_controller
@@ -86,12 +79,11 @@ class ChannelStrip(MackieControlComponent):
                 self.__add_listeners()
         self.refresh_state()
         self.__within_track_added_or_deleted = False
-        return
 
     def v_pot_parameter(self):
         return self.__v_pot_parameter
 
-    def set_v_pot_parameter(self, parameter, display_mode=VPOT_DISPLAY_SINGLE_DOT):
+    def set_v_pot_parameter(self, parameter, display_mode = VPOT_DISPLAY_SINGLE_DOT):
         self.__v_pot_display_mode = display_mode
         self.__v_pot_parameter = parameter
         if not parameter:
@@ -105,7 +97,7 @@ class ChannelStrip(MackieControlComponent):
         if not parameter:
             self.reset_fader()
 
-    def enable_meter_mode(self, Enabled, needs_to_send_meter_mode=True):
+    def enable_meter_mode(self, Enabled, needs_to_send_meter_mode = True):
         self.__meters_enabled = Enabled
         if needs_to_send_meter_mode or Enabled:
             self.__send_meter_mode()
@@ -117,8 +109,7 @@ class ChannelStrip(MackieControlComponent):
         self.send_midi((CC_STATUS + 0, 48 + self.__strip_index, 32))
 
     def show_full_enlighted_poti(self):
-        self.send_midi((CC_STATUS + 0, 48 + self.__strip_index,
-         VPOT_DISPLAY_WRAP * 16 + 11))
+        self.send_midi((CC_STATUS + 0, 48 + self.__strip_index, VPOT_DISPLAY_WRAP * 16 + 11))
 
     def handle_channel_strip_switch_ids(self, sw_id, value):
         if sw_id in range(SID_RECORD_ARM_BASE, SID_RECORD_ARM_BASE + NUM_CHANNEL_STRIPS):
@@ -156,12 +147,10 @@ class ChannelStrip(MackieControlComponent):
                         touched = value == BUTTON_PRESSED
                         self.set_is_touched(touched)
                         self.__channel_strip_controller.handle_fader_touch(self.__strip_index, self.__stack_offset, touched)
-        return
 
     def handle_vpot_rotation(self, strip_index, cc_value):
         if strip_index is self.__strip_index and self.__channel_strip_controller != None:
             self.__channel_strip_controller.handle_vpot_rotation(self.__strip_index, self.__stack_offset, cc_value)
-        return
 
     def refresh_state(self):
         if not self.__within_track_added_or_deleted:
@@ -175,7 +164,6 @@ class ChannelStrip(MackieControlComponent):
         if not self.__assigned_track:
             self.reset_fader()
             self.unlight_vpot_leds()
-        return
 
     def on_update_display_timer(self):
         if not self.main_script().is_pro_version or self.__meters_enabled and self.__channel_strip_controller.assignment_mode() == CSM_VOLPAN:
@@ -227,9 +215,8 @@ class ChannelStrip(MackieControlComponent):
                 return index
             index += 1
 
-        if not (self.__assigned_track and 0):
-            raise AssertionError
-        return
+        if self.__assigned_track:
+            assert 0
 
     def __add_listeners(self):
         if self.__assigned_track.can_be_armed:
@@ -259,8 +246,15 @@ class ChannelStrip(MackieControlComponent):
             device_type = SYSEX_DEVICE_TYPE_XT
         else:
             device_type = SYSEX_DEVICE_TYPE
-        self.send_midi((
-         240, 0, 0, 102, device_type, 32, self.__strip_index, mode, 247))
+        self.send_midi((240,
+         0,
+         0,
+         102,
+         device_type,
+         32,
+         self.__strip_index,
+         mode,
+         247))
 
     def __toggle_arm_track(self, exclusive):
         if self.__assigned_track and self.__assigned_track.can_be_armed:
@@ -287,42 +281,34 @@ class ChannelStrip(MackieControlComponent):
             all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
             if self.song().view.selected_track != all_tracks[self.__assigned_track_index()]:
                 self.song().view.selected_track = all_tracks[self.__assigned_track_index()]
-            elif self.application().view.is_view_visible('Arranger'):
+            elif self.application().view.is_view_visible(u'Arranger'):
                 if self.__assigned_track:
                     self.__assigned_track.view.is_collapsed = not self.__assigned_track.view.is_collapsed
 
     def __update_arm_led(self):
         track = self.__assigned_track
         if track and track.can_be_armed and track.arm:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_RECORD_ARM_BASE + self.__strip_index, BUTTON_STATE_ON))
+            self.send_midi((NOTE_ON_STATUS, SID_RECORD_ARM_BASE + self.__strip_index, BUTTON_STATE_ON))
         else:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_RECORD_ARM_BASE + self.__strip_index, BUTTON_STATE_OFF))
+            self.send_midi((NOTE_ON_STATUS, SID_RECORD_ARM_BASE + self.__strip_index, BUTTON_STATE_OFF))
 
     def __update_mute_led(self):
         if self.__assigned_track and self.__assigned_track.mute:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_MUTE_BASE + self.__strip_index, BUTTON_STATE_ON))
+            self.send_midi((NOTE_ON_STATUS, SID_MUTE_BASE + self.__strip_index, BUTTON_STATE_ON))
         else:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_MUTE_BASE + self.__strip_index, BUTTON_STATE_OFF))
+            self.send_midi((NOTE_ON_STATUS, SID_MUTE_BASE + self.__strip_index, BUTTON_STATE_OFF))
 
     def __update_solo_led(self):
         if self.__assigned_track and self.__assigned_track.solo:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_SOLO_BASE + self.__strip_index, BUTTON_STATE_ON))
+            self.send_midi((NOTE_ON_STATUS, SID_SOLO_BASE + self.__strip_index, BUTTON_STATE_ON))
         else:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_SOLO_BASE + self.__strip_index, BUTTON_STATE_OFF))
+            self.send_midi((NOTE_ON_STATUS, SID_SOLO_BASE + self.__strip_index, BUTTON_STATE_OFF))
 
     def __update_track_is_selected_led(self):
         if self.song().view.selected_track == self.__assigned_track:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_SELECT_BASE + self.__strip_index, BUTTON_STATE_ON))
+            self.send_midi((NOTE_ON_STATUS, SID_SELECT_BASE + self.__strip_index, BUTTON_STATE_ON))
         else:
-            self.send_midi((NOTE_ON_STATUS,
-             SID_SELECT_BASE + self.__strip_index, BUTTON_STATE_OFF))
+            self.send_midi((NOTE_ON_STATUS, SID_SELECT_BASE + self.__strip_index, BUTTON_STATE_OFF))
 
 
 class MasterChannelStrip(MackieControlComponent):

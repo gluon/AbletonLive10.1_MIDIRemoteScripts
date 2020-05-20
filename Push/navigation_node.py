@@ -1,19 +1,16 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/navigation_node.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/navigation_node.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap
 from functools import partial
-import Live.DrumPad, Live.Song, Live.Track
+import Live.DrumPad
+import Live.Song
+import Live.Track
 from ableton.v2.base import compose, find_if, flatten, index_if, in_range, listens, liveobj_changed, liveobj_valid, second, EventObject
 from ableton.v2.control_surface import select_and_appoint_device
 from pushbase import consts
 DeviceType = Live.Device.DeviceType
 
-def make_navigation_node(model_object, is_entering=True, session_ring=None, device_bank_registry=None, banking_info=None):
+def make_navigation_node(model_object, is_entering = True, session_ring = None, device_bank_registry = None, banking_info = None):
     u"""
     Returns a proper navigation node wrapper for the model_object
     """
@@ -38,7 +35,7 @@ def make_navigation_node(model_object, is_entering=True, session_ring=None, devi
             else:
                 node = RackNode(model_object)
         else:
-            assert device_bank_registry, 'Navigating a device needs a bank registry'
+            assert device_bank_registry, u'Navigating a device needs a bank registry'
             node = SimpleDeviceNode(device_bank_registry, banking_info, model_object)
     if node and node.parent and not node.children:
         node.disconnect()
@@ -59,7 +56,7 @@ class NavigationNode(EventObject):
     __events__ = (u'children', u'selected_child', u'state')
 
     def get_selected_child(self):
-        return
+        return None
 
     def set_selected_child(self, value):
         pass
@@ -102,19 +99,17 @@ class NavigationNode(EventObject):
         if selected_child_index == None and self.children:
             self.selected_child = 0
         self.notify_selected_child(self.selected_child)
-        return
 
 
 class ModelNode(NavigationNode):
 
-    def __init__(self, object=None, *a, **k):
+    def __init__(self, object = None, *a, **k):
         super(ModelNode, self).__init__(*a, **k)
         self._object = object
         self._children = []
         self._state = []
         self._selected_child = None
         self._in_update_children = False
-        return
 
     def _get_children_from_model(self):
         pass
@@ -149,7 +144,6 @@ class ModelNode(NavigationNode):
         else:
             self._selected_child = None
             self._set_selected_child_in_model(None)
-        return
 
     def set_state(self, child, value):
         if child >= 0 and child < len(self._children):
@@ -162,8 +156,6 @@ class ModelNode(NavigationNode):
     def get_parent(self):
         if liveobj_valid(self._object):
             return self._object.canonical_parent
-        else:
-            return
 
     def _get_song(self):
         return self._get_parent_with_class(Live.Song.Song)
@@ -183,7 +175,6 @@ class ModelNode(NavigationNode):
         children = [ c[1] for c in self._children ]
         self._selected_child = children.index(selected) if selected in children else None
         self.notify_selected_child(self._selected_child)
-        return
 
     def _update_state(self, child):
         children = map(second, self.children)
@@ -207,7 +198,7 @@ class ModelNode(NavigationNode):
 
 class ChainNode(ModelNode):
 
-    def __init__(self, device_bank_registry=None, *a, **k):
+    def __init__(self, device_bank_registry = None, *a, **k):
         super(ChainNode, self).__init__(*a, **k)
         self._device_bank_registry = device_bank_registry
         self._on_devices_changed_in_live.subject = self._object
@@ -236,7 +227,6 @@ class ChainNode(ModelNode):
             if isinstance(selected_object, Live.Device.Device) and track and track.view.selected_device != selected_object:
                 select_and_appoint_device(self._get_song(), selected_object)
         self._device_bank_registry.set_device_bank(track.view.selected_device, 0)
-        return
 
     def delete_child(self, index):
         if index >= 0 and index < len(self._children) and not isinstance(self._children[index][1], Live.DrumPad.DrumPad):
@@ -250,15 +240,10 @@ class ChainNode(ModelNode):
         def expand_device(d):
             drum_pad = d.view.selected_drum_pad if d.can_have_drum_pads else None
             if drum_pad:
-                drum_pad_name = drum_pad.name if len(drum_pad.chains) > 0 else 'EmptyPad'
-                return [
-                 (
-                  d.name, d), (drum_pad_name, drum_pad)]
+                drum_pad_name = drum_pad.name if len(drum_pad.chains) > 0 else u'EmptyPad'
+                return [(d.name, d), (drum_pad_name, drum_pad)]
             else:
-                return [
-                 (
-                  d.name, d)]
-                return
+                return [(d.name, d)]
 
         return list(flatten(imap(expand_device, self._object.devices)))
 
@@ -276,23 +261,20 @@ class ChainNode(ModelNode):
         selected = self._get_track().view.selected_device
         if selected == None:
             return find_if(lambda d: isinstance(d, Live.DrumPad.DrumPad), devices)
-        else:
-            is_deeper = False
-            while selected:
-                if selected in devices:
-                    if isinstance(selected, Live.DrumPad.DrumPad):
-                        self._on_selected_drum_pad()
-                        self._update_child_slots()
-                        return selected
-                    if is_deeper and selected.can_have_drum_pads:
-                        self._on_selected_drum_pad()
-                        self._update_child_slots()
-                        return selected.view.selected_drum_pad
+        is_deeper = False
+        while selected:
+            if selected in devices:
+                if isinstance(selected, Live.DrumPad.DrumPad):
+                    self._on_selected_drum_pad()
+                    self._update_child_slots()
                     return selected
-                selected = selected.canonical_parent
-                is_deeper = True
-
-            return
+                if is_deeper and selected.can_have_drum_pads:
+                    self._on_selected_drum_pad()
+                    self._update_child_slots()
+                    return selected.view.selected_drum_pad
+                return selected
+            selected = selected.canonical_parent
+            is_deeper = True
 
     def _get_state_from_model(self, child):
         if isinstance(child, Live.DrumPad.DrumPad):
@@ -304,27 +286,25 @@ class ChainNode(ModelNode):
     def _set_state_in_model(self, child, value):
         if child == None:
             return False
-        else:
-            if isinstance(child, Live.DrumPad.DrumPad):
-                if child.mute == value:
-                    child.mute = not value
-                    return value
-                return not child.mute
-            if child.parameters:
-                on_off = child.parameters[0]
-                if value != on_off.value and on_off.is_enabled:
-                    child.parameters[0].value = int(value)
-                    return value
-                return bool(on_off.value)
-            return
+        if isinstance(child, Live.DrumPad.DrumPad):
+            if child.mute == value:
+                child.mute = not value
+                return value
+            return not child.mute
+        if child.parameters:
+            on_off = child.parameters[0]
+            if value != on_off.value and on_off.is_enabled:
+                child.parameters[0].value = int(value)
+                return value
+            return bool(on_off.value)
 
-    @listens('devices')
+    @listens(u'devices')
     def _on_devices_changed_in_live(self):
         self._update_children()
         self._update_selected_child()
         self._update_child_slots()
 
-    @listens('selected_device')
+    @listens(u'selected_device')
     def _on_selected_device_changed_in_live(self):
         self._update_selected_child()
 
@@ -340,35 +320,34 @@ class ChainNode(ModelNode):
         self._child_state_slots.disconnect()
         self._selected_drum_pad_slots.disconnect()
         for device in map(second, self.children):
-            self._child_name_slots.register_slot(device, self._update_children, 'name')
+            self._child_name_slots.register_slot(device, self._update_children, u'name')
             if isinstance(device, Live.DrumPad.DrumPad):
-                self._child_state_slots.register_slot(device, partial(self._update_state, device), 'mute')
+                self._child_state_slots.register_slot(device, partial(self._update_state, device), u'mute')
             elif isinstance(device, Live.Device.Device):
                 if device.can_have_drum_pads:
-                    self._selected_drum_pad_slots.register_slot(device.view, self._on_selected_drum_pad, 'selected_drum_pad')
+                    self._selected_drum_pad_slots.register_slot(device.view, self._on_selected_drum_pad, u'selected_drum_pad')
                 if device.parameters:
-                    self._child_state_slots.register_slot(device.parameters[0], partial(self._update_state, device), 'value')
+                    self._child_state_slots.register_slot(device.parameters[0], partial(self._update_state, device), u'value')
 
 
 class TrackNode(ChainNode):
     if not consts.PROTO_SONG_IS_ROOT:
 
         def get_parent(self):
-            return
+            return None
 
 
 class SongNode(ModelNode):
 
-    def __init__(self, session_ring=None, *a, **k):
+    def __init__(self, session_ring = None, *a, **k):
         super(SongNode, self).__init__(*a, **k)
         assert session_ring is not None
         self._session_ring = session_ring
-        self.register_slot(self._object, self._update_children, 'visible_tracks')
-        self.register_slot(self._object, self._update_children, 'return_tracks')
-        self.register_slot(self._object.view, self._update_selected_child, 'selected_track')
+        self.register_slot(self._object, self._update_children, u'visible_tracks')
+        self.register_slot(self._object, self._update_children, u'return_tracks')
+        self.register_slot(self._object.view, self._update_selected_child, u'selected_track')
         self._update_children()
         self._update_selected_child()
-        return
 
     def _get_selected_child_from_model(self):
         return self._object.view.selected_track
@@ -384,9 +363,9 @@ class SongNode(ModelNode):
 
 class SimpleDeviceNode(ModelNode):
 
-    def __init__(self, device_bank_registry=None, banking_info=None, *a, **k):
+    def __init__(self, device_bank_registry = None, banking_info = None, *a, **k):
         super(SimpleDeviceNode, self).__init__(*a, **k)
-        assert device_bank_registry, 'Need a device bank registry.'
+        assert device_bank_registry, u'Need a device bank registry.'
         self._mute_next_update = False
         self._device_bank_registry = device_bank_registry
         self._banking_info = banking_info
@@ -395,28 +374,24 @@ class SimpleDeviceNode(ModelNode):
         self._update_children()
         self._update_selected_child()
 
-    @listens('device_bank')
+    @listens(u'device_bank')
     def _on_device_bank_changed(self, device, bank):
         self._update_selected_child()
 
-    @listens('parameters')
+    @listens(u'parameters')
     def _on_device_parameters_changed(self):
         if self._children != self._get_children_from_model():
             self._update_children()
             selected_child = len(self._children) - 1 if self._children else None
             self.set_selected_child(selected_child)
-        return
 
     def _get_selected_child_from_model(self):
         if self.children:
             return self._device_bank_registry.get_device_bank(self.object)
-        else:
-            return
 
     def _set_selected_child_in_model(self, value):
         if value != None:
             self._device_bank_registry.set_device_bank(self.object, value)
-        return
 
     def _get_children_from_model(self):
         names = self._banking_info.device_bank_names(device=self.object)
@@ -431,8 +406,8 @@ class RackNode(ModelNode):
 
     def __init__(self, *a, **k):
         super(RackNode, self).__init__(*a, **k)
-        self.register_slot(self._object, self._update_children, 'chains')
-        self.register_slot(self._object.view, self._update_selected_child, 'selected_chain')
+        self.register_slot(self._object, self._update_children, u'chains')
+        self.register_slot(self._object.view, self._update_selected_child, u'selected_chain')
         self._update_children()
         self._update_selected_child()
 

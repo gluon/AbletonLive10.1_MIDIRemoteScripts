@@ -1,16 +1,11 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/TrackArmState.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/TrackArmState.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .SubjectSlot import Subject, subject_slot, SlotManager
 
 class TrackArmState(Subject, SlotManager):
-    __subject_events__ = (u'arm', )
+    __subject_events__ = (u'arm',)
 
-    def __init__(self, track=None, *a, **k):
+    def __init__(self, track = None, *a, **k):
         super(TrackArmState, self).__init__(*a, **k)
         self.set_track(track)
 
@@ -20,13 +15,12 @@ class TrackArmState(Subject, SlotManager):
         subject = track if track and track.can_be_armed else None
         self._on_explicit_arm_changed.subject = subject
         self._on_implicit_arm_changed.subject = subject
-        return
 
-    @subject_slot('arm')
+    @subject_slot(u'arm')
     def _on_explicit_arm_changed(self):
         self._on_arm_changed()
 
-    @subject_slot('implicit_arm')
+    @subject_slot(u'implicit_arm')
     def _on_implicit_arm_changed(self):
         self._on_arm_changed()
 

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/ConfigurableButtonElement.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/ConfigurableButtonElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Skin import SkinColorMissingError
 from _Framework.ButtonElement import ButtonElement, ON_VALUE, OFF_VALUE
@@ -12,21 +7,20 @@ class ConfigurableButtonElement(ButtonElement):
     u"""
     Special button class (adapted from Push script for LP Pro)
     that can be configured with custom on- and off-values.
-
+    
     A ConfigurableButtonElement can have states other than True or
     False, which can be defined by setting the 'states' property.
     Thus 'set_light' can take any state or skin color.
     """
-    default_states = {True: 'DefaultButton.On', 
-       False: 'DefaultButton.Disabled'}
+    default_states = {True: u'DefaultButton.On',
+     False: u'DefaultButton.Disabled'}
     send_depends_on_forwarding = False
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, skin=None, default_states=None, *a, **k):
+    def __init__(self, is_momentary, msg_type, channel, identifier, skin = None, default_states = None, *a, **k):
         super(ConfigurableButtonElement, self).__init__(is_momentary, msg_type, channel, identifier, skin=skin, **k)
         if default_states is not None:
             self.default_states = default_states
         self.states = dict(self.default_states)
-        return
 
     @property
     def _on_value(self):
@@ -51,7 +45,7 @@ class ConfigurableButtonElement(ButtonElement):
             return value
 
     def reset(self):
-        self.set_light('DefaultButton.Disabled')
+        self.set_light(u'DefaultButton.Disabled')
         self.reset_state()
 
     def reset_state(self):

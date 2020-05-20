@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/BackgroundComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/BackgroundComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.SubjectSlot import SubjectSlotError
 from _Framework.BackgroundComponent import BackgroundComponent as BackgroundComponentBase
@@ -20,7 +15,6 @@ class BackgroundComponent(BackgroundComponentBase):
                 self.disconnect_disconnectable(slot)
             if name in self._control_map:
                 del self._control_map[name]
-        return
 
 
 class ModifierBackgroundComponent(BackgroundComponentBase):
@@ -32,7 +26,7 @@ class ModifierBackgroundComponent(BackgroundComponentBase):
         super(ModifierBackgroundComponent, self)._clear_control(name, control)
         if control:
             try:
-                self._control_slots[name] = self.register_slot(control, lambda *a, **k: self._on_value_listener(control, *a, **k), 'value')
+                self._control_slots[name] = self.register_slot(control, lambda *a, **k: self._on_value_listener(control, *a, **k), u'value')
             except SubjectSlotError:
                 pass
 

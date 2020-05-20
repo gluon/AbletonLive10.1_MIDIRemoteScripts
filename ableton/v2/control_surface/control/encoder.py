@@ -1,16 +1,10 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/encoder.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/encoder.py
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from ...base import clamp, const, lazy_attribute, task, sign
 from .control import Connectable, InputControl, SendValueMixin, control_event
 logger = logging.getLogger(__name__)
-__all__ = (u'EncoderControl', u'StepEncoderControl', u'ListValueEncoderControl', u'ListIndexEncoderControl',
-           u'ValueStepper')
+__all__ = (u'EncoderControl', u'StepEncoderControl', u'ListValueEncoderControl', u'ListIndexEncoderControl', u'ValueStepper')
 
 class EncoderControl(InputControl):
     u"""
@@ -19,15 +13,15 @@ class EncoderControl(InputControl):
     :class:`~ableton.v2.control_surface.elements.encoder.TouchEncoderElement`.
     """
     TOUCH_TIME = 0.5
-    touched = control_event('touched')
-    released = control_event('released')
+    touched = control_event(u'touched')
+    released = control_event(u'released')
 
     class State(InputControl.State, Connectable):
         u"""
         State-full representation of the Control.
         """
 
-        def __init__(self, control=None, manager=None, touch_event_delay=0, *a, **k):
+        def __init__(self, control = None, manager = None, touch_event_delay = 0, *a, **k):
             assert control is not None
             assert manager is not None
             super(EncoderControl.State, self).__init__(control=control, manager=manager, *a, **k)
@@ -35,8 +29,7 @@ class EncoderControl(InputControl):
             self._touch_value_slot = None
             self._timer_based = False
             self._touch_event_delay = touch_event_delay
-            self._touch_value_slot = self.register_slot(None, self._on_touch_value, 'value')
-            return
+            self._touch_value_slot = self.register_slot(None, self._on_touch_value, u'value')
 
         @property
         def is_touched(self):
@@ -56,12 +49,11 @@ class EncoderControl(InputControl):
                 self._kill_all_tasks()
             super(EncoderControl.State, self).set_control_element(control_element)
             self._touch_value_slot.subject = self._get_touch_element(control_element) if control_element is not None else None
-            if control_element and hasattr(control_element, 'is_pressed') and control_element.is_pressed():
+            if control_element and hasattr(control_element, u'is_pressed') and control_element.is_pressed():
                 self._touch_encoder()
-            return
 
         def _get_touch_element(self, control_element):
-            return getattr(control_element, 'touch_element', None)
+            return getattr(control_element, u'touch_element', None)
 
         def _lost_touch_element(self, control_element):
             return control_element is not None and self._get_touch_element(control_element) is None
@@ -70,20 +62,20 @@ class EncoderControl(InputControl):
             is_touched = self._is_touched
             self._is_touched = True
             if not is_touched:
-                self._call_listener('touched')
+                self._call_listener(u'touched')
 
         def _release_encoder(self):
             is_touched = self._is_touched
             self._is_touched = False
             if is_touched:
-                self._call_listener('released')
+                self._call_listener(u'released')
 
         def _event_listener_required(self):
             return True
 
         def _notify_encoder_value(self, value, *a, **k):
             normalized_value = self._control_element.normalize_value(value)
-            self._call_listener('value', normalized_value)
+            self._call_listener(u'value', normalized_value)
             self.connected_property_value = normalized_value
 
         def _on_value(self, value, *a, **k):
@@ -139,7 +131,7 @@ class ValueStepper(object):
     on its way.
     """
 
-    def __init__(self, num_steps=10, *a, **k):
+    def __init__(self, num_steps = 10, *a, **k):
         super(ValueStepper, self).__init__(*a, **k)
         self._step = 0.0
         self._num_steps = float(num_steps)
@@ -169,7 +161,7 @@ class ValueStepper(object):
         return result
 
     def reset(self):
-        u""" Resets the Value Steppers state, as if it had never been advanced. """
+        u""" Resets the Value Stepper's state, as if it had never been advanced. """
         self._step = 0.0
 
 
@@ -182,14 +174,14 @@ class StepEncoderControl(EncoderControl):
 
     class State(EncoderControl.State):
 
-        def __init__(self, num_steps=10, *a, **k):
+        def __init__(self, num_steps = 10, *a, **k):
             super(StepEncoderControl.State, self).__init__(*a, **k)
             self._stepper = ValueStepper(num_steps=num_steps)
 
         def _notify_encoder_value(self, value, *a, **k):
             steps = self._stepper.advance(self._control_element.normalize_value(value))
             if steps != 0:
-                self._call_listener('value', steps)
+                self._call_listener(u'value', steps)
                 self._on_stepped(steps)
 
         def _on_stepped(self, steps):
@@ -224,9 +216,8 @@ class ListValueEncoderControl(StepEncoderControl):
         def __init__(self, *a, **k):
             super(ListValueEncoderControl.State, self).__init__(*a, **k)
             self._list_values_getter = None
-            return
 
-        def connect_list_property(self, subject, list_property_name=None, current_value_property_name=None):
+        def connect_list_property(self, subject, list_property_name = None, current_value_property_name = None):
             u"""
             Connect a list with the Control. The subject is the host of the list, where
             the list needs to be listenable and accessible with the name
@@ -236,7 +227,7 @@ class ListValueEncoderControl(StepEncoderControl):
             self.connect_property(subject, current_value_property_name)
             self._list_values_getter = lambda : getattr(subject, list_property_name)
 
-        def connect_static_list(self, subject, current_value_property_name=None, list_values=None):
+        def connect_static_list(self, subject, current_value_property_name = None, list_values = None):
             u"""
             Connect a list with the Control. The subject is the host of the currently
             selected item and should be listenable and accessible with then name
@@ -249,7 +240,6 @@ class ListValueEncoderControl(StepEncoderControl):
         def disconnect_property(self):
             super(ListValueEncoderControl.State, self).disconnect_property()
             self._list_values_getter = None
-            return
 
         def _on_stepped(self, steps):
             if self._list_values_getter is not None:
@@ -257,12 +247,11 @@ class ListValueEncoderControl(StepEncoderControl):
                 try:
                     current_index = list_values.index(self.connected_property_value)
                 except ValueError:
-                    logger.warning('Encoder was turned, but current value is not in list!')
+                    logger.warning(u'Encoder was turned, but current value is not in list!')
                     current_index = 0
 
                 new_index = clamp(current_index + steps, 0, len(list_values) - 1)
                 self.connected_property_value = list_values[new_index]
-            return
 
 
 class ListIndexEncoderControl(StepEncoderControl):
@@ -279,9 +268,8 @@ class ListIndexEncoderControl(StepEncoderControl):
         def __init__(self, *a, **k):
             super(ListIndexEncoderControl.State, self).__init__(*a, **k)
             self._max_index = None
-            return
 
-        def connect_list_property(self, subject, current_index_property_name=None, max_index=None):
+        def connect_list_property(self, subject, current_index_property_name = None, max_index = None):
             u"""
             Connect a list with the Control. The subject is the host of the index
             property, which needs to be listenable and accessible with the name
@@ -294,13 +282,11 @@ class ListIndexEncoderControl(StepEncoderControl):
         def disconnect_property(self):
             super(ListIndexEncoderControl.State, self).disconnect_property()
             self._max_index = None
-            return
 
         def _on_stepped(self, steps):
             if self._max_index is not None:
                 new_index = clamp(self.connected_property_value + steps, 0, self._max_index)
                 self.connected_property_value = new_index
-            return
 
 
 class SendValueEncoderControl(EncoderControl):

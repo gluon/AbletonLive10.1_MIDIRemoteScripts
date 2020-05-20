@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/MixerOrDeviceModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/MixerOrDeviceModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from _Framework.ButtonElement import ButtonElement
@@ -33,7 +28,7 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
         self._page_displays = None
         self._device_dummy_source = DisplayDataSource()
         self._parameter_source = DisplayDataSource()
-        self._device_dummy_source.set_display_string('Mixer')
+        self._device_dummy_source.set_display_string(u'Mixer')
         self._clean_value_display_in = -1
         self._must_update_encoder_display = False
         self._register_timer_callback(self._on_timer)
@@ -42,7 +37,6 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
             encoder.add_value_listener(self._parameter_value, identify_sender)
 
         self.set_mode(0)
-        return
 
     def disconnect(self):
         self._unregister_timer_callback(self._on_timer)
@@ -57,7 +51,6 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
         self._device_dummy_source = None
         self._parameter_source = None
         ModeSelectorComponent.disconnect(self)
-        return
 
     def set_displays(self, encoders_display, value_display, device_display, page_displays):
         assert isinstance(encoders_display, PhysicalDisplayElement)
@@ -71,7 +64,6 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
         if self._value_display != None:
             self._value_display.segment(0).set_data_source(self._parameter_source)
         self.update()
-        return
 
     def set_peek_button(self, button):
         assert button == None or isinstance(button, ButtonElement)
@@ -82,7 +74,6 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
             if self._peek_button != None:
                 self._peek_button.add_value_listener(self._peek_value)
             self.update()
-        return
 
     def number_of_modes(self):
         return 2
@@ -127,26 +118,24 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
                         self._page_displays[index].update()
 
             else:
-                print('Invalid mode index')
+                print(u'Invalid mode index')
                 assert False
-        return
 
     def _parameter_value(self, value, control):
         assert control in self._encoders
         if self.is_enabled():
             parameter = control.mapped_parameter()
             if parameter != None:
-                self._parameter_source.set_display_string(parameter.name + ': ' + parameter.__str__())
+                self._parameter_source.set_display_string(parameter.name + u': ' + parameter.__str__())
             else:
-                self._parameter_source.set_display_string('<unmapped>')
+                self._parameter_source.set_display_string(u'<unmapped>')
             self._clean_value_display_in = 20
-        return
 
     def _on_timer(self):
         if self._clean_value_display_in > 0:
             self._clean_value_display_in -= 1
             if self._clean_value_display_in == 0:
-                self._parameter_source.set_display_string('')
+                self._parameter_source.set_display_string(u'')
                 self._clean_value_display_in = -1
         if self._must_update_encoder_display:
             self._encoders_display.update()
@@ -164,4 +153,3 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
 
         if peek_changed and self._encoders_display != None:
             self._must_update_encoder_display = True
-        return

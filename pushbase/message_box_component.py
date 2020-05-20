@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/message_box_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/message_box_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import re
 from itertools import izip_longest
@@ -13,12 +8,12 @@ from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.components import BackgroundComponent
 from .consts import DISPLAY_LENGTH, MessageBoxText
-FORMAT_SPECIFIER_WITH_MARKUP_PATTERN = re.compile('[%](len=([0-9]+),)?([^%]*?[diouxXeEfFgGcrs])')
+FORMAT_SPECIFIER_WITH_MARKUP_PATTERN = re.compile(u'[%](len=([0-9]+),)?([^%]*?[diouxXeEfFgGcrs])')
 
 def strip_restriction_markup_and_format(text_or_text_spec):
     if isinstance(text_or_text_spec, tuple):
         format_string = text_or_text_spec[0]
-        stripped_format_string = re.sub(FORMAT_SPECIFIER_WITH_MARKUP_PATTERN, '%\\g<3>', format_string)
+        stripped_format_string = re.sub(FORMAT_SPECIFIER_WITH_MARKUP_PATTERN, u'%\\g<3>', format_string)
         arguments = text_or_text_spec[1:]
         return stripped_format_string % arguments
     else:
@@ -45,16 +40,15 @@ class MessageBoxComponent(BackgroundComponent):
     u"""
     Component showing a temporary message in the display
     """
-    __events__ = (u'cancel', )
+    __events__ = (u'cancel',)
     num_lines = 4
 
     def __init__(self, *a, **k):
         super(MessageBoxComponent, self).__init__(*a, **k)
         self._current_text = None
         self._can_cancel = False
-        self.data_sources = map(DisplayDataSource, (u'', ) * self.num_lines)
+        self.data_sources = map(DisplayDataSource, (u'',) * self.num_lines)
         self._notification_display = None
-        return
 
     def _set_display_line(self, n, display_line):
         if display_line:
@@ -82,21 +76,19 @@ class MessageBoxComponent(BackgroundComponent):
             if button is not None:
                 button.reset()
             if self._can_cancel and button:
-                button.set_light('MessageBox.Cancel')
-        return
+                button.set_light(u'MessageBox.Cancel')
 
     def _update_display(self):
         if self._current_text != None:
-            lines = self._current_text.split('\n')
+            lines = self._current_text.split(u'\n')
             for source_line, line in izip_longest(self.data_sources, lines):
                 if source_line:
-                    source_line.set_display_string(line or '')
+                    source_line.set_display_string(line or u'')
 
             if self._can_cancel:
-                self.data_sources[(-1)].set_display_string(('[  Ok  ]').rjust(DISPLAY_LENGTH - 1))
-        return
+                self.data_sources[-1].set_display_string(u'[  Ok  ]'.rjust(DISPLAY_LENGTH - 1))
 
-    @listens('value')
+    @listens(u'value')
     def _on_cancel_button_value(self, value):
         if self.is_enabled() and self._can_cancel and value:
             self.notify_cancel()
@@ -142,9 +134,8 @@ class DialogComponent(Component):
         self._next_message = None
         self._on_open_dialog_count.subject = self.application
         self._on_message_cancel.subject = self._message_box
-        return
 
-    message_box_layer = forward_property('_message_box')('layer')
+    message_box_layer = forward_property(u'_message_box')(u'layer')
 
     def expect_dialog(self, message):
         u"""
@@ -156,13 +147,12 @@ class DialogComponent(Component):
         self._next_message = message
         self._update_dialog()
 
-    @listens('open_dialog_count')
+    @listens(u'open_dialog_count')
     def _on_open_dialog_count(self):
         self._update_dialog(open_dialog_changed=True)
         self._next_message = None
-        return
 
-    @listens('cancel')
+    @listens(u'cancel')
     def _on_message_cancel(self):
         self._next_message = None
         try:
@@ -171,15 +161,13 @@ class DialogComponent(Component):
             pass
 
         self._update_dialog()
-        return
 
-    def _update_dialog(self, open_dialog_changed=False):
+    def _update_dialog(self, open_dialog_changed = False):
         message = self._next_message or MessageBoxText.LIVE_DIALOG
         can_cancel = self._next_message != None
         self._message_box.text = message
         self._message_box.can_cancel = can_cancel
         self._message_box.set_enabled(self.application.open_dialog_count > 0 or not open_dialog_changed and self._next_message)
-        return
 
 
 class InfoComponent(BackgroundComponent):
@@ -187,7 +175,7 @@ class InfoComponent(BackgroundComponent):
     Component that will show an info text and grab all components that should be unusable.
     """
 
-    def __init__(self, info_text='', *a, **k):
+    def __init__(self, info_text = u'', *a, **k):
         super(InfoComponent, self).__init__(*a, **k)
         self._data_source = DisplayDataSource()
         self._data_source.set_display_string(info_text)

@@ -1,16 +1,11 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/device_parameter_bank.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/device_parameter_bank.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ..base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, clamp
 from .banking_util import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, all_parameters
 
 class DeviceParameterBank(EventObject):
 
-    def __init__(self, size=None, device=None, banking_info=None, *a, **k):
+    def __init__(self, size = None, device = None, banking_info = None, *a, **k):
         assert size is not None
         super(DeviceParameterBank, self).__init__(*a, **k)
         self._size = size
@@ -20,7 +15,6 @@ class DeviceParameterBank(EventObject):
         self._parameters = None
         self._on_parameters_changed.subject = device
         self._update_parameters()
-        return
 
     def bank_count(self):
         return self._banking_info.device_bank_count(self._device, bank_size=self._size)
@@ -42,7 +36,7 @@ class DeviceParameterBank(EventObject):
 
     index = property(_get_index, _set_index)
 
-    @listens('parameters')
+    @listens(u'parameters')
     def _on_parameters_changed(self):
         self._index = self._adjust_index(self._index)
         self._update_parameters()
@@ -58,7 +52,7 @@ class DeviceParameterBank(EventObject):
     def name(self):
         if liveobj_valid(self._device):
             return self._calc_name()
-        return ''
+        return u''
 
     @property
     def device(self):
@@ -80,13 +74,13 @@ class DeviceParameterBank(EventObject):
 
 class DescribedDeviceParameterBank(DeviceParameterBank):
 
-    def __init__(self, device=None, banking_info=None, *a, **k):
+    def __init__(self, device = None, banking_info = None, *a, **k):
         self._definition = banking_info.device_bank_definition(device)
         self._dynamic_slots = []
         super(DescribedDeviceParameterBank, self).__init__(device=device, banking_info=banking_info, *a, **k)
         self._update_parameters()
 
-    @listens_group('content')
+    @listens_group(u'content')
     def _on_slot_content_changed(self, _slot):
         self._update_parameters()
 
@@ -101,13 +95,12 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
             slot.set_parameter_host(None)
             self.unregister_disconnectable(slot)
 
-        self._dynamic_slots = filter(lambda s: hasattr(s, 'notify_content'), self._content_slots())
+        self._dynamic_slots = filter(lambda s: hasattr(s, u'notify_content'), self._content_slots())
         for slot in self._dynamic_slots:
             self.register_disconnectable(slot)
             slot.set_parameter_host(self.device)
 
         self._on_slot_content_changed.replace_subjects(self._dynamic_slots)
-        return
 
     def _calc_name(self):
         return self._definition.key_by_index(self.index)
@@ -115,10 +108,7 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
     def _collect_parameters(self):
         parameters = self._device.parameters
         bank_slots = self._current_parameter_slots()
-        return [ (
-         find_if(lambda p: p.original_name == str(slot_definition), parameters), getattr(slot_definition, 'display_name', None))
-         for slot_definition in bank_slots
-               ]
+        return [ (find_if(lambda p: p.original_name == str(slot_definition), parameters), getattr(slot_definition, u'display_name', None)) for slot_definition in bank_slots ]
 
     def _update_parameters(self):
         self._setup_dynamic_slots()
@@ -129,7 +119,7 @@ class MaxDeviceParameterBank(DeviceParameterBank):
 
     def __init__(self, *a, **k):
         super(MaxDeviceParameterBank, self).__init__(*a, **k)
-        assert hasattr(self._device, 'get_bank_count')
+        assert hasattr(self._device, u'get_bank_count')
         self._on_bank_parameters_changed.subject = self.device
 
     def _calc_name(self):
@@ -141,19 +131,18 @@ class MaxDeviceParameterBank(DeviceParameterBank):
             return provided_name
         return super(MaxDeviceParameterBank, self)._calc_name()
 
-    @listens('bank_parameters_changed')
+    @listens(u'bank_parameters_changed')
     def _on_bank_parameters_changed(self):
         self._update_parameters()
 
     def _collect_parameters(self):
         if self.bank_count() == 0:
             return [(None, None)] * self._size
-        else:
-            parameters = self._device.parameters
-            mx_index = self.index - int(self._banking_info.has_main_bank(self._device))
-            indices = self.device.get_bank_parameters(mx_index)
-            parameters = [ parameters[index] if index >= 0 else None for index in indices ]
-            return [ (param, None) for param in parameters ]
+        parameters = self._device.parameters
+        mx_index = self.index - int(self._banking_info.has_main_bank(self._device))
+        indices = self.device.get_bank_parameters(mx_index)
+        parameters = [ (parameters[index] if index >= 0 else None) for index in indices ]
+        return [ (param, None) for param in parameters ]
 
 
 def create_device_bank(device, banking_info):

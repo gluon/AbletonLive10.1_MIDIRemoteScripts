@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/step_duplicator.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/step_duplicator.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import liveobj_valid, nop
@@ -55,7 +50,6 @@ class StepDuplicatorComponent(Component, Messenger):
         self._clip = None
         self._source_step = None
         self._notification_reference = partial(nop, None)
-        return
 
     @property
     def is_duplicating(self):
@@ -65,7 +59,7 @@ class StepDuplicatorComponent(Component, Messenger):
         self._cancel_duplicate()
         self._clip = clip
 
-    def add_step_with_pitch(self, note, step_start, step_end, nudge_offset=0, is_page=False):
+    def add_step_with_pitch(self, note, step_start, step_end, nudge_offset = 0, is_page = False):
         if self.is_enabled() and self.is_duplicating:
             current_step = (note,
              step_start,
@@ -76,9 +70,8 @@ class StepDuplicatorComponent(Component, Messenger):
                 self._duplicate_to(current_step)
             else:
                 self._duplicate_from(current_step)
-        return
 
-    def add_step(self, step_start, step_end, nudge_offset=0, is_page=False):
+    def add_step(self, step_start, step_end, nudge_offset = 0, is_page = False):
         self.add_step_with_pitch(ALL_NOTES, step_start, step_end, nudge_offset, is_page)
 
     def _duplicate_from(self, source_step):
@@ -108,13 +101,11 @@ class StepDuplicatorComponent(Component, Messenger):
             set_loop(self._clip, loop_start, loop_end)
         self._notification_reference = self.show_notification(message)
         self._source_step = None
-        return
 
     def _cancel_duplicate(self):
         self._source_step = None
         if self._notification_reference() is not None:
             self._notification_reference().hide()
-        return
 
     @button.released
     def button(self, _):

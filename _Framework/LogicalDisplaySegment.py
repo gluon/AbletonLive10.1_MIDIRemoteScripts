@@ -1,18 +1,13 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/LogicalDisplaySegment.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/LogicalDisplaySegment.py
 from __future__ import absolute_import, print_function, unicode_literals
 
 class LogicalDisplaySegment(object):
     u"""
     Class representing a specific segment of a display on the controller
     """
-    separator = ''
+    separator = u''
 
-    def __init__(self, width=None, update_callback=None, *a, **k):
+    def __init__(self, width = None, update_callback = None, *a, **k):
         super(LogicalDisplaySegment, self).__init__(*a, **k)
         assert width is not None
         assert callable(update_callback)
@@ -21,7 +16,6 @@ class LogicalDisplaySegment(object):
         self._position_identifier = ()
         self._data_source = None
         self._display_string = None
-        return
 
     def disconnect(self):
         self._update_callback = None
@@ -29,7 +23,6 @@ class LogicalDisplaySegment(object):
         if self._data_source != None:
             self._data_source.set_update_callback(None)
             self._data_source = None
-        return
 
     def set_data_source(self, data_source):
         if self._data_source != None:
@@ -38,7 +31,6 @@ class LogicalDisplaySegment(object):
         if self._data_source != None:
             self._data_source.set_update_callback(self.update)
         self._display_string = self._get_display_string()
-        return
 
     def data_source(self):
         return self._data_source
@@ -64,8 +56,7 @@ class LogicalDisplaySegment(object):
             assert width >= 0
             return self._data_source.adjust_string(width) + separator
         else:
-            return ' ' * self._width
-            return
+            return u' ' * self._width
 
     def display_string(self):
         if self._display_string is None:

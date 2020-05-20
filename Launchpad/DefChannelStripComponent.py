@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/DefChannelStripComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/DefChannelStripComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ChannelStripComponent import ChannelStripComponent
@@ -20,7 +15,6 @@ class DefChannelStripComponent(ChannelStripComponent):
         self._default_send1_button = None
         self._default_send2_button = None
         self._invert_mute_feedback = True
-        return
 
     def disconnect(self):
         u""" releasing references and removing listeners"""
@@ -49,7 +43,6 @@ class DefChannelStripComponent(ChannelStripComponent):
             self._default_send2_button.remove_value_listener(self._default_send2_value)
             self._default_send2_button = None
         ChannelStripComponent.disconnect(self)
-        return
 
     def set_track(self, track):
         assert track == None or isinstance(track, Live.Track.Track)
@@ -69,7 +62,6 @@ class DefChannelStripComponent(ChannelStripComponent):
             ChannelStripComponent.set_track(self, track)
         else:
             self.update()
-        return
 
     def set_default_buttons(self, volume, panning, send1, send2):
         assert volume == None or isinstance(volume, ConfigurableButtonElement)
@@ -101,7 +93,6 @@ class DefChannelStripComponent(ChannelStripComponent):
             if self._default_send2_button != None:
                 self._default_send2_button.add_value_listener(self._default_send2_value)
         self.update()
-        return
 
     def set_send_controls(self, controls):
         assert controls == None or isinstance(controls, tuple)
@@ -113,7 +104,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                         control.reset()
 
             self.update()
-        return
 
     def update(self):
         super(DefChannelStripComponent, self).update()
@@ -165,47 +155,41 @@ class DefChannelStripComponent(ChannelStripComponent):
                             if send_control != None:
                                 send_control.reset()
 
-        return
-
     def _default_volume_value(self, value):
-        if not self._default_volume_button != None:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._track != None and (value != 0 or not self._default_volume_button.is_momentary()):
+        assert self._default_volume_button != None
+        assert value in range(128)
+        if self.is_enabled() and self._track != None:
+            if value != 0 or not self._default_volume_button.is_momentary():
                 volume = self._track.mixer_device.volume
                 if volume.is_enabled:
                     volume.value = volume.default_value
-        return
 
     def _default_panning_value(self, value):
-        if not self._default_panning_button != None:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._track != None and (value != 0 or not self._default_panning_button.is_momentary()):
+        assert self._default_panning_button != None
+        assert value in range(128)
+        if self.is_enabled() and self._track != None:
+            if value != 0 or not self._default_panning_button.is_momentary():
                 panning = self._track.mixer_device.panning
                 if panning.is_enabled:
                     panning.value = panning.default_value
-        return
 
     def _default_send1_value(self, value):
-        if not self._default_send1_button != None:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._track != None and len(self._track.mixer_device.sends) > 0 and (value != 0 or not self._default_send1_button.is_momentary()):
+        assert self._default_send1_button != None
+        assert value in range(128)
+        if self.is_enabled() and self._track != None and len(self._track.mixer_device.sends) > 0:
+            if value != 0 or not self._default_send1_button.is_momentary():
                 send1 = self._track.mixer_device.sends[0]
                 if send1.is_enabled:
                     send1.value = send1.default_value
-        return
 
     def _default_send2_value(self, value):
-        if not self._default_send2_button != None:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._track != None and len(self._track.mixer_device.sends) > 1 and (value != 0 or not self._default_send2_button.is_momentary()):
+        assert self._default_send2_button != None
+        assert value in range(128)
+        if self.is_enabled() and self._track != None and len(self._track.mixer_device.sends) > 1:
+            if value != 0 or not self._default_send2_button.is_momentary():
                 send2 = self._track.mixer_device.sends[1]
                 if send2.is_enabled:
                     send2.value = send2.default_value
-        return
 
     def _on_mute_changed(self):
         if self.is_enabled() and self._mute_button != None:
@@ -216,7 +200,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                     self._mute_button.turn_off()
             else:
                 self._mute_button.send_value(0)
-        return
 
     def _on_solo_changed(self):
         if self.is_enabled() and self._solo_button != None:
@@ -227,7 +210,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                     self._solo_button.turn_off()
             else:
                 self._solo_button.send_value(0)
-        return
 
     def _on_arm_changed(self):
         if self.is_enabled() and self._arm_button != None:
@@ -238,7 +220,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                     self._arm_button.turn_off()
             else:
                 self._arm_button.send_value(0)
-        return
 
     def _on_volume_changed(self):
         assert self._track != None
@@ -248,7 +229,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                 self._default_volume_button.turn_on()
             else:
                 self._default_volume_button.turn_off()
-        return
 
     def _on_panning_changed(self):
         assert self._track != None
@@ -258,7 +238,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                 self._default_panning_button.turn_on()
             else:
                 self._default_panning_button.turn_off()
-        return
 
     def _on_send1_changed(self):
         assert self._track != None
@@ -270,7 +249,6 @@ class DefChannelStripComponent(ChannelStripComponent):
                 self._default_send1_button.turn_on()
             else:
                 self._default_send1_button.turn_off()
-        return
 
     def _on_send2_changed(self):
         assert self._track != None
@@ -282,4 +260,3 @@ class DefChannelStripComponent(ChannelStripComponent):
                 self._default_send2_button.turn_on()
             else:
                 self._default_send2_button.turn_off()
-        return

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_MK2/ControlElementUtils.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_MK2/ControlElementUtils.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Dependency import depends
 from _Framework.Resource import PrioritizedResource
@@ -12,7 +7,7 @@ from _Framework.ComboElement import ComboElement, MultiElement as MultiElementBa
 from _Framework.ButtonElement import ButtonElement
 
 @depends(skin=None)
-def make_button(identifier, channel, name, msg_type=MIDI_NOTE_TYPE, skin=None, is_modifier=False):
+def make_button(identifier, channel, name, msg_type = MIDI_NOTE_TYPE, skin = None, is_modifier = False):
     return ButtonElement(True, msg_type, channel, identifier, skin=skin, name=name, resource_type=PrioritizedResource if is_modifier else None)
 
 
@@ -36,7 +31,7 @@ class MultiElement(MultiElementBase):
 
 class FilteringMultiElement(MultiElement):
 
-    def __init__(self, controls, feedback_channels=None, **k):
+    def __init__(self, controls, feedback_channels = None, **k):
         super(MultiElement, self).__init__(*controls, **k)
         self._feedback_channels = feedback_channels
 

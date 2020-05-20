@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/ShiftableZoomingComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/ShiftableZoomingComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonElement import ButtonElement
 from _Framework.SessionZoomingComponent import DeprecatedSessionZoomingComponent
@@ -16,9 +11,8 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
         self._stop_buttons = stop_buttons
         self._ignore_buttons = False
         for button in self._stop_buttons:
-            if not isinstance(button, ButtonElement):
-                raise AssertionError
-                button.add_value_listener(self._stop_value, identify_sender=True)
+            assert isinstance(button, ButtonElement)
+            button.add_value_listener(self._stop_value, identify_sender=True)
 
     def disconnect(self):
         super(ShiftableZoomingComponent, self).disconnect()
@@ -41,15 +35,12 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
                 for button in self._scene_bank_buttons:
                     button.turn_off()
 
-        return
-
     def _stop_value(self, value, sender):
-        if not value in range(128):
-            raise AssertionError
-            assert sender != None
-            if self.is_enabled() and not self._ignore_buttons and self._is_zoomed_out and (value != 0 or not sender.is_momentary()):
+        assert value in range(128)
+        assert sender != None
+        if self.is_enabled() and not self._ignore_buttons and self._is_zoomed_out:
+            if value != 0 or not sender.is_momentary():
                 self.song().stop_all_clips()
-        return
 
     def _zoom_value(self, value):
         assert self._zoom_button != None
@@ -67,7 +58,6 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
                 self._session.set_enabled(not self._is_zoomed_out)
                 if self._is_zoomed_out:
                     self.update()
-        return
 
     def _matrix_value(self, value, x, y, is_momentary):
         if not self._ignore_buttons:

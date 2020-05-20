@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_DirectLink/ShiftableSessionComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_DirectLink/ShiftableSessionComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
@@ -15,7 +10,6 @@ class ShiftableSessionComponent(SessionComponent):
         self._shift_button = None
         self._clip_slot_buttons = None
         SessionComponent.__init__(self, num_tracks, num_scenes)
-        return
 
     def disconnect(self):
         SessionComponent.disconnect(self)
@@ -23,7 +17,6 @@ class ShiftableSessionComponent(SessionComponent):
             self._shift_button.remove_value_listener(self._shift_value)
             self._shift_button = None
         self._clip_slot_buttons = None
-        return
 
     def set_shift_button(self, shift_button):
         assert shift_button == None or shift_button.is_momentary()
@@ -32,13 +25,11 @@ class ShiftableSessionComponent(SessionComponent):
         self._shift_button = shift_button
         if self._shift_button != None:
             self._shift_button.add_value_listener(self._shift_value)
-        return
 
     def set_clip_slot_buttons(self, buttons):
         assert buttons == None or isinstance(buttons, tuple) and len(buttons) == self._num_tracks
         self._clip_slot_buttons = buttons
         self._shift_value(0)
-        return
 
     def on_selected_track_changed(self):
         SessionComponent.on_selected_track_changed(self)
@@ -60,20 +51,16 @@ class ShiftableSessionComponent(SessionComponent):
             else:
                 slot.set_launch_button(self._clip_slot_buttons[index])
 
-        return
-
     def _bank_right_value(self, value):
-        if not value in range(128):
-            raise AssertionError
-            assert self._bank_right_button != None
-            if self.is_enabled() and (value is not 0 or not self._bank_right_button.is_momentary()):
+        assert value in range(128)
+        assert self._bank_right_button != None
+        if self.is_enabled():
+            if value is not 0 or not self._bank_right_button.is_momentary():
                 self.set_offsets(self._track_offset + self._num_tracks, self.scene_offset())
-        return
 
     def _bank_left_value(self, value):
-        if not isinstance(value, int):
-            raise AssertionError
-            assert self._bank_left_button != None
-            if self.is_enabled() and (value is not 0 or not self._bank_left_button.is_momentary()):
+        assert isinstance(value, int)
+        assert self._bank_left_button != None
+        if self.is_enabled():
+            if value is not 0 or not self._bank_left_button.is_momentary():
                 self.set_offsets(max(0, self._track_offset - self._num_tracks), self.scene_offset())
-        return

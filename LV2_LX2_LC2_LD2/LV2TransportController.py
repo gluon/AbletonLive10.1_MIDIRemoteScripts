@@ -1,19 +1,13 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/LV2TransportController.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/LV2TransportController.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .FaderfoxTransportController import FaderfoxTransportController
 from .consts import *
 
 class LV2TransportController(FaderfoxTransportController):
-    u"""Class representing the transport section of LV2 controllers"""
     __module__ = __name__
-    __filter_funcs__ = [
-     'update_display', 'log']
+    __doc__ = u'Class representing the transport section of LV2 controllers'
+    __filter_funcs__ = [u'update_display', u'log']
     __use_slot_led__ = True
 
     def __init__(self, parent):
@@ -54,7 +48,7 @@ class LV2TransportController(FaderfoxTransportController):
                 self.set_slot_launch_led(track_idx, clip_idx, False)
 
     def set_slot_launch_led(self, track_idx, clip_idx, playing):
-        self.log('set slot launch led %s %s %s' % (track_idx, clip_idx, playing))
+        self.log(u'set slot launch led %s %s %s' % (track_idx, clip_idx, playing))
         channel = AUX_CHANNEL_SETUP2
         note_no = 0
         if clip_idx > 7:
@@ -62,7 +56,7 @@ class LV2TransportController(FaderfoxTransportController):
         if clip_idx < 6:
             note_no = SLOT_LAUNCH_NOTES1[track_idx][clip_idx]
         else:
-            note_no = SLOT_LAUNCH_NOTES2[track_idx][(clip_idx - 6)]
+            note_no = SLOT_LAUNCH_NOTES2[track_idx][clip_idx - 6]
         if playing:
             self.parent.send_midi((NOTEON_STATUS + channel, note_no, 127))
         else:

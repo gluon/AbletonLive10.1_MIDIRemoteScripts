@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/chain_selection_component.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/chain_selection_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count
 from ableton.v2.base import listens, listens_group, liveobj_valid
@@ -16,7 +11,6 @@ class ChainProvider(ItemProvider):
     def __init__(self, *a, **k):
         super(ChainProvider, self).__init__(*a, **k)
         self._rack = None
-        return
 
     def set_rack(self, rack):
         if rack != self._rack:
@@ -26,7 +20,6 @@ class ChainProvider(ItemProvider):
             self.__on_selected_chain_changed.subject = rack_view
             self.notify_items()
             self.notify_selected_item()
-        return
 
     @property
     def items(self):
@@ -43,17 +36,15 @@ class ChainProvider(ItemProvider):
     def selected_item(self):
         if liveobj_valid(self._rack):
             return self._rack.view.selected_chain
-        else:
-            return
 
     def select_chain(self, chain):
         self._rack.view.selected_chain = chain
 
-    @listens('chains')
+    @listens(u'chains')
     def __on_chains_changed(self):
         self.notify_items()
 
-    @listens('selected_chain')
+    @listens(u'selected_chain')
     def __on_selected_chain_changed(self):
         self.notify_selected_item()
 
@@ -72,7 +63,7 @@ class ChainSelectionComponent(ItemListerComponent):
 
     def _color_for_button(self, button_index, is_selected):
         if is_selected:
-            return self.color_class_name + '.ItemSelected'
+            return self.color_class_name + u'.ItemSelected'
         else:
             chain_color = self._chain_parent.chains[button_index].color_index
             return IndexedColor.from_live_index(chain_color, DISPLAY_BUTTON_SHADE_LEVEL)
@@ -80,12 +71,11 @@ class ChainSelectionComponent(ItemListerComponent):
     def set_parent(self, parent):
         assert parent is None or parent.can_have_chains
         self._chain_parent.set_rack(parent)
-        return
 
-    @listens('items')
+    @listens(u'items')
     def __on_items_changed(self):
         self.__on_chain_color_index_changed.replace_subjects(self._chain_parent.chains, identifiers=count())
 
-    @listens_group('color_index')
+    @listens_group(u'color_index')
     def __on_chain_color_index_changed(self, chain_index):
         self.select_buttons[chain_index].color = self._color_for_button(chain_index, self._items_equal(self.items[chain_index], self._item_provider.selected_item))

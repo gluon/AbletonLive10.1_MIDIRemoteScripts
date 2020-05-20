@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AIRA_MX_1/NotifyingSessionComponent.py
-# Compiled at: 2019-05-15 02:17:38
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AIRA_MX_1/NotifyingSessionComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count, izip_longest
 from _Framework.SubjectSlot import subject_slot, subject_slot_group
@@ -23,8 +18,6 @@ class SpecialSceneComponent(SceneComponent):
     def scene_name(self):
         if self._scene and self._scene.name:
             return self._scene.name
-        else:
-            return
 
     def set_playing_value(self, value):
         self._playing_value = value
@@ -55,7 +48,6 @@ class SpecialSceneComponent(SceneComponent):
                 self._launch_button.turn_off()
             else:
                 self._launch_button.set_light(value_to_send)
-        return
 
     def _has_fired_slots(self):
         for track in self.song().tracks:
@@ -94,7 +86,7 @@ class NotifyingSessionComponent(SessionComponent):
         super(NotifyingSessionComponent, self)._enable_skinning()
         for scene_index in xrange(self._num_scenes):
             scene = self.scene(scene_index)
-            scene.set_playing_value('Session.ScenePlaying')
+            scene.set_playing_value(u'Session.ScenePlaying')
 
     def _reassign_tracks(self):
         tracks_to_use = self.song().tracks
@@ -103,12 +95,12 @@ class NotifyingSessionComponent(SessionComponent):
         self._update_stop_track_clip_buttons()
         self._update_scene_launch_buttons()
 
-    @subject_slot_group('fired_slot_index')
+    @subject_slot_group(u'fired_slot_index')
     def _on_fired_slot_index_changed(self, track_index):
         super(NotifyingSessionComponent, self)._on_fired_slot_index_changed(track_index)
         self._update_scene_launch_buttons()
 
-    @subject_slot_group('playing_slot_index')
+    @subject_slot_group(u'playing_slot_index')
     def _on_playing_slot_index_changed(self, track_index):
         super(NotifyingSessionComponent, self)._on_playing_slot_index_changed(track_index)
         self._update_scene_launch_buttons()
@@ -117,11 +109,11 @@ class NotifyingSessionComponent(SessionComponent):
         for scene in self._scenes:
             scene.update_light()
 
-    @subject_slot('offset')
+    @subject_slot(u'offset')
     def _on_offset_changed(self):
         if self._last_scene_offset != self._scene_offset:
             name = self._scenes[0].scene_name()
             if not name:
                 name = self._scene_offset + 1
-            self._show_msg_callback('Controlling Scene %s' % name)
+            self._show_msg_callback(u'Controlling Scene %s' % name)
             self._last_scene_offset = self._scene_offset

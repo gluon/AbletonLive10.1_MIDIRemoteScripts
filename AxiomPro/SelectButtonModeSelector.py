@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/SelectButtonModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/SelectButtonModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from _Framework.ButtonElement import ButtonElement
@@ -23,13 +18,11 @@ class SelectButtonModeSelector(ModeSelectorComponent):
         self._mode_display = None
         self._mode_index = 0
         self.update()
-        return
 
     def disconnect(self):
         self._mixer = None
         self._buttons = None
         self._mode_display = None
-        return
 
     def set_mode_display(self, display):
         assert isinstance(display, PhysicalDisplayElement)
@@ -63,25 +56,22 @@ class SelectButtonModeSelector(ModeSelectorComponent):
                     self._mixer.channel_strip(index).set_mute_button(None)
                     self._mixer.channel_strip(index).set_solo_button(self._buttons[index])
                 else:
-                    print('Invalid mode index')
+                    print(u'Invalid mode index')
                     assert False
-
-        return
 
     def _toggle_value(self, value):
         assert self._mode_toggle.is_momentary()
         ModeSelectorComponent._toggle_value(self, value)
         if value != 0 and self._mode_display is not None:
-            mode_name = ''
+            mode_name = u''
             if self._mode_index == 0:
-                mode_name = 'Select'
+                mode_name = u'Select'
             elif self._mode_index == 1:
-                mode_name = 'Arm'
+                mode_name = u'Arm'
             elif self._mode_index == 2:
-                mode_name = 'Mute'
+                mode_name = u'Mute'
             elif self._mode_index == 3:
-                mode_name = 'Solo'
+                mode_name = u'Solo'
             self._mode_display.display_message(mode_name)
         else:
             self._mode_display.update()
-        return

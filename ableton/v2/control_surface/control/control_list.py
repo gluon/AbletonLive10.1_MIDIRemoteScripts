@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/control_list.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control/control_list.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from itertools import izip_longest
@@ -17,18 +12,17 @@ class ControlList(Control):
 
     class State(Control.State):
 
-        def __init__(self, control=None, manager=None, unavailable_color=None, extra_args=None, extra_kws=None, *a, **k):
+        def __init__(self, control = None, manager = None, unavailable_color = None, extra_args = None, extra_kws = None, *a, **k):
             assert control is not None
             super(ControlList.State, self).__init__(manager=manager, control=control)
             self._control_elements = None
             self._control_type = control.control_type
             self._controls = []
             self._dynamic_create = False
-            self._unavailable_color = unavailable_color if unavailable_color is not None else 'DefaultButton.Disabled'
+            self._unavailable_color = unavailable_color if unavailable_color is not None else u'DefaultButton.Disabled'
             self._extra_args = a
             self._extra_kws = k
             self.control_count = control.control_count
-            return
 
         @property
         def control_count(self):
@@ -58,8 +52,7 @@ class ControlList(Control):
 
         def _create_controls(self, count):
             if count > len(self._controls):
-                self._controls.extend([ self._make_control(i) for i in xrange(len(self._controls), count)
-                                      ])
+                self._controls.extend([ self._make_control(i) for i in xrange(len(self._controls), count) ])
             elif count < len(self._controls):
                 self._disconnect_controls(self._controls[count:])
                 self._controls = self._controls[:count]
@@ -73,10 +66,10 @@ class ControlList(Control):
             control = self._control_type(*self._extra_args, **self._extra_kws)
             control._event_listeners = self._event_listeners
             control_state = control._get_state(self._manager)
-            if not hasattr(control_state, 'index'):
+            if not hasattr(control_state, u'index'):
                 control_state.index = index
             else:
-                raise RuntimeError("Cannot set 'index' attribute. Attribute already set.")
+                raise RuntimeError(u"Cannot set 'index' attribute. Attribute already set.")
             return control
 
         def set_control_element(self, control_elements):
@@ -95,7 +88,7 @@ class ControlList(Control):
                     self._send_unavailable_color(element)
 
         def _send_unavailable_color(self, element):
-            if hasattr(element, 'set_light'):
+            if hasattr(element, u'set_light'):
                 element.set_light(self._unavailable_color)
 
         def __getitem__(self, index):
@@ -107,7 +100,7 @@ class ControlList(Control):
         def _register_value_slot(self, manager, control):
             pass
 
-    def __init__(self, control_type=None, control_count=_DYNAMIC_CONTROL_COUNT, *a, **k):
+    def __init__(self, control_type = None, control_count = _DYNAMIC_CONTROL_COUNT, *a, **k):
         super(ControlList, self).__init__(extra_args=a, extra_kws=k, *a, **k)
         self.control_type = control_type
         self.control_count = control_count
@@ -135,7 +128,6 @@ class RadioButtonGroup(ControlList, RadioButtonControl):
                 checked_control = find_if(lambda c: c.is_checked, self)
                 if checked_control is not None:
                     checked_control.is_checked = False
-            return
 
         def connect_property(self, *a):
             super(RadioButtonGroup.State, self).connect_property(*a)
@@ -174,14 +166,13 @@ class MatrixControl(ControlList):
 
     class State(ControlList.State):
 
-        def __init__(self, control=None, manager=None, dimensions=None, *a, **k):
+        def __init__(self, control = None, manager = None, dimensions = None, *a, **k):
             assert control is not None
             assert manager is not None
             super(MatrixControl.State, self).__init__(control, manager, *a, **k)
             self._dimensions = (None, None)
             if dimensions is not None:
                 self.dimensions = dimensions
-            return
 
         @property
         def dimensions(self):
@@ -205,8 +196,8 @@ class MatrixControl(ControlList):
 
         def _make_control(self, index):
             control = super(MatrixControl.State, self)._make_control(index)
-            if hasattr(control._get_state(self._manager), 'coordinate'):
-                raise RuntimeError("Cannot set 'coordinate' attribute. Attribute already set.")
+            if hasattr(control._get_state(self._manager), u'coordinate'):
+                raise RuntimeError(u"Cannot set 'coordinate' attribute. Attribute already set.")
             return control
 
         def _update_coordinates(self):
@@ -216,26 +207,22 @@ class MatrixControl(ControlList):
 
         def set_control_element(self, control_elements):
             dimensions = (None, None)
-            if hasattr(control_elements, 'width') and hasattr(control_elements, 'height'):
-                dimensions = (
-                 control_elements.height(), control_elements.width())
+            if hasattr(control_elements, u'width') and hasattr(control_elements, u'height'):
+                dimensions = (control_elements.height(), control_elements.width())
                 if not self._dynamic_create:
-                    control_elements = [ control_elements.get_button(row, col) for row, col in product(xrange(self.height), xrange(self.width))
-                                       ]
+                    control_elements = [ control_elements.get_button(row, col) for row, col in product(xrange(self.height), xrange(self.width)) ]
             elif is_matrix(control_elements):
-                dimensions = (
-                 len(control_elements), len(first(control_elements)))
+                dimensions = (len(control_elements), len(first(control_elements)))
                 if not self._dynamic_create:
                     control_elements = [ row[0:self.width] for row in control_elements ]
                 control_elements = list(flatten(control_elements))
             elif control_elements is not None:
-                raise RuntimeError('Control Elements must be a matrix')
+                raise RuntimeError(u'Control Elements must be a matrix')
             if self._dynamic_create and None not in dimensions:
                 self._dimensions = dimensions
                 self._create_controls(first(dimensions) * second(dimensions))
                 self._update_controls()
             super(MatrixControl.State, self).set_control_element(control_elements)
-            return
 
         def get_control(self, row, column):
             index = row * self.width + column
@@ -259,12 +246,11 @@ _control_matrix_classes = dict()
 def control_list(control_type, *a, **k):
     if control_type == RadioButtonControl:
         return RadioButtonGroup(*a, **k)
-    else:
-        c = _control_list_classes.get(control_type, None)
-        if not c:
-            c = mixin(ControlList, control_type)
-            _control_list_classes[control_type] = c
-        return c(control_type, *a, **k)
+    c = _control_list_classes.get(control_type, None)
+    if not c:
+        c = mixin(ControlList, control_type)
+        _control_list_classes[control_type] = c
+    return c(control_type, *a, **k)
 
 
 def control_matrix(control_type, *a, **k):

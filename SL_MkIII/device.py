@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/device.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/device.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface import ParameterInfo
@@ -12,9 +7,9 @@ from ableton.v2.control_surface.control import ButtonControl
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity
 
 class DeviceComponent(DeviceComponentBase):
-    __events__ = (u'bank', )
-    prev_bank_button = ButtonControl(color='Device.On')
-    next_bank_button = ButtonControl(color='Device.On')
+    __events__ = (u'bank',)
+    prev_bank_button = ButtonControl(color=u'Device.On')
+    next_bank_button = ButtonControl(color=u'Device.On')
 
     def __init__(self, *a, **k):
         super(DeviceComponent, self).__init__(*a, **k)
@@ -36,7 +31,7 @@ class DeviceComponent(DeviceComponentBase):
     def _create_parameter_info(self, parameter, name):
         return ParameterInfo(parameter=parameter, name=name, default_encoder_sensitivity=parameter_mapping_sensitivity(parameter, self.device().class_name))
 
-    @listens('device_bank')
+    @listens(u'device_bank')
     def __on_bank_changed(self, device, bank):
         if device == self.device():
             self._set_bank_index(bank)
@@ -47,7 +42,6 @@ class DeviceComponent(DeviceComponentBase):
         bank = self._bank
         self.prev_bank_button.enabled = bank is not None and bank.index > 0
         self.next_bank_button.enabled = bank is not None and bank.index < bank.bank_count() - 1
-        return
 
     def _scroll_bank(self, offset):
         if self._bank:

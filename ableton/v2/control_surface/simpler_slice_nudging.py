@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/simpler_slice_nudging.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/simpler_slice_nudging.py
 from __future__ import absolute_import, print_function, unicode_literals
 from contextlib import contextmanager
 import Live
@@ -12,7 +7,7 @@ CENTERED_NUDGE_VALUE = 0.5
 MINIMUM_SLICE_DISTANCE = 2
 
 def is_simpler(device):
-    return device and device.class_name == 'OriginalSimpler'
+    return device and device.class_name == u'OriginalSimpler'
 
 
 class SimplerSliceNudging(EventObject):
@@ -23,8 +18,7 @@ class SimplerSliceNudging(EventObject):
         self._simpler = device if is_simpler(device) else None
         self.__on_selected_slice_changed.subject = self._simpler
         with self._updating_nudge_parameter():
-            self._nudge_parameter = find_if(lambda p: p.name == 'Nudge', self._simpler.parameters if liveobj_valid(self._simpler) else [])
-        return
+            self._nudge_parameter = find_if(lambda p: p.name == u'Nudge', self._simpler.parameters if liveobj_valid(self._simpler) else [])
 
     @contextmanager
     def _updating_nudge_parameter(self):
@@ -34,17 +28,16 @@ class SimplerSliceNudging(EventObject):
         if self._nudge_parameter:
             self._nudge_parameter.set_display_value_conversion(self._display_value_conversion)
         self.__on_nudge_delta.subject = self._nudge_parameter
-        return
 
     def _can_access_slicing_properties(self):
         return liveobj_valid(self._simpler) and liveobj_valid(self._simpler.sample) and self._simpler.current_playback_mode == Live.SimplerDevice.PlaybackMode.slicing
 
-    @listens('view.selected_slice')
+    @listens(u'view.selected_slice')
     def __on_selected_slice_changed(self):
         if self._nudge_parameter:
             self._nudge_parameter.notify_value()
 
-    @listens('delta')
+    @listens(u'delta')
     def __on_nudge_delta(self, delta):
         if self._can_access_slicing_properties():
             old_slice_time = self._simpler.view.selected_slice
@@ -80,4 +73,4 @@ class SimplerSliceNudging(EventObject):
         selected_slice = self._simpler.view.selected_slice if self._can_access_slicing_properties() else -1
         if selected_slice >= 0:
             return str(selected_slice)
-        return '-'
+        return u'-'

@@ -1,27 +1,22 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/mixer.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/SL_MkIII/mixer.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import liveobj_valid, listens, listens_group
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
-from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
 from .channel_strip import ChannelStripComponent
-from .control import ConfigurableTextDisplayControl
+from .control import ConfigurableTextDisplayControl, TextDisplayControl
 from .elements import SESSION_WIDTH
 from .util import color_for_track
 
 class MixerComponent(MixerComponentBase):
-    send_up_button = ButtonControl(color='Mixer.Send')
-    send_down_button = ButtonControl(color='Mixer.Send')
-    pan_value_display = ConfigurableTextDisplayControl(segments=(u'', ) * SESSION_WIDTH)
-    send_value_display = ConfigurableTextDisplayControl(segments=(u'', ) * SESSION_WIDTH)
-    mixer_display = TextDisplayControl(segments=(u'Mixer', ))
-    pan_display = TextDisplayControl(segments=(u'Pan', ))
-    send_index_display = ConfigurableTextDisplayControl(segments=(u'', ))
+    send_up_button = ButtonControl(color=u'Mixer.Send')
+    send_down_button = ButtonControl(color=u'Mixer.Send')
+    pan_value_display = ConfigurableTextDisplayControl(segments=(u'',) * SESSION_WIDTH)
+    send_value_display = ConfigurableTextDisplayControl(segments=(u'',) * SESSION_WIDTH)
+    mixer_display = TextDisplayControl(segments=(u'Mixer',))
+    pan_display = TextDisplayControl(segments=(u'Pan',))
+    send_index_display = ConfigurableTextDisplayControl(segments=(u'',))
     send_encoder_color_fields = control_list(ColorSysexControl, SESSION_WIDTH)
     selected_track_color_field = ColorSysexControl()
 
@@ -99,20 +94,18 @@ class MixerComponent(MixerComponentBase):
         send_index = self.send_index
         self.send_up_button.enabled = send_index != None and send_index > 0
         self.send_down_button.enabled = send_index != None and send_index < self.num_sends - 1
-        return
 
     def _update_send_index_display(self):
         send_index = self.send_index
-        self.send_index_display[0] = 'Send ' + chr(send_index + 65) if send_index != None else ''
-        return
+        self.send_index_display[0] = u'Send ' + chr(send_index + 65) if send_index != None else u''
 
     def _update_send_value_display(self):
         for index, send in enumerate(self.controlled_sends):
-            self.send_value_display[index] = str(send) if send else ''
+            self.send_value_display[index] = str(send) if send else u''
 
     def _update_send_encoder_color_fields(self):
         for index, send in enumerate(self.controlled_sends):
-            self.send_encoder_color_fields[index].color = 'Mixer.Send' if send else 'DefaultButton.Disabled'
+            self.send_encoder_color_fields[index].color = u'Mixer.Send' if send else u'DefaultButton.Disabled'
 
     def _update_selected_track_color_field(self):
         self.selected_track_color_field.color = color_for_track(self.song.view.selected_track)
@@ -120,17 +113,17 @@ class MixerComponent(MixerComponentBase):
     def _update_send_value_subjects(self):
         self.__on_send_value_changed.replace_subjects(self.controlled_sends)
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self._update_selected_strip()
         self._update_selected_track_color_field()
         self.__on_selected_track_color_changed.subject = self.song.view.selected_track
 
-    @listens('color')
+    @listens(u'color')
     def __on_selected_track_color_changed(self):
         self._update_selected_track_color_field()
 
-    @listens_group('value')
+    @listens_group(u'value')
     def __on_send_value_changed(self, _):
         self._update_send_value_display()
 

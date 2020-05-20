@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/ConfigurableButtonElement.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad/ConfigurableButtonElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ButtonElement import *
@@ -42,7 +37,7 @@ class ConfigurableButtonElement(ButtonElement):
     def reset(self):
         self.send_value(4)
 
-    def add_value_listener(self, callback, identify_sender=False):
+    def add_value_listener(self, callback, identify_sender = False):
         if not self._is_notifying:
             ButtonElement.add_value_listener(self, callback, identify_sender)
         else:
@@ -57,7 +52,7 @@ class ConfigurableButtonElement(ButtonElement):
 
         self._pending_listeners = []
 
-    def send_value(self, value, force=False):
+    def send_value(self, value, force = False):
         ButtonElement.send_value(self, value, force or self._force_next_value)
         self._force_next_value = False
 

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Novation_Impulse/TransportViewModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Novation_Impulse/TransportViewModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
@@ -26,7 +21,7 @@ class TransportViewModeSelector(ModeSelectorComponent):
         self._ffwd_button = ffwd_button
         self._rwd_button = rwd_button
         self._loop_button = loop_button
-        self.application().view.add_is_view_visible_listener('Session', self._on_view_changed)
+        self.application().view.add_is_view_visible_listener(u'Session', self._on_view_changed)
         self.update()
 
     def disconnect(self):
@@ -36,8 +31,7 @@ class TransportViewModeSelector(ModeSelectorComponent):
         self._ffwd_button = None
         self._rwd_button = None
         self._loop_button = None
-        self.application().view.remove_is_view_visible_listener('Session', self._on_view_changed)
-        return
+        self.application().view.remove_is_view_visible_listener(u'Session', self._on_view_changed)
 
     def update(self):
         super(TransportViewModeSelector, self).update()
@@ -52,10 +46,9 @@ class TransportViewModeSelector(ModeSelectorComponent):
                 self._transport.set_loop_button(None)
                 self._session.set_select_buttons(self._ffwd_button, self._rwd_button)
                 self._session.selected_scene().set_launch_button(self._loop_button)
-        return
 
     def _on_view_changed(self):
-        if self.application().view.is_view_visible('Session'):
+        if self.application().view.is_view_visible(u'Session'):
             self._mode_index = 1
         else:
             self._mode_index = 0

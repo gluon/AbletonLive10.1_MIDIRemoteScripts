@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/ChannelStripController.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/MackieControl/ChannelStripController.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .MackieControlComponent import *
 from _Generic.Devices import *
@@ -31,8 +26,6 @@ def target_by_name(target_list, name):
     matches = filter(lambda t: t.display_name == name, target_list)
     if matches:
         return matches[0]
-    else:
-        return
 
 
 class ChannelStripController(MackieControlComponent):
@@ -41,14 +34,14 @@ class ChannelStripController(MackieControlComponent):
        (Mackie Control XTs) if available: Maps and controls the faders, VPots and the
        displays depending on the assignemnt modes (Vol_Pan, PlugIn, IO, Send) and
        edit and flip mode.
-
+    
        stack_offset vs. strip_index vs. bank_channel_offset:
-
+    
        When using multiple sets of channel strips (stacking them), we will still only
        have one ChannelStripController which rules them all.
        To identify and seperate them, the implementation uses 3 different kind of
        indices or offsets:
-
+    
        - strip_index: is the index of a channel_strip within its controller box,
          so strip no 1 on an extension (XT) and strip number one on the 'main' Mackie
          will both have a strip_index of 1.
@@ -56,18 +49,18 @@ class ChannelStripController(MackieControlComponent):
          will use a unique MIDI port to send out its MIDI messages which uses the
          strip_index, encoded into the MIDI messages channel, to tell the hardware which
          channel on the controller is meant.
-
+    
        - stack_offset: descibes how many channels are left to the device that a
          channel_strip belongs to. For example: You have 3 Mackies: First, a XT, then
          the main Mackie, then another XT.
          The first XT will have the stack_index 0, the main Mackie, the stack_index 8,
          because 8 faders are on present before it. The second XT has a stack_index of 16
-
+    
        - bank_cha_offset: this shifts all available channel strips within all the tracks
          that should be controlled. For example: If you have a song with 32 tracks, and
          a main Mackie Control + a XT on the right, then you want to shift the first fader
          of the main Mackie to Track 16, to be able to control Track 16 to 32.
-
+    
        The master channel strip is hardcoded and not in the list of "normal" channel_strips,
        because its always mapped to the master_volume.
     """
@@ -110,7 +103,6 @@ class ChannelStripController(MackieControlComponent):
         self.__reassign_channel_strip_offsets()
         self.__reassign_channel_strip_parameters(for_display_only=False)
         self._last_assignment_mode = self.__assignment_mode
-        return
 
     def destroy(self):
         self.song().remove_visible_tracks_listener(self.__on_tracks_added_or_deleted)
@@ -131,8 +123,8 @@ class ChannelStripController(MackieControlComponent):
             self.send_midi((NOTE_ON_STATUS, note, BUTTON_STATE_OFF))
 
         self.send_midi((NOTE_ON_STATUS, SELECT_RUDE_SOLO, BUTTON_STATE_OFF))
-        self.send_midi((CC_STATUS, 75, g7_seg_led_conv_table[' ']))
-        self.send_midi((CC_STATUS, 74, g7_seg_led_conv_table[' ']))
+        self.send_midi((CC_STATUS, 75, g7_seg_led_conv_table[u' ']))
+        self.send_midi((CC_STATUS, 74, g7_seg_led_conv_table[u' ']))
         MackieControlComponent.destroy(self)
 
     def set_controller_extensions(self, left_extensions, right_extensions):
@@ -251,7 +243,7 @@ class ChannelStripController(MackieControlComponent):
                 direction = -1
             else:
                 direction = 1
-            channel_strip = self.__channel_strips[(stack_offset + strip_index)]
+            channel_strip = self.__channel_strips[stack_offset + strip_index]
             current_routing = self.__routing_target(channel_strip)
             available_routings = self.__available_routing_targets(channel_strip)
             if current_routing and available_routings:
@@ -268,8 +260,8 @@ class ChannelStripController(MackieControlComponent):
         elif self.__assignment_mode == CSM_PLUGINS:
             pass
         else:
-            channel_strip = self.__channel_strips[(stack_offset + strip_index)]
-            assert not channel_strip.assigned_track() or not channel_strip.assigned_track().has_audio_output, 'in every other mode, the midimap should handle the messages'
+            channel_strip = self.__channel_strips[stack_offset + strip_index]
+            assert not channel_strip.assigned_track() or not channel_strip.assigned_track().has_audio_output, u'in every other mode, the midimap should handle the messages'
 
     def handle_fader_touch(self, strip_offset, stack_offset, touched):
         u""" forwarded to us by the channel_strips """
@@ -279,7 +271,7 @@ class ChannelStripController(MackieControlComponent):
         u""" forwarded to us by the channel_strips """
         if self.__assignment_mode == CSM_VOLPAN or self.__assignment_mode == CSM_SENDS or self.__assignment_mode == CSM_PLUGINS and self.__plugin_mode == PCM_PARAMETERS:
             if stack_offset + strip_index in range(0, len(self.__channel_strips)):
-                param = self.__channel_strips[(stack_offset + strip_index)].v_pot_parameter()
+                param = self.__channel_strips[stack_offset + strip_index].v_pot_parameter()
             if param and param.is_enabled:
                 if param.is_quantized:
                     if param.value + 1 > param.max:
@@ -299,7 +291,6 @@ class ChannelStripController(MackieControlComponent):
                 self.__reorder_parameters()
                 self.__plugin_mode_offsets[PCM_PARAMETERS] = 0
                 self.__set_plugin_mode(PCM_PARAMETERS)
-        return
 
     def assignment_mode(self):
         return self.__assignment_mode
@@ -328,10 +319,8 @@ class ChannelStripController(MackieControlComponent):
         send_index = strip_index + stack_index + self.__send_mode_offset
         if send_index < len(self.song().view.selected_track.mixer_device.sends):
             p = self.song().view.selected_track.mixer_device.sends[send_index]
-            return (
-             p, p.name)
-        else:
-            return (None, None)
+            return (p, p.name)
+        return (None, None)
 
     def __plugin_parameter(self, strip_index, stack_index):
         u""" Return the parameter that is assigned to the given channel strip
@@ -339,17 +328,16 @@ class ChannelStripController(MackieControlComponent):
         assert self.__assignment_mode == CSM_PLUGINS
         if self.__plugin_mode == PCM_DEVICES:
             return (None, None)
-        else:
-            if self.__plugin_mode == PCM_PARAMETERS:
-                assert self.__chosen_plugin
-                parameters = self.__ordered_plugin_parameters
-                parameter_index = strip_index + stack_index + self.__plugin_mode_offsets[PCM_PARAMETERS]
-                if parameter_index >= 0 and parameter_index < len(parameters):
-                    return parameters[parameter_index]
-                return (None, None)
+        if self.__plugin_mode == PCM_PARAMETERS:
+            assert self.__chosen_plugin
+            parameters = self.__ordered_plugin_parameters
+            parameter_index = strip_index + stack_index + self.__plugin_mode_offsets[PCM_PARAMETERS]
+            if parameter_index >= 0 and parameter_index < len(parameters):
+                return parameters[parameter_index]
             else:
-                assert 0
-            return
+                return (None, None)
+        else:
+            assert 0
 
     def __any_slider_is_touched(self):
         for s in self.__channel_strips:
@@ -369,9 +357,9 @@ class ChannelStripController(MackieControlComponent):
         u""" return true if pressing the "next" button will have any effect """
         if self.__assignment_mode == CSM_PLUGINS:
             return self.__plugin_mode_offsets[self.__plugin_mode] > 0
+        elif self.__assignment_mode == CSM_SENDS:
+            return self.__send_mode_offset > 0
         else:
-            if self.__assignment_mode == CSM_SENDS:
-                return self.__send_mode_offset > 0
             return False
 
     def __can_switch_to_next_page(self):
@@ -380,14 +368,14 @@ class ChannelStripController(MackieControlComponent):
             sel_track = self.song().view.selected_track
             if self.__plugin_mode == PCM_DEVICES:
                 return self.__plugin_mode_offsets[PCM_DEVICES] + len(self.__channel_strips) < len(sel_track.devices)
-            assert self.__plugin_mode == PCM_PARAMETERS and self.__chosen_plugin
-            parameters = self.__ordered_plugin_parameters
-            return self.__plugin_mode_offsets[PCM_PARAMETERS] + len(self.__channel_strips) < len(parameters)
-        if not 0:
-            raise AssertionError
-        elif self.__assignment_mode == CSM_SENDS:
-            return self.__send_mode_offset + len(self.__channel_strips) < len(self.song().return_tracks)
+            if self.__plugin_mode == PCM_PARAMETERS:
+                assert self.__chosen_plugin
+                parameters = self.__ordered_plugin_parameters
+                return self.__plugin_mode_offsets[PCM_PARAMETERS] + len(self.__channel_strips) < len(parameters)
+            assert 0
         else:
+            if self.__assignment_mode == CSM_SENDS:
+                return self.__send_mode_offset + len(self.__channel_strips) < len(self.song().return_tracks)
             return False
 
     def __available_routing_targets(self, channel_strip):
@@ -404,8 +392,7 @@ class ChannelStripController(MackieControlComponent):
                 return flatten_target_list(t.available_output_routing_channels)
             assert 0
         else:
-            return
-        return
+            return None
 
     def __routing_target(self, channel_strip):
         assert self.__assignment_mode == CSM_IO
@@ -421,8 +408,7 @@ class ChannelStripController(MackieControlComponent):
                 return flatten_target(t.output_routing_channel)
             assert 0
         else:
-            return
-        return
+            return None
 
     def __set_routing_target(self, channel_strip, target_string):
         assert self.__assignment_mode == CSM_IO
@@ -470,15 +456,16 @@ class ChannelStripController(MackieControlComponent):
         elif mode == CSM_SENDS:
             self.__main_display_controller.set_show_parameter_names(True)
             self.__assignment_mode = mode
-        elif mode == CSM_IO:
-            for s in self.__channel_strips:
-                s.unlight_vpot_leds()
+        else:
+            if mode == CSM_IO:
+                for s in self.__channel_strips:
+                    s.unlight_vpot_leds()
 
-        self.__main_display_controller.set_show_parameter_names(False)
-        if self.__assignment_mode != mode:
-            self.__assignment_mode = mode
-        elif self.__assignment_mode == CSM_IO:
-            self.__switch_to_next_io_mode()
+            self.__main_display_controller.set_show_parameter_names(False)
+            if self.__assignment_mode != mode:
+                self.__assignment_mode = mode
+            elif self.__assignment_mode == CSM_IO:
+                self.__switch_to_next_io_mode()
         self.__update_assignment_mode_leds()
         self.__update_assignment_display()
         self.__apply_meter_mode()
@@ -489,7 +476,6 @@ class ChannelStripController(MackieControlComponent):
             self.__update_vpot_leds_in_plugins_device_choose_mode()
         self.__update_flip_led()
         self.request_rebuild_midi_map()
-        return
 
     def __set_plugin_mode(self, new_mode):
         u""" Set a new plugin sub-mode, which can be:
@@ -512,7 +498,6 @@ class ChannelStripController(MackieControlComponent):
             self.__update_page_switch_leds()
             self.__update_flip_led()
             self.__update_page_switch_leds()
-        return
 
     def __switch_to_prev_page(self):
         u""" Switch to the previous page in the non track strip modes (choosing plugs, or
@@ -572,30 +557,25 @@ class ChannelStripController(MackieControlComponent):
             slider_display_mode = VPOT_DISPLAY_SINGLE_DOT
             if self.__assignment_mode == CSM_VOLPAN:
                 if s.assigned_track() and s.assigned_track().has_audio_output:
-                    vpot_param = (
-                     s.assigned_track().mixer_device.panning, 'Pan')
+                    vpot_param = (s.assigned_track().mixer_device.panning, u'Pan')
                     vpot_display_mode = VPOT_DISPLAY_BOOST_CUT
-                    slider_param = (
-                     s.assigned_track().mixer_device.volume, 'Volume')
+                    slider_param = (s.assigned_track().mixer_device.volume, u'Volume')
                     slider_display_mode = VPOT_DISPLAY_WRAP
             elif self.__assignment_mode == CSM_PLUGINS:
                 vpot_param = self.__plugin_parameter(s.strip_index(), s.stack_offset())
                 vpot_display_mode = VPOT_DISPLAY_WRAP
                 if s.assigned_track() and s.assigned_track().has_audio_output:
-                    slider_param = (
-                     s.assigned_track().mixer_device.volume, 'Volume')
+                    slider_param = (s.assigned_track().mixer_device.volume, u'Volume')
                     slider_display_mode = VPOT_DISPLAY_WRAP
             elif self.__assignment_mode == CSM_SENDS:
                 vpot_param = self.__send_parameter(s.strip_index(), s.stack_offset())
                 vpot_display_mode = VPOT_DISPLAY_WRAP
                 if s.assigned_track() and s.assigned_track().has_audio_output:
-                    slider_param = (
-                     s.assigned_track().mixer_device.volume, 'Volume')
+                    slider_param = (s.assigned_track().mixer_device.volume, u'Volume')
                     slider_display_mode = VPOT_DISPLAY_WRAP
             elif self.__assignment_mode == CSM_IO:
                 if s.assigned_track() and s.assigned_track().has_audio_output:
-                    slider_param = (
-                     s.assigned_track().mixer_device.volume, 'Volume')
+                    slider_param = (s.assigned_track().mixer_device.volume, u'Volume')
             if self.__flip and self.__can_flip():
                 if self.__any_slider_is_touched():
                     display_parameters.append(vpot_param)
@@ -616,12 +596,11 @@ class ChannelStripController(MackieControlComponent):
         self.__main_display_controller.set_channel_offset(self.__strip_offset())
         if len(display_parameters):
             self.__main_display_controller.set_parameters(display_parameters)
-        return
 
     def _need_to_update_meter(self, meter_state_changed):
         return meter_state_changed and self.__assignment_mode == CSM_VOLPAN
 
-    def __apply_meter_mode(self, meter_state_changed=False):
+    def __apply_meter_mode(self, meter_state_changed = False):
         u""" Update the meter mode in the displays and channel strips """
         enabled = self.__meters_enabled and self.__assignment_mode is CSM_VOLPAN
         send_meter_mode = self._last_assignment_mode != self.__assignment_mode or self._need_to_update_meter(meter_state_changed)
@@ -657,51 +636,44 @@ class ChannelStripController(MackieControlComponent):
         else:
             assert 0
             sid_on_switch = None
-        for s in (SID_ASSIGNMENT_IO, SID_ASSIGNMENT_SENDS,
-         SID_ASSIGNMENT_PAN, SID_ASSIGNMENT_PLUG_INS):
+        for s in (SID_ASSIGNMENT_IO,
+         SID_ASSIGNMENT_SENDS,
+         SID_ASSIGNMENT_PAN,
+         SID_ASSIGNMENT_PLUG_INS):
             if s == sid_on_switch:
                 self.send_midi((NOTE_ON_STATUS, s, BUTTON_STATE_ON))
             else:
                 self.send_midi((NOTE_ON_STATUS, s, BUTTON_STATE_OFF))
-
-        return
 
     def __update_assignment_display(self):
         u""" Cryptically label the current assignment mode in the 2char display above
             the assignment buttons
         """
         if self.__assignment_mode == CSM_VOLPAN:
-            ass_string = [
-             'P', 'N']
+            ass_string = [u'P', u'N']
         elif self.__assignment_mode == CSM_PLUGINS or self.__assignment_mode == CSM_SENDS:
             if self.__last_attached_selected_track == self.song().master_track:
-                ass_string = [
-                 'M', 'A']
+                ass_string = [u'M', u'A']
             for t in self.song().return_tracks:
                 if t == self.__last_attached_selected_track:
-                    ass_string = [
-                     'R', chr(ord('A') + list(self.song().return_tracks).index(t))]
+                    ass_string = [u'R', chr(ord(u'A') + list(self.song().return_tracks).index(t))]
                     break
 
             for t in self.song().visible_tracks:
                 if t == self.__last_attached_selected_track:
-                    ass_string = list('%.2d' % min(99, list(self.song().visible_tracks).index(t) + 1))
+                    ass_string = list(u'%.2d' % min(99, list(self.song().visible_tracks).index(t) + 1))
                     break
 
             assert ass_string
         elif self.__assignment_mode == CSM_IO:
             if self.__sub_mode_in_io_mode == CSM_IO_MODE_INPUT_MAIN:
-                ass_string = [
-                 'I', "'"]
+                ass_string = [u'I', u"'"]
             elif self.__sub_mode_in_io_mode == CSM_IO_MODE_INPUT_SUB:
-                ass_string = [
-                 'I', ',']
+                ass_string = [u'I', u',']
             elif self.__sub_mode_in_io_mode == CSM_IO_MODE_OUTPUT_MAIN:
-                ass_string = [
-                 '0', "'"]
+                ass_string = [u'0', u"'"]
             elif self.__sub_mode_in_io_mode == CSM_IO_MODE_OUTPUT_SUB:
-                ass_string = [
-                 '0', ',']
+                ass_string = [u'0', u',']
             else:
                 assert 0
         else:
@@ -765,7 +737,7 @@ class ChannelStripController(MackieControlComponent):
                     if self.__routing_target(s):
                         targets.append(self.__routing_target(s))
                     else:
-                        targets.append('')
+                        targets.append(u'')
 
                 self.__main_display_controller.set_channel_strip_strings(targets)
             elif self.__assignment_mode == CSM_PLUGINS and self.__plugin_mode == PCM_DEVICES:
@@ -784,7 +756,6 @@ class ChannelStripController(MackieControlComponent):
                         self.__displayed_plugins.append(None)
 
                 self.__update_plugin_names()
-        return
 
     def __update_plugin_names(self):
         assert self.__assignment_mode == CSM_PLUGINS and self.__plugin_mode == PCM_DEVICES
@@ -793,10 +764,9 @@ class ChannelStripController(MackieControlComponent):
             if plugin != None:
                 device_strings.append(plugin.name)
             else:
-                device_strings.append('')
+                device_strings.append(u'')
 
         self.__main_display_controller.set_channel_strip_strings(device_strings)
-        return
 
     def __update_view_returns_mode(self):
         u""" Update the control return tracks LED
@@ -835,7 +805,6 @@ class ChannelStripController(MackieControlComponent):
             self.__reassign_channel_strip_parameters(for_display_only=False)
             self.__update_assignment_display()
             self.request_rebuild_midi_map()
-        return
 
     def __on_flip_changed(self):
         u""" Update the flip button LED when the flip mode changed
@@ -859,7 +828,6 @@ class ChannelStripController(MackieControlComponent):
                         self.__chosen_plugin.remove_parameters_listener(self.__on_parameter_list_of_chosen_plugin_changed)
                     self.__chosen_plugin = None
                     self.__set_plugin_mode(PCM_DEVICES)
-        return
 
     def __on_tracks_added_or_deleted(self):
         u""" Notifier, called as soon as tracks where added, removed or moved
@@ -899,7 +867,6 @@ class ChannelStripController(MackieControlComponent):
         self.__reorder_parameters()
         self.__reassign_channel_strip_parameters(for_display_only=False)
         self.request_rebuild_midi_map()
-        return
 
     def __reorder_parameters(self):
         result = []
@@ -908,7 +875,7 @@ class ChannelStripController(MackieControlComponent):
                 device_banks = DEVICE_DICT[self.__chosen_plugin.class_name]
                 for bank in device_banks:
                     for param_name in bank:
-                        parameter_name = ''
+                        parameter_name = u''
                         parameter = get_parameter_by_name(self.__chosen_plugin, param_name)
                         if parameter:
                             parameter_name = parameter.name

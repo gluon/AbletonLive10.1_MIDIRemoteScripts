@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/actions.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/actions.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends, listens, task
@@ -18,24 +13,22 @@ from pushbase.message_box_component import Messenger
 class CreateDefaultTrackComponent(Component, Messenger):
 
     @depends(selection=None)
-    def __init__(self, selection=None, *a, **k):
+    def __init__(self, selection = None, *a, **k):
         super(CreateDefaultTrackComponent, self).__init__(*a, **k)
         self.options = OptionsComponent(parent=self)
         self.options.selected_option = None
         self.options.option_names = (u'Audio', u'Midi', u'Return')
         self.options.labels = (u'Create track:', u'', u'', u'')
-        self.options.selected_color = 'Browser.Load'
-        self.options.unselected_color = 'Browser.Load'
+        self.options.selected_color = u'Browser.Load'
+        self.options.unselected_color = u'Browser.Load'
         self._on_option_selected.subject = self.options
         self._selection = selection
-        return
 
-    @listens('selected_option')
+    @listens(u'selected_option')
     def _on_option_selected(self, option):
         if option is not None:
             self.create_track()
             self.options.selected_option = None
-        return
 
     def create_track(self):
         try:
@@ -54,36 +47,30 @@ class CreateDefaultTrackComponent(Component, Messenger):
 
     def on_enabled_changed(self):
         self.options.selected_option = None
-        return
 
 
 class CreateInstrumentTrackComponent(Component, Messenger):
 
     @depends(selection=None)
-    def __init__(self, selection=None, browser_mode=None, browser_component=None, browser_hotswap_mode=None, *a, **k):
+    def __init__(self, selection = None, browser_mode = None, browser_component = None, browser_hotswap_mode = None, *a, **k):
         super(CreateInstrumentTrackComponent, self).__init__(*a, **k)
         self._selection = selection
         self._with_browser_modes = ModesComponent(parent=self)
-        self._with_browser_modes.add_mode('create', [
-         self._prepare_browser,
-         SetAttributeMode(self.application.browser, 'filter_type', Live.Browser.FilterType.instrument_hotswap),
-         SetAttributeMode(browser_component, 'do_load_item', self._do_browser_load_item),
+        self._with_browser_modes.add_mode(u'create', [self._prepare_browser,
+         SetAttributeMode(self.application.browser, u'filter_type', Live.Browser.FilterType.instrument_hotswap),
+         SetAttributeMode(browser_component, u'do_load_item', self._do_browser_load_item),
          browser_mode,
          browser_component.reset_load_memory])
-        self._with_browser_modes.add_mode('hotswap', [
-         browser_hotswap_mode,
-         browser_mode])
+        self._with_browser_modes.add_mode(u'hotswap', [browser_hotswap_mode, browser_mode])
         self._go_to_hotswap_task = self._tasks.add(task.sequence(task.delay(1), task.run(self._go_to_hotswap)))
         self._go_to_hotswap_task.kill()
 
     def on_enabled_changed(self):
-        self._with_browser_modes.selected_mode = 'create' if self.is_enabled() else None
+        self._with_browser_modes.selected_mode = u'create' if self.is_enabled() else None
         self._go_to_hotswap_task.kill()
-        return
 
     def _prepare_browser(self):
         self.application.browser.hotswap_target = None
-        return
 
     def _do_browser_load_item(self, item):
         song = self.song
@@ -96,25 +83,22 @@ class CreateInstrumentTrackComponent(Component, Messenger):
         self._go_to_hotswap_task.restart()
 
     def _go_to_hotswap(self):
-        self._with_browser_modes.selected_mode = 'hotswap'
+        self._with_browser_modes.selected_mode = u'hotswap'
 
 
 class CreateDeviceComponent(Component):
 
     @depends(selection=None)
-    def __init__(self, selection=None, browser_component=None, browser_mode=None, browser_hotswap_mode=None, insert_left=False, *a, **k):
+    def __init__(self, selection = None, browser_component = None, browser_mode = None, browser_hotswap_mode = None, insert_left = False, *a, **k):
         super(CreateDeviceComponent, self).__init__(*a, **k)
         self._selection = selection
         self._add_effect_mode = BrowserAddEffectMode(selection=selection, browser=self.application.browser, application_view=self.application.view, insert_left=insert_left)
         self._create_device_modes = ModesComponent(parent=self)
-        self._create_device_modes.add_mode('create', [
-         SetAttributeMode(browser_component, 'do_load_item', self._do_browser_load_item),
+        self._create_device_modes.add_mode(u'create', [SetAttributeMode(browser_component, u'do_load_item', self._do_browser_load_item),
          self._add_effect_mode,
          browser_mode,
          browser_component.reset_load_memory])
-        self._create_device_modes.add_mode('hotswap', [
-         browser_hotswap_mode,
-         browser_mode])
+        self._create_device_modes.add_mode(u'hotswap', [browser_hotswap_mode, browser_mode])
         self._go_to_hotswap_task = self._tasks.add(task.sequence(task.delay(1), task.run(self._go_to_hotswap)))
         self._go_to_hotswap_task.kill()
 
@@ -122,12 +106,12 @@ class CreateDeviceComponent(Component):
         self._go_to_hotswap_task.kill()
         if self.is_enabled():
             if is_empty_drum_pad(self._selection.selected_object):
-                self._create_device_modes.selected_mode = 'hotswap'
+                self._create_device_modes.selected_mode = u'hotswap'
             else:
-                self._create_device_modes.selected_mode = 'create'
+                self._create_device_modes.selected_mode = u'create'
 
     def _go_to_hotswap(self):
-        self._create_device_modes.selected_mode = 'hotswap'
+        self._create_device_modes.selected_mode = u'hotswap'
 
     def _do_browser_load_item(self, item):
         selection = self._add_effect_mode.get_selection_for_insert()

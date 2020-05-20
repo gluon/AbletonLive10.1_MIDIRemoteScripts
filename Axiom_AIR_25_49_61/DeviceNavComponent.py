@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/DeviceNavComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/DeviceNavComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
@@ -15,7 +10,6 @@ class DeviceNavComponent(ControlSurfaceComponent):
         ControlSurfaceComponent.__init__(self)
         self._left_button = None
         self._right_button = None
-        return
 
     def disconnect(self):
         if self._left_button != None:
@@ -24,7 +18,6 @@ class DeviceNavComponent(ControlSurfaceComponent):
         if self._right_button != None:
             self._right_button.remove_value_listener(self._nav_value)
             self._right_button = None
-        return
 
     def set_device_nav_buttons(self, left_button, right_button):
         identify_sender = True
@@ -39,7 +32,6 @@ class DeviceNavComponent(ControlSurfaceComponent):
         if self._right_button != None:
             self._right_button.add_value_listener(self._nav_value, identify_sender)
         self.update()
-        return
 
     def on_enabled_changed(self):
         self.update()
@@ -48,11 +40,11 @@ class DeviceNavComponent(ControlSurfaceComponent):
         if self.is_enabled():
             if not sender.is_momentary() or value != 0:
                 modifier_pressed = True
-                if not self.application().view.is_view_visible('Detail') or not self.application().view.is_view_visible('Detail/DeviceChain'):
-                    self.application().view.show_view('Detail')
-                    self.application().view.show_view('Detail/DeviceChain')
+                if not self.application().view.is_view_visible(u'Detail') or not self.application().view.is_view_visible(u'Detail/DeviceChain'):
+                    self.application().view.show_view(u'Detail')
+                    self.application().view.show_view(u'Detail/DeviceChain')
                 else:
                     direction = Live.Application.Application.View.NavDirection.left
                     if sender == self._right_button:
                         direction = Live.Application.Application.View.NavDirection.right
-                    self.application().view.scroll_view(direction, 'Detail/DeviceChain', not modifier_pressed)
+                    self.application().view.scroll_view(direction, u'Detail/DeviceChain', not modifier_pressed)

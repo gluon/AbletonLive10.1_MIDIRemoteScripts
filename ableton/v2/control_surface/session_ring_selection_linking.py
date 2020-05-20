@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/session_ring_selection_linking.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/session_ring_selection_linking.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ..base.event import EventObject, listens
 from ..base.dependency import depends
@@ -12,7 +7,7 @@ from ..base.util import index_if
 class SessionRingSelectionLinking(EventObject):
 
     @depends(song=None)
-    def __init__(self, session_ring=None, selection_changed_notifier=None, song=None, *a, **k):
+    def __init__(self, session_ring = None, selection_changed_notifier = None, song = None, *a, **k):
         super(SessionRingSelectionLinking, self).__init__(*a, **k)
         assert session_ring is not None
         assert selection_changed_notifier is not None
@@ -20,9 +15,8 @@ class SessionRingSelectionLinking(EventObject):
         self._session_ring = session_ring
         self._song = song
         self._on_selection_scrolled.subject = selection_changed_notifier
-        return
 
-    @listens('selection_scrolled')
+    @listens(u'selection_scrolled')
     def _on_selection_scrolled(self):
         self._link_session_ring_with_minimal_travel()
 

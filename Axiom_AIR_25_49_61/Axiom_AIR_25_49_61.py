@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/Axiom_AIR_25_49_61.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/Axiom_AIR_25_49_61.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from Live import MidiMap
@@ -28,7 +23,7 @@ from .BestBankDeviceComponent import BestBankDeviceComponent
 from .TransportViewModeSelector import TransportViewModeSelector
 from .consts import *
 
-def create_configurable_button(identifier, name, send_channel_offset=0, identifier_send_offset=0, send_msg_type=None):
+def create_configurable_button(identifier, name, send_channel_offset = 0, identifier_send_offset = 0, send_msg_type = None):
     button = ConfigurableButtonElement(IS_MOMENTARY, MIDI_CC_TYPE, GLOBAL_CHANNEL, identifier, GLOBAL_SEND_CHANNEL + send_channel_offset, identifier_send_offset, send_msg_type)
     button.name = name
     return button
@@ -62,8 +57,8 @@ class Axiom_AIR_25_49_61(ControlSurface):
         self._alt_device_component = None
         with self.component_guard():
             self.set_pad_translations(PAD_TRANSLATIONS)
-            self._suggested_input_port = 'HyperControl'
-            self._suggested_output_port = 'HyperControl'
+            self._suggested_input_port = u'HyperControl'
+            self._suggested_output_port = u'HyperControl'
             self._single_fader_button_modes = None
             self._has_faders = True
             self._display_reset_delay = -1
@@ -80,8 +75,6 @@ class Axiom_AIR_25_49_61(ControlSurface):
             self._drum_group_hyper_button = None
             for component in self.components:
                 component.set_enabled(False)
-
-        return
 
     def disconnect(self):
         self._scheduled_messages = []
@@ -155,7 +148,6 @@ class Axiom_AIR_25_49_61(ControlSurface):
         self._session = None
         ControlSurface.disconnect(self)
         self._send_midi(SYSEX_START + DISABLE_HYPERCONTROL)
-        return
 
     def refresh_state(self):
         ControlSurface.refresh_state(self)
@@ -166,9 +158,9 @@ class Axiom_AIR_25_49_61(ControlSurface):
             if midi_bytes[12:15] < AXIOM_REV4_RESPONSE:
                 self.schedule_message(1, self._send_midi, SYSEX_START + ENGAGE_HYPERCONTROL)
                 self.schedule_message(2, self._send_midi, SYSEX_START + CLEAR_ALL)
-                self.schedule_message(3, self._name_display.display_message, 'Firmware')
-                self.schedule_message(13, self._name_display.display_message, 'Update')
-                self.schedule_message(23, self._name_display.display_message, 'Required')
+                self.schedule_message(3, self._name_display.display_message, u'Firmware')
+                self.schedule_message(13, self._name_display.display_message, u'Update')
+                self.schedule_message(23, self._name_display.display_message, u'Required')
                 self.schedule_message(33, self._send_midi, SYSEX_START + DISABLE_HYPERCONTROL)
             elif midi_bytes[12:15] >= AXIOM_REV4_RESPONSE:
                 if self._waiting_for_first_response == True:
@@ -197,14 +189,12 @@ class Axiom_AIR_25_49_61(ControlSurface):
         ControlSurface.restore_bank(self, bank_index)
         if self._alt_device_component != None:
             self._alt_device_component.restore_bank(bank_index)
-        return
 
     def set_appointed_device(self, device):
         ControlSurface.set_appointed_device(self, device)
         with self.component_guard():
             if self._alt_device_component != None:
                 self._alt_device_component.set_device(device)
-        return
 
     def set_alt_device_component(self, device_component):
         self._alt_device_component = device_component
@@ -219,151 +209,147 @@ class Axiom_AIR_25_49_61(ControlSurface):
         self._device_component.set_device(device_to_select)
         if self._alt_device_component != None:
             self._alt_device_component.set_device(device_to_select)
-        return
 
     def _setup_controls(self):
-        self._left_button = create_button(99, 'Left_Button')
-        self._right_button = create_button(100, 'Right_Button')
-        self._up_button = create_button(101, 'Up_Button')
-        self._down_button = create_button(102, 'Down_Button')
-        self._loop_button = create_button(113, 'Loop_Button')
-        self._rwd_button = create_button(114, 'Rwd_Button')
-        self._ffwd_button = create_button(115, 'FFwd_Button')
-        self._stop_button = create_button(116, 'Stop_Button')
-        self._play_button = create_button(117, 'Play_Button')
-        self._rec_button = create_button(118, 'Record_Button')
+        self._left_button = create_button(99, u'Left_Button')
+        self._right_button = create_button(100, u'Right_Button')
+        self._up_button = create_button(101, u'Up_Button')
+        self._down_button = create_button(102, u'Down_Button')
+        self._loop_button = create_button(113, u'Loop_Button')
+        self._rwd_button = create_button(114, u'Rwd_Button')
+        self._ffwd_button = create_button(115, u'FFwd_Button')
+        self._stop_button = create_button(116, u'Stop_Button')
+        self._play_button = create_button(117, u'Play_Button')
+        self._rec_button = create_button(118, u'Record_Button')
         self._select_button = ConfigurableButtonElement(IS_MOMENTARY, MIDI_CC_TYPE, GLOBAL_CHANNEL, 98)
-        self._select_button.name = 'Select_Button'
+        self._select_button.name = u'Select_Button'
         self._select_button.add_value_listener(self._select_button_value)
-        self._main_group_hyper_button = create_configurable_button(104, 'Fader_Group_HyperControl_Button', 2, 14)
-        self._main_group_track_button = create_configurable_button(105, 'Main_Group_Track_Button', 2, 11)
-        self._main_group_fx_button = create_configurable_button(106, 'Main_Group_Inst_FX_Button', 2, 11)
-        self._identify_button = create_configurable_button(97, 'Identify_Button', 2, 16)
+        self._main_group_hyper_button = create_configurable_button(104, u'Fader_Group_HyperControl_Button', 2, 14)
+        self._main_group_track_button = create_configurable_button(105, u'Main_Group_Track_Button', 2, 11)
+        self._main_group_fx_button = create_configurable_button(106, u'Main_Group_Inst_FX_Button', 2, 11)
+        self._identify_button = create_configurable_button(97, u'Identify_Button', 2, 16)
         self._identify_button.add_value_listener(self._identify_value)
         self._fader_buttons = []
         for index in range(8):
-            self._fader_buttons.append(create_configurable_button(49 + index, 'Fader_Button_%d' % index))
-            self._fader_buttons[(-1)].add_value_listener(self._fader_button_value, identify_sender=True)
+            self._fader_buttons.append(create_configurable_button(49 + index, u'Fader_Button_%d' % index))
+            self._fader_buttons[-1].add_value_listener(self._fader_button_value, identify_sender=True)
 
         self._faders = []
         for index in range(8):
-            self._faders.append(create_slider(33 + index, 'Fader_%d' % index))
-            self._faders[(-1)].add_value_listener(self._fader_value, identify_sender=True)
+            self._faders.append(create_slider(33 + index, u'Fader_%d' % index))
+            self._faders[-1].add_value_listener(self._fader_value, identify_sender=True)
 
-        self._master_fader_button = create_configurable_button(57, 'Master_Fader_Button')
+        self._master_fader_button = create_configurable_button(57, u'Master_Fader_Button')
         self._master_fader_button.add_value_listener(self._fader_button_value, identify_sender=True)
-        self._master_fader = create_slider(41, 'Master_Fader')
+        self._master_fader = create_slider(41, u'Master_Fader')
         self._master_fader.add_value_listener(self._fader_value, identify_sender=True)
-        self._fader_group_mode_button = create_configurable_button(61, 'Fader_Group_Mode_Button')
-        self._fader_group_midi_button = create_configurable_button(60, 'Fader_Group_MIDI_Button')
+        self._fader_group_mode_button = create_configurable_button(61, u'Fader_Group_Mode_Button')
+        self._fader_group_midi_button = create_configurable_button(60, u'Fader_Group_MIDI_Button')
         self._fader_group_midi_button.add_value_listener(self._midi_button_value, identify_sender=True)
-        self._fader_group_mix_button = create_configurable_button(58, 'Fader_Group_Mix_Button', 0, 1)
+        self._fader_group_mix_button = create_configurable_button(58, u'Fader_Group_Mix_Button', 0, 1)
         self._fader_group_mix_button.add_value_listener(self._hyper_button_value, identify_sender=True)
-        self._fader_group_fx_button = create_configurable_button(59, 'Fader_Group_Inst_FX_Button', 0, -1)
+        self._fader_group_fx_button = create_configurable_button(59, u'Fader_Group_Inst_FX_Button', 0, -1)
         self._fader_group_fx_button.add_value_listener(self._hyper_button_value, identify_sender=True)
         self._encoders = []
         for index in range(8):
-            self._encoders.append(create_encoder(17 + index, 'Encoder_%d' % index))
-            self._encoders[(-1)].add_value_listener(self._encoder_value, identify_sender=True)
+            self._encoders.append(create_encoder(17 + index, u'Encoder_%d' % index))
+            self._encoders[-1].add_value_listener(self._encoder_value, identify_sender=True)
 
-        self._encoder_group_midi_button = create_configurable_button(27, 'Encoder_Group_MIDI_Button', 0, 72)
+        self._encoder_group_midi_button = create_configurable_button(27, u'Encoder_Group_MIDI_Button', 0, 72)
         self._encoder_group_midi_button.add_value_listener(self._midi_button_value, identify_sender=True)
-        self._encoder_group_mix_button = create_configurable_button(25, 'Encoder_Group_Mix_Button', 0, 72)
+        self._encoder_group_mix_button = create_configurable_button(25, u'Encoder_Group_Mix_Button', 0, 72)
         self._encoder_group_mix_button.add_value_listener(self._hyper_button_value, identify_sender=True)
-        self._encoder_group_fx_button = create_configurable_button(26, 'Encoder_Group_Inst_FX_Button', 0, 72)
+        self._encoder_group_fx_button = create_configurable_button(26, u'Encoder_Group_Inst_FX_Button', 0, 72)
         self._encoder_group_fx_button.add_value_listener(self._hyper_button_value, identify_sender=True)
 
     def _setup_drum_pads(self):
         self._drum_pads = []
         num_pads = 12 if self._has_faders else 16
         for index in range(8):
-            self._drum_pads.append(create_configurable_button(81 + index, 'Pad_%d' % index, 0, 0, MIDI_CC_TYPE))
+            self._drum_pads.append(create_configurable_button(81 + index, u'Pad_%d' % index, 0, 0, MIDI_CC_TYPE))
 
         for index in range(num_pads - 8):
             self._drum_pads.append(ConfigurableButtonElement(IS_MOMENTARY, MIDI_NOTE_TYPE, GLOBAL_CHANNEL - 1, 81 + index, GLOBAL_SEND_CHANNEL, 8, MIDI_CC_TYPE))
-            self._drum_pads[(-1)].name = 'Pad_' + str(index + 8)
+            self._drum_pads[-1].name = u'Pad_' + str(index + 8)
 
-        self._drum_group_midi_button = create_configurable_button(91, 'Drum_Group_MIDI_Button', 2, -2)
+        self._drum_group_midi_button = create_configurable_button(91, u'Drum_Group_MIDI_Button', 2, -2)
         self._drum_group_midi_button.add_value_listener(self._midi_button_value, identify_sender=True)
-        self._drum_group_roll_button = create_configurable_button(90, 'Drum_Group_Roll_Button', -1)
-        self._drum_group_hyper_button = create_configurable_button(89, 'Drum_Group_HyperControl_Button', 2, 2)
+        self._drum_group_roll_button = create_configurable_button(90, u'Drum_Group_Roll_Button', -1)
+        self._drum_group_hyper_button = create_configurable_button(89, u'Drum_Group_HyperControl_Button', 2, 2)
         self._drum_group_hyper_button.add_value_listener(self._hyper_button_value, identify_sender=True)
 
     def _setup_displays(self):
         self._name_display = PhysicalDisplayElement(12, 1)
-        self._name_display.name = 'Name_Display'
-        self._name_display.set_message_parts(SYSEX_START + (21, ), (0, 247))
+        self._name_display.name = u'Name_Display'
+        self._name_display.set_message_parts(SYSEX_START + (21,), (0, 247))
         self._name_display.set_clear_all_message(CLEAR_NAME)
         self._name_display_data_source = DisplayDataSource()
         self._name_display.segment(0).set_data_source(self._name_display_data_source)
         self._value_display = NumericalDisplayElement(3, 1)
-        self._value_display.name = 'Value_Display'
+        self._value_display.name = u'Value_Display'
         self._value_display.set_message_parts(SYSEX_START + (20, 48), (0, 247))
         self._value_display.set_clear_all_message(CLEAR_VALUE)
         self._value_display_data_source = DisplayDataSource()
         self._value_display.segment(0).set_data_source(self._value_display_data_source)
         self._bank_display = NumericalDisplayElement(3, 1)
-        self._bank_display.name = 'Bank_Display'
-        self._bank_display.set_message_parts(SYSEX_START + (19, ), (0, 247))
+        self._bank_display.name = u'Bank_Display'
+        self._bank_display.set_message_parts(SYSEX_START + (19,), (0, 247))
         self._bank_display.set_clear_all_message(CLEAR_BANK)
         self._bank_display_data_source = DisplayDataSource()
         self._bank_display.segment(0).set_data_source(self._bank_display_data_source)
         self._pad_display = NumericalDisplayElement(2, 1)
-        self._pad_display.name = 'Pad_Display'
-        self._pad_display.set_message_parts(SYSEX_START + (18, ), (0, 247))
+        self._pad_display.name = u'Pad_Display'
+        self._pad_display.set_message_parts(SYSEX_START + (18,), (0, 247))
         self._pad_display.set_clear_all_message(CLEAR_PAD)
         self._pad_display_data_source = DisplayDataSource()
         self._pad_display.segment(0).set_data_source(self._pad_display_data_source)
 
     def _setup_mixer(self):
         self._mixer_for_encoders = SpecialMixerComponent(self._name_display, self._value_display, 8)
-        self._mixer_for_encoders.name = 'Mixer_for_encoders'
+        self._mixer_for_encoders.name = u'Mixer_for_encoders'
         self._mixer_for_faders = SpecialMixerComponent(self._name_display, self._value_display, 8)
-        self._mixer_for_faders.name = 'Mixer_for_faders'
+        self._mixer_for_faders.name = u'Mixer_for_faders'
 
     def _setup_session(self):
         self._session = SpecialSessionComponent(8, 0)
-        self._session.name = 'Session_Control'
-        self._session.selected_scene().name = 'Selected_Scene'
+        self._session.name = u'Session_Control'
+        self._session.selected_scene().name = u'Selected_Scene'
         self._session.set_mixer(self._mixer_for_encoders)
         self._session.set_alt_mixer(self._mixer_for_faders)
         self._session.add_offset_listener(self._update_bank_value)
 
     def _setup_transport(self):
         self._transport = TransportComponent()
-        self._transport.name = 'Transport'
+        self._transport.name = u'Transport'
         self._transport.set_stop_button(self._stop_button)
         self._transport.set_play_button(self._play_button)
         self._transport.set_record_button(self._rec_button)
         transport_view_modes = TransportViewModeSelector(self._transport, self._session, self._ffwd_button, self._rwd_button, self._loop_button)
-        transport_view_modes.name = 'Transport_View_Modes'
+        transport_view_modes.name = u'Transport_View_Modes'
 
     def _setup_device(self):
         self._device_for_encoders = BestBankDeviceComponent(device_selection_follows_track_selection=True)
-        self._device_for_encoders.name = 'Device_Component_for_encoders'
+        self._device_for_encoders.name = u'Device_Component_for_encoders'
         self._device_for_faders = BestBankDeviceComponent(device_selection_follows_track_selection=True)
-        self._device_for_faders.name = 'Device_Component_for_faders'
+        self._device_for_faders.name = u'Device_Component_for_faders'
         self.set_device_component(self._device_for_encoders)
         self.set_alt_device_component(self._device_for_faders)
         self._device_nav = DeviceNavComponent()
-        self._device_nav.name = 'Device_Nav_Component'
+        self._device_nav.name = u'Device_Nav_Component'
 
     def _setup_modes(self):
         self._fader_button_modes = FaderButtonModeSelector(self._mixer_for_faders, tuple(self._fader_buttons))
-        self._fader_button_modes.name = 'Fader_Button_Modes'
+        self._fader_button_modes.name = u'Fader_Button_Modes'
         self._fader_button_modes.set_mode_toggle(self._fader_group_mode_button)
         self._fader_modes = FaderModeSelector(self._mixer_for_faders, self._device_for_faders, tuple(self._faders), self._fader_button_modes, self._master_fader_button)
-        self._fader_modes.name = 'Fader_Modes'
-        self._fader_modes.set_mode_buttons((self._fader_group_mix_button,
-         self._fader_group_fx_button))
+        self._fader_modes.name = u'Fader_Modes'
+        self._fader_modes.set_mode_buttons((self._fader_group_mix_button, self._fader_group_fx_button))
         self._encoder_modes = EncoderModeSelector(self._mixer_for_encoders, self._device_for_encoders, tuple(self._encoders))
-        self._encoder_modes.name = 'Encoder_Modes'
-        self._encoder_modes.set_mode_buttons((self._encoder_group_mix_button,
-         self._encoder_group_fx_button))
+        self._encoder_modes.name = u'Encoder_Modes'
+        self._encoder_modes.set_mode_buttons((self._encoder_group_mix_button, self._encoder_group_fx_button))
         main_modes = MainModeSelector(self._device_for_encoders, self._device_for_faders, self._session, self._mixer_for_faders, self._device_nav, self._up_button, self._down_button, self._left_button, self._right_button, self._select_button)
-        main_modes.name = 'Main_Modes'
-        main_modes.set_mode_buttons((self._main_group_track_button,
-         self._main_group_fx_button))
+        main_modes.name = u'Main_Modes'
+        main_modes.set_mode_buttons((self._main_group_track_button, self._main_group_fx_button))
 
     def _setup_master_fader(self):
         if self._has_faders:
@@ -373,7 +359,7 @@ class Axiom_AIR_25_49_61(ControlSurface):
 
     def _setup_single_fader_button_modes(self):
         self._single_fader_button_modes = SingleFaderButtonModeSelector(self._mixer_for_encoders, self._fader_group_midi_button)
-        self._single_fader_button_modes.name = 'Single_Fader_Button_Modes'
+        self._single_fader_button_modes.name = u'Single_Fader_Button_Modes'
         self._single_fader_button_modes.set_mode_toggle(self._fader_group_mode_button)
 
     def _complete_setup(self):
@@ -398,7 +384,7 @@ class Axiom_AIR_25_49_61(ControlSurface):
 
     def _show_startup_message(self):
         self._send_midi(SYSEX_START + CLEAR_ALL)
-        self._name_display.display_message('Ableton Live')
+        self._name_display.display_message(u'Ableton Live')
         self._display_reset_delay = INITIAL_DISPLAY_DELAY
 
     def _select_button_value(self, value):
@@ -463,10 +449,11 @@ class Axiom_AIR_25_49_61(ControlSurface):
                         self._encoder_modes.set_enabled(True)
                         self._display_reset_delay = 0
                         return
-                    self.schedule_message(1, self._encoder_modes.set_enabled, True)
-                    self.schedule_message(1, self._encoder_modes.update)
-                    self._display_reset_delay = 2
-                    return
+                    else:
+                        self.schedule_message(1, self._encoder_modes.set_enabled, True)
+                        self.schedule_message(1, self._encoder_modes.update)
+                        self._display_reset_delay = 2
+                        return
             elif sender is self._fader_group_fx_button or sender is self._fader_group_mix_button:
                 if self._hc_byte | FADERS != self._hc_byte:
                     self._hc_byte = self._hc_byte | FADERS
@@ -478,12 +465,13 @@ class Axiom_AIR_25_49_61(ControlSurface):
                         self._fader_button_modes.set_enabled(True)
                         self._display_reset_delay = 0
                         return
-                    self.schedule_message(1, self._fader_modes.set_enabled, True)
-                    self.schedule_message(1, self._fader_modes.update)
-                    self.schedule_message(1, self._fader_button_modes.set_enabled, True)
-                    self.schedule_message(1, self._fader_button_modes.update)
-                    self._display_reset_delay = 2
-                    return
+                    else:
+                        self.schedule_message(1, self._fader_modes.set_enabled, True)
+                        self.schedule_message(1, self._fader_modes.update)
+                        self.schedule_message(1, self._fader_button_modes.set_enabled, True)
+                        self.schedule_message(1, self._fader_button_modes.update)
+                        self._display_reset_delay = 2
+                        return
             self._display_reset_delay = 0
 
     def _set_drum_pads_to_hc(self):
@@ -499,53 +487,51 @@ class Axiom_AIR_25_49_61(ControlSurface):
         param = sender.mapped_parameter()
         if param != None:
             param_range = param.max - param.min
-            if param.name == 'Track Volume':
+            if param.name == u'Track Volume':
                 if sender == self._master_fader:
                     if self._has_faders:
-                        name_string = 'Master  Vol'
+                        name_string = u'Master  Vol'
                     else:
-                        name_string = self._mixer_for_faders.selected_strip().track_name_data_source().display_string() + '   Vol'
+                        name_string = self._mixer_for_faders.selected_strip().track_name_data_source().display_string() + u'   Vol'
                 else:
-                    name_string = self._mixer_for_faders.channel_strip(self._faders.index(sender)).track_name_data_source().display_string() + '   Vol'
+                    name_string = self._mixer_for_faders.channel_strip(self._faders.index(sender)).track_name_data_source().display_string() + u'   Vol'
             else:
                 name_string = param.name
                 value = int((param.value - param.min) / param_range * 127)
             value_string = str(value)
         else:
-            name_string = '<unmapped>'
+            name_string = u'<unmapped>'
             value_string = None
             self.schedule_message(1, self._set_value_string)
         self._set_name_string(name_string)
         self._set_value_string(value_string)
-        return
 
     def _encoder_value(self, value, sender):
         param = sender.mapped_parameter()
         if param != None:
             param_range = param.max - param.min
-            if param.name == 'Track Volume':
-                name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + '   Vol'
+            if param.name == u'Track Volume':
+                name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + u'   Vol'
                 value = int((param.value - param.min) / param_range * 127)
-            elif param.name == 'Track Panning':
-                name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + '   Pan'
+            elif param.name == u'Track Panning':
+                name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + u'   Pan'
                 value = int(param.value / param_range * 127)
                 if value < 0:
-                    name_string += '  L'
+                    name_string += u'  L'
                 elif value > 0:
-                    name_string += '  R'
+                    name_string += u'  R'
                 else:
-                    name_string += '  C'
+                    name_string += u'  C'
             else:
                 name_string = param.name
                 value = int((param.value - param.min) / param_range * 127)
             value_string = str(value)
         else:
-            name_string = '<unmapped>'
+            name_string = u'<unmapped>'
             value_string = None
             self.schedule_message(1, self._set_value_string)
         self._set_name_string(name_string)
         self._set_value_string(value_string)
-        return
 
     def _set_displays_to_default(self):
         self._name_display.segment(0).set_data_source(self._mixer_for_encoders.selected_strip().track_name_data_source())
@@ -553,26 +539,23 @@ class Axiom_AIR_25_49_61(ControlSurface):
         self._update_bank_value()
         self._set_value_string(None)
         self._send_midi(SYSEX_START + LCD_HC_DEFAULT)
-        return
 
     def _set_name_string(self, name_string):
         self._name_display.segment(0).set_data_source(self._name_display_data_source)
         self._name_display_data_source.set_display_string(name_string)
         self._display_reset_delay = STANDARD_DISPLAY_DELAY
 
-    def _set_value_string(self, value_string=None):
+    def _set_value_string(self, value_string = None):
         if value_string != None:
             self._value_display_data_source.set_display_string(value_string)
         else:
             self._value_display.reset()
-        return
 
-    def _set_bank_string(self, bank_string=None):
+    def _set_bank_string(self, bank_string = None):
         if bank_string != None:
             self._bank_display_data_source.set_display_string(bank_string)
         else:
             self._bank_display.reset()
-        return
 
     def _update_bank_value(self):
         bank = (self._session.track_offset() + 1) / self._session.width() + 1
@@ -591,11 +574,11 @@ class Axiom_AIR_25_49_61(ControlSurface):
         if control.message_type() is MIDI_NOTE_TYPE:
             feedback_rule = Live.MidiMap.NoteFeedbackRule()
             feedback_rule.note_no = 0
-            feedback_rule.vel_map = (0, )
+            feedback_rule.vel_map = (0,)
         elif control.message_type() is MIDI_CC_TYPE:
             feedback_rule = Live.MidiMap.CCFeedbackRule()
             feedback_rule.cc_no = 0
-            feedback_rule.cc_value_map = (0, )
+            feedback_rule.cc_value_map = (0,)
         elif control.message_type() is MIDI_PB_TYPE:
             feedback_rule = Live.MidiMap.PitchBendFeedbackRule()
             feedback_rule.value_pair_map = feedback_map

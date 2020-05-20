@@ -1,13 +1,8 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/dependency.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/dependency.py
 u"""
 Dependency injection framework.
 
-The framework provides lously coupled passing of dependencies from
+The framework provides loosely coupled passing of dependencies from
 providers to the objects that require them.
 
 Dependencies are identified by keys, that are valid Python
@@ -25,7 +20,7 @@ class DependencyError(Exception):
 
 class InjectionRegistry(object):
 
-    def __init__(self, parent=None, *a, **k):
+    def __init__(self, parent = None, *a, **k):
         super(InjectionRegistry, self).__init__(*a, **k)
         self._key_registry = {}
 
@@ -40,34 +35,32 @@ class InjectionRegistry(object):
     def clear(self):
         self._key_registry = {}
 
-    def get(self, key, default=None):
+    def get(self, key, default = None):
         try:
-            return self._key_registry[key][(-1)].provides[key]
+            return self._key_registry[key][-1].provides[key]
         except KeyError:
             return default
 
 
 _global_injection_registry = InjectionRegistry()
 
-def get_dependency_for(name, default=None):
+def get_dependency_for(name, default = None):
     accessor = _global_injection_registry.get(name, default)
     if accessor is not None:
         return accessor()
-    else:
-        raise DependencyError('Required dependency %s not provided' % name)
-        return
+    raise DependencyError(u'Required dependency %s not provided' % name)
 
 
 class dependency(object):
     u"""
     Data descriptor that provides a given dependency looking as an
-    attribute.  The depedency is specified as a keyword parameter,
+    attribute.  The dependency is specified as a keyword parameter,
     whose value can be a default accessor or None.  The attribute only
     tries to fetch the dependency on demand when needed.  Example::
-
+    
          class HttpServer(object):
              connection_port = dependency(http_port = const(80))
-
+    
          server = HttpServer()
          assert server.connection_port == 80
          with inject(connection_port = const(8000)).everywhere():
@@ -78,7 +71,7 @@ class dependency(object):
         assert len(k) == 1
         self._dependency_name, self._dependency_default = k.items()[0]
 
-    def __get__(self, _, cls=None):
+    def __get__(self, _, cls = None):
         return get_dependency_for(self._dependency_name, self._dependency_default)
 
 
@@ -88,20 +81,20 @@ def depends(**dependencies):
     parameters.  Dependencies are specified as keywords with an
     optional accessor function or None if required.  Dependencies can
     be injected or passed directly as keyword parameters.  Example::
-
+    
         class HttpServer(object):
             @depends(http_port = const(80))
             def listen(http_port = None):
                 print "Listening on", http_port
-
+    
         server = HttpServer()
         server.listen()
         server.listen(http_port = 8000)
         with inject(http_port = const(8000)).everywhere():
             server.listen()
-
+    
     Produces the output::
-
+    
         Listening on port 80
         Listening on port 8000
         Listening on port 8000
@@ -111,8 +104,7 @@ def depends(**dependencies):
 
         @wraps(func)
         def wrapper(*a, **explicit):
-            deps = dict([ (k, get_dependency_for(k, v)) for k, v in dependencies.iteritems() if k not in explicit
-                        ])
+            deps = dict([ (k, get_dependency_for(k, v)) for k, v in dependencies.iteritems() if k not in explicit ])
             return func(*a, **union(deps, explicit))
 
         return wrapper
@@ -142,7 +134,7 @@ class Injector(object):
 
 class RegistryInjector(Injector):
 
-    def __init__(self, provides=None, registry=None, *a, **k):
+    def __init__(self, provides = None, registry = None, *a, **k):
         super(RegistryInjector, self).__init__(*a, **k)
         self._provides_dict = provides
         self._registry = registry
@@ -164,7 +156,7 @@ class RegistryInjector(Injector):
 
 class InjectionFactory(object):
 
-    def __init__(self, provides=None, *a, **k):
+    def __init__(self, provides = None, *a, **k):
         super(InjectionFactory, self).__init__(*a, **k)
         self._provides_dict = provides
 
@@ -177,7 +169,7 @@ class InjectionFactory(object):
 
 def inject(**k):
     u"""
-    Inject returns a InjectorFactory that can generate Injectors to
+    Inject returns an InjectorFactory that can generate Injectors to
     inject the provided keys at different levels.  The values to
     inject are specified as keyword parameters mapping keys to given
     nullary callables that will be used to access the dependency when

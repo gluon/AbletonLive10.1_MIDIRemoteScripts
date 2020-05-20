@@ -1,11 +1,7 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/Task.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/Task.py
 from __future__ import absolute_import, print_function, unicode_literals
-import functools, traceback
+import functools
+import traceback
 from .Dependency import depends
 from .Util import remove_if, find_if, linear as linear_fn, print_message, const, nop
 
@@ -24,7 +20,6 @@ class Task(object):
         self._state = RUNNING
         self._next = []
         self._task_manager = None
-        return
 
     def clear(self):
         pass
@@ -98,7 +93,7 @@ class Task(object):
 
     def _set_parent(self, manager):
         if self._task_manager and manager:
-            raise TaskError('Already attached to: ' + str(self._task_manager))
+            raise TaskError(u'Already attached to: ' + str(self._task_manager))
         self._task_manager = manager
 
     def _task_equivalent(self, other):
@@ -107,7 +102,7 @@ class Task(object):
 
 class WrapperTask(Task):
 
-    def __init__(self, wrapped_task=None, *a, **k):
+    def __init__(self, wrapped_task = None, *a, **k):
         super(WrapperTask, self).__init__(*a, **k)
         self.wrapped_task = wrapped_task
 
@@ -125,12 +120,11 @@ class WrapperTask(Task):
 
 class FuncTask(Task):
 
-    def __init__(self, func=None, equivalent=None, *a, **k):
+    def __init__(self, func = None, equivalent = None, *a, **k):
         assert func != None
         super(FuncTask, self).__init__(*a, **k)
         self._func = func
         self._equivalent = equivalent
-        return
 
     def _set_func(self, func):
         self._func = func
@@ -157,13 +151,12 @@ class GeneratorTask(Task):
     class Param(object):
         delta = 0
 
-    def __init__(self, generator=None, equivalent=None, *a, **k):
+    def __init__(self, generator = None, equivalent = None, *a, **k):
         assert generator != None and callable(generator)
         super(GeneratorTask, self).__init__(*a, **k)
         self._param = GeneratorTask.Param()
         self._set_generator(generator)
         self._equivalent = equivalent
-        return
 
     def _set_generator(self, generator):
         self._orig = generator
@@ -196,7 +189,7 @@ class TaskGroup(Task):
     auto_remove = True
     loop = False
 
-    def __init__(self, tasks=[], auto_kill=None, auto_remove=None, loop=None, *a, **k):
+    def __init__(self, tasks = [], auto_kill = None, auto_remove = None, loop = None, *a, **k):
         super(TaskGroup, self).__init__(*a, **k)
         if auto_kill is not None:
             self.auto_kill = auto_kill
@@ -208,18 +201,15 @@ class TaskGroup(Task):
         for task in tasks:
             self.add(task)
 
-        return
-
     def clear(self):
         for t in self._tasks:
             t._set_parent(None)
 
         self._tasks = []
         super(TaskGroup, self).clear()
-        return
 
     @depends(log_message=const(print_message), traceback=const(traceback))
-    def do_update(self, timer, log_message=None, traceback=None):
+    def do_update(self, timer, log_message = None, traceback = None):
         super(TaskGroup, self).do_update(timer)
         for task in self._tasks:
             if not task.is_killed:
@@ -227,7 +217,7 @@ class TaskGroup(Task):
                     task.update(timer)
                 except Exception:
                     task.kill()
-                    log_message('Error when executing task')
+                    log_message(u'Error when executing task')
                     traceback.print_exc()
 
         if self.auto_remove:
@@ -249,7 +239,6 @@ class TaskGroup(Task):
     def remove(self, task):
         self._tasks.remove(task)
         task._set_parent(None)
-        return
 
     def find(self, task):
         return find_if(lambda t: t._task_equivalent(task), self._tasks)
@@ -267,12 +256,11 @@ class TaskGroup(Task):
 class WaitTask(Task):
     duration = 1.0
 
-    def __init__(self, duration=None, *a, **k):
+    def __init__(self, duration = None, *a, **k):
         super(WaitTask, self).__init__(*a, **k)
         if duration is not None:
             self.duration = duration
         self.remaining = self.duration
-        return
 
     def do_update(self, delta):
         super(WaitTask, self).do_update(delta)
@@ -288,12 +276,11 @@ class WaitTask(Task):
 class DelayTask(Task):
     duration = 1
 
-    def __init__(self, duration=None, *a, **k):
+    def __init__(self, duration = None, *a, **k):
         super(DelayTask, self).__init__(*a, **k)
         if duration is not None:
             self.duration = duration
         self.remaining = self.duration
-        return
 
     def do_restart(self):
         self.remaining = self.duration
@@ -324,7 +311,7 @@ class TimerTask(WaitTask):
 
 class FadeTask(Task):
 
-    def __init__(self, func=lambda x: x, duration=1.0, loop=False, init=False, *a, **k):
+    def __init__(self, func = lambda x: x, duration = 1.0, loop = False, init = False, *a, **k):
         super(FadeTask, self).__init__(*a, **k)
         self.func = func
         self.curr = 0.0
@@ -352,13 +339,12 @@ class FadeTask(Task):
 
 class SequenceTask(Task):
 
-    def __init__(self, tasks=[], *a, **k):
+    def __init__(self, tasks = [], *a, **k):
         super(SequenceTask, self).__init__(*a, **k)
         self._tasks = tasks
         self._iter = iter(tasks)
         self._current = None
         self._advance_sequence()
-        return
 
     def _advance_sequence(self):
         try:
@@ -372,7 +358,6 @@ class SequenceTask(Task):
             self._current.update(delta)
             if self._current.is_killed:
                 self._advance_sequence()
-        return
 
     def do_restart(self):
         for x in self._tasks:
@@ -387,13 +372,11 @@ class TimedCallbackTask(SequenceTask):
 
     def start(self, duration, callback):
         if duration is not None:
-            self._tasks = [
-             DelayTask(duration), FuncTask(self._call)]
+            self._tasks = [DelayTask(duration), FuncTask(self._call)]
             self._callback = callback or nop
         else:
             self._tasks = []
         self.restart()
-        return
 
     def _call(self, _time_expired):
         self.cancel()
@@ -406,14 +389,13 @@ class TimedCallbackTask(SequenceTask):
 def totask(task):
     if not isinstance(task, Task):
         if not callable(task):
-            raise TaskError('You can add either tasks or callables. ' + str(task))
+            raise TaskError(u'You can add either tasks or callables. ' + str(task))
         task = FuncTask(func=task)
     return task
 
 
 def generator(orig):
-    equiv = [
-     None]
+    equiv = [None]
 
     @functools.wraps(orig)
     def wrapper():
@@ -450,7 +432,7 @@ def linear(f, min, max, *a, **k):
 try:
     import math
 
-    def sinusoid(f, min=0.0, max=1.0, *a, **k):
+    def sinusoid(f, min = 0.0, max = 1.0, *a, **k):
         return fade((lambda x: f(min + (max - min) * math.sin(x * math.pi / 2.0))), *a, **k)
 
 
@@ -458,7 +440,7 @@ except ImportError as err:
     pass
 
 def run(func, *a, **k):
-    return FuncTask(lambda t: None if func(*a, **k) else None)
+    return FuncTask(lambda t: (None if func(*a, **k) else None))
 
 
 def repeat(task):

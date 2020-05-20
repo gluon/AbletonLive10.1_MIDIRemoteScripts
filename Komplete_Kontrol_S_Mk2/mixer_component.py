@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/mixer_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/mixer_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from functools import partial
@@ -32,8 +27,6 @@ class MixerComponent(MixerComponentBase):
     def set_track_meter_display(self, display):
         for index, strip in enumerate(self._channel_strips):
             strip.set_meter_display_callback(partial(display.update_meter_display, index * METERS_PER_SEGMENT) if display else None)
-
-        return
 
     def set_track_arm_displays(self, displays):
         for strip, display in izip_longest(self._channel_strips, displays or []):

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/special_mixer_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/special_mixer_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import listens
@@ -27,13 +22,12 @@ class SpecialMixerComponent(components.MixerComponent):
         self._pan_send_values_display = None
         self._pan_send_graphics_display = None
         self._pan_send_toggle_skip = False
-        self._selected_track_data_sources = map(DisplayDataSource, (u'', ) * self.num_label_segments)
-        self._selected_track_data_sources[0].set_display_string('Track Selection:')
+        self._selected_track_data_sources = map(DisplayDataSource, (u'',) * self.num_label_segments)
+        self._selected_track_data_sources[0].set_display_string(u'Track Selection:')
         self._selected_track_name_data_source = self._selected_track_data_sources[1]
-        self._on_selected_track_changed.subject = self.song.view
+        self._on_selected_track_name_changed.subject = self.song.view
         self._on_track_list_changed.subject = self.song
         self._update_selected_track_name()
-        return
 
     def set_pan_send_toggle(self, toggle):
         u"""
@@ -103,10 +97,9 @@ class SpecialMixerComponent(components.MixerComponent):
             self.set_pan_controls(controls)
         else:
             sends = self._pan_send_index - 1
-            self.set_send_controls(map(lambda ctl: (None, ) * sends + (ctl,), controls or []))
-        return
+            self.set_send_controls(map(lambda ctl: (None,) * sends + (ctl,), controls or []))
 
-    @listens('visible_tracks')
+    @listens(u'visible_tracks')
     def _on_track_list_changed(self):
         self._update_pan_sends()
 
@@ -133,7 +126,7 @@ class SpecialMixerComponent(components.MixerComponent):
             sources = [ strip.track_parameter_graphic_sources(parameter) for strip in self._channel_strips ]
             display.set_data_sources(sources)
 
-    @listens('value')
+    @listens(u'value')
     def _on_pan_send_value(self, value):
         if not self._pan_send_toggle_skip and self.is_enabled() and (value or not self._pan_send_toggle.is_momentary()):
             self._pan_send_index += 1
@@ -149,8 +142,8 @@ class SpecialMixerComponent(components.MixerComponent):
         if len(self.song.tracks) == 0 or self._pan_send_index > len(self.song.tracks[0].mixer_device.sends):
             self._pan_send_index = 0
 
-    @listens('selected_track.name')
-    def _on_selected_track_changed(self):
+    @listens(u'selected_track.name')
+    def _on_selected_track_name_changed(self):
         self._update_selected_track_name()
 
     def _update_selected_track_name(self):

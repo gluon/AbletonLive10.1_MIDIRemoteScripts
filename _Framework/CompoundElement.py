@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/CompoundElement.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/CompoundElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 from .ControlElement import ControlElementClient
@@ -13,7 +8,7 @@ from .Util import BooleanContext, first, second
 
 class NestedElementClient(ControlElementClient):
 
-    def __init__(self, compound=None, client=None, **k):
+    def __init__(self, compound = None, client = None, **k):
         super(NestedElementClient, self).__init__(**k)
         self.compound = compound
         self.client = client
@@ -148,7 +143,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         important, because for nested InputControlElements, the
         existence of listeners determine wether they will send the
         MIDI messages to Live or to the script.
-
+        
         You can force the compound to listen to its nested elements
         using this methods.  The compound will then listen to them IFF
         the number of requests is greater than the number of
@@ -184,7 +179,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
                 self._nested_control_elements[control] = False
         self.on_nested_control_element_lost(control)
 
-    @subject_slot_group('value')
+    @subject_slot_group(u'value')
     def _on_nested_control_element_value(self, value, sender):
         if self.owns_control_element(sender):
             self.on_nested_control_element_value(value, sender)
@@ -198,7 +193,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         if owner and not self._disable_notify_owner_on_button_ownership_change:
             self.notify_ownership_change(owner, True)
 
-    def _grab_nested_control_elements(self, client, priority=None, **k):
+    def _grab_nested_control_elements(self, client, priority = None, **k):
         was_resource_based = self._is_resource_based
         self._is_resource_based = True
         nested_client = self._get_nested_client(client)

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/action_with_options_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/action_with_options_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import in_range, clamp, task
@@ -62,13 +57,13 @@ class ActionWithSettingsComponent(Component):
 
 
 class OptionsComponent(Component):
-    __events__ = (u'selected_option', )
-    unselected_color = 'Option.Unselected'
-    selected_color = 'Option.Selected'
+    __events__ = (u'selected_option',)
+    unselected_color = u'Option.Unselected'
+    selected_color = u'Option.Selected'
     _selected_option = None
     select_buttons = control_list(ButtonControl, control_count=0)
 
-    def __init__(self, num_options=8, num_labels=4, num_display_segments=None, *a, **k):
+    def __init__(self, num_options = 8, num_labels = 4, num_display_segments = None, *a, **k):
         super(OptionsComponent, self).__init__(*a, **k)
         num_display_segments = num_display_segments or num_options
         self._label_data_sources = [ DisplayDataSource() for _ in xrange(num_labels) ]
@@ -99,7 +94,6 @@ class OptionsComponent(Component):
         self._selected_option = selected_option
         self._update_select_buttons()
         self._update_data_sources()
-        return
 
     selected_option = property(_get_selected_option, _set_selected_option)
 
@@ -151,14 +145,14 @@ class OptionsComponent(Component):
     def _update_data_sources(self):
         for index, (source, name) in enumerate(izip_longest(self._data_sources, self.option_names)):
             if name:
-                source.set_display_string((consts.CHAR_SELECT if index == self._selected_option else ' ') + name)
+                source.set_display_string((consts.CHAR_SELECT if index == self._selected_option else u' ') + name)
             else:
-                source.set_display_string('')
+                source.set_display_string(u'')
 
 
 class ActionWithOptionsComponent(ActionWithSettingsComponent):
 
-    def __init__(self, num_options=8, *a, **k):
+    def __init__(self, num_options = 8, *a, **k):
         super(ActionWithOptionsComponent, self).__init__(*a, **k)
         self._options = OptionsComponent(parent=self, num_options=num_options)
         self._options.set_enabled(False)
@@ -182,7 +176,7 @@ class ToggleWithOptionsComponent(ActionWithOptionsComponent):
 
     def __init__(self, *a, **k):
         super(ToggleWithOptionsComponent, self).__init__(*a, **k)
-        self.action_button.color = 'DefaultButton.Off'
+        self.action_button.color = u'DefaultButton.Off'
 
     def _get_is_active(self):
         return self._is_active
@@ -191,7 +185,7 @@ class ToggleWithOptionsComponent(ActionWithOptionsComponent):
         if value != self._is_active:
             self._is_active = value
             self.notify_is_active(value)
-            self.action_button.color = 'DefaultButton.On' if value else 'DefaultButton.Off'
+            self.action_button.color = u'DefaultButton.On' if value else u'DefaultButton.Off'
 
     is_active = property(_get_is_active, _set_is_active)
 

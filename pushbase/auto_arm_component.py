@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/auto_arm_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/auto_arm_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import mixin, nop
@@ -16,18 +11,17 @@ class AutoArmRestoreBehaviour(ModeButtonBehaviour):
     Mode button behaviour that auto-arm is enabled when the mode is
     activated. If it is not, then it will make the button blink and
     restore it in the second press.
-
+    
     Note that this interface is passive, you have to manually call
     update() to make sure the light is update when the auto-arm
     condition changes.
     """
 
-    def __init__(self, auto_arm=None, *a, **k):
+    def __init__(self, auto_arm = None, *a, **k):
         super(AutoArmRestoreBehaviour, self).__init__(*a, **k)
         self._auto_arm = auto_arm
         self._last_update_params = None
         self._should_call_super = True
-        return
 
     def press_immediate(self, component, mode):
         if component.selected_mode != mode:
@@ -56,7 +50,7 @@ class AutoArmRestoreBehaviour(ModeButtonBehaviour):
     def update_button(self, component, mode, selected_mode):
         self._last_update_params = (component, mode, selected_mode)
         button = component.get_mode_button(mode)
-        button.mode_selected_color = 'DefaultButton.Alert' if self._auto_arm.needs_restore_auto_arm else 'DefaultButton.On'
+        button.mode_selected_color = u'DefaultButton.Alert' if self._auto_arm.needs_restore_auto_arm else u'DefaultButton.On'
 
     def update(self):
         if self._last_update_params:
@@ -66,10 +60,14 @@ class AutoArmRestoreBehaviour(ModeButtonBehaviour):
 class RestoringAutoArmComponent(AutoArmComponent, Messenger):
 
     def __init__(self, *a, **k):
+        AutoArmComponent.active_push_instances.append(self)
         super(RestoringAutoArmComponent, self).__init__(*a, **k)
         self._auto_arm_restore_behaviour = None
         self._notification_reference = partial(nop, None)
-        return
+
+    def disconnect(self):
+        AutoArmComponent.active_push_instances.remove(self)
+        super(RestoringAutoArmComponent, self).disconnect()
 
     def _update_implicit_arm(self):
         super(RestoringAutoArmComponent, self)._update_implicit_arm()
@@ -97,11 +95,10 @@ class RestoringAutoArmComponent(AutoArmComponent, Messenger):
 
     def _update_notification(self):
         if self.needs_restore_auto_arm:
-            self._notification_reference = self.show_notification('  Press [Note] to arm the track:    ' + self.song.view.selected_track.name, blink_text='  Press        to arm the track:    ' + self.song.view.selected_track.name, notification_time=10.0)
+            self._notification_reference = self.show_notification(u'  Press [Note] to arm the track:    ' + self.song.view.selected_track.name, blink_text=u'  Press        to arm the track:    ' + self.song.view.selected_track.name, notification_time=10.0)
         else:
             self._hide_notification()
 
     def _hide_notification(self):
         if self._notification_reference() is not None:
             self._notification_reference().hide()
-        return

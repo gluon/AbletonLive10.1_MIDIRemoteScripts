@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_Mini32/MixerOrDeviceModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_Mini32/MixerOrDeviceModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 
@@ -37,7 +32,6 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
         self._mixer_modes = None
         self._device_nav = None
         ModeSelectorComponent.disconnect(self)
-        return
 
     def number_of_modes(self):
         return 3
@@ -75,4 +69,3 @@ class MixerOrDeviceModeSelector(ModeSelectorComponent):
                 self._session.set_page_right_button(None)
                 self._device.set_on_off_button(None)
                 self._mixer.selected_strip().set_arm_button(None)
-        return

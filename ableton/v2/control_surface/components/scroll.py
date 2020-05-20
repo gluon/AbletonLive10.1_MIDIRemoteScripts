@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/scroll.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/scroll.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import task
 from .. import defaults
@@ -43,13 +38,12 @@ class ScrollComponent(Component, Scrollable):
     scroll_up_button = ButtonControl()
     scroll_down_button = ButtonControl()
 
-    def __init__(self, scrollable=None, *a, **k):
+    def __init__(self, scrollable = None, *a, **k):
         super(ScrollComponent, self).__init__(*a, **k)
         self._scroll_task_up = self._make_scroll_task(self._do_scroll_up)
         self._scroll_task_down = self._make_scroll_task(self._do_scroll_down)
         if scrollable != None:
             self.scrollable = scrollable
-        return
 
     def _make_scroll_task(self, scroll_step):
         t = self._tasks.add(task.sequence(task.wait(self.scrolling_delay), task.loop(task.wait(self.scrolling_step_delay), task.run(scroll_step))))

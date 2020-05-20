@@ -1,22 +1,16 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/SpecialSessionComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/SpecialSessionComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.SessionComponent import SessionComponent
 
 class SpecialSessionComponent(SessionComponent):
     u""" Session component which allows parallel mixer components
-        and has track select buttons """
+    and has track select buttons """
 
     def __init__(self, num_tracks, num_scenes):
         self._alt_mixer = None
         self._next_track_button = None
         self._prev_track_button = None
         SessionComponent.__init__(self, num_tracks, num_scenes)
-        return
 
     def disconnect(self):
         SessionComponent.disconnect(self)
@@ -27,13 +21,11 @@ class SpecialSessionComponent(SessionComponent):
         if self._prev_track_button != None:
             self._prev_track_button.remove_value_listener(self._prev_track_value)
             self._prev_track_button = None
-        return
 
     def set_alt_mixer(self, alt_mixer):
         self._alt_mixer = alt_mixer
         if self._alt_mixer != None:
             self._alt_mixer.set_track_offset(self.track_offset())
-        return
 
     def set_track_select_buttons(self, next_button, prev_button):
         do_update = False
@@ -53,7 +45,6 @@ class SpecialSessionComponent(SessionComponent):
                 self._prev_track_button.add_value_listener(self._prev_track_value)
         if do_update:
             self.on_selected_track_changed()
-        return
 
     def tracks_to_use(self):
         list_of_tracks = None
@@ -80,16 +71,15 @@ class SpecialSessionComponent(SessionComponent):
             self.notify_offset()
             if self.width() > 0 and self.height() > 0:
                 self._do_show_highlight()
-        return
 
     def _next_track_value(self, value):
         if self.is_enabled():
             if value is not 0 or not self._next_track_button.is_momentary():
                 selected_track = self.song().view.selected_track
                 all_tracks = self.song().visible_tracks + self.song().return_tracks + (self.song().master_track,)
-                if selected_track != all_tracks[(-1)]:
+                if selected_track != all_tracks[-1]:
                     index = list(all_tracks).index(selected_track)
-                    self.song().view.selected_track = all_tracks[(index + 1)]
+                    self.song().view.selected_track = all_tracks[index + 1]
 
     def _prev_track_value(self, value):
         if self.is_enabled():
@@ -98,4 +88,4 @@ class SpecialSessionComponent(SessionComponent):
                 all_tracks = self.song().visible_tracks + self.song().return_tracks + (self.song().master_track,)
                 if selected_track != all_tracks[0]:
                     index = list(all_tracks).index(selected_track)
-                    self.song().view.selected_track = all_tracks[(index - 1)]
+                    self.song().view.selected_track = all_tracks[index - 1]

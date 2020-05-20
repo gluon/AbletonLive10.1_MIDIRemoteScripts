@@ -1,27 +1,21 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/model/repr.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/model/repr.py
 from __future__ import absolute_import, print_function, unicode_literals
 import re
 from functools import partial
 from ableton.v2.base import EventObject, Slot, EventError, find_if, listenable_property, listens, liveobj_valid
 from ..device_parameter_icons import get_image_filenames, get_image_filenames_from_ids
-DEVICE_TYPES_WITH_PRESET_NAME = [
- 'InstrumentGroupDevice',
- 'DrumGroupDevice',
- 'AudioEffectGroupDevice',
- 'MidiEffectGroupDevice',
- 'ProxyInstrumentDevice',
- 'ProxyAudioEffectDevice',
- 'MxDeviceInstrument',
- 'MxDeviceAudioEffect',
- 'MxDeviceMidiEffect']
+DEVICE_TYPES_WITH_PRESET_NAME = [u'InstrumentGroupDevice',
+ u'DrumGroupDevice',
+ u'AudioEffectGroupDevice',
+ u'MidiEffectGroupDevice',
+ u'ProxyInstrumentDevice',
+ u'ProxyAudioEffectDevice',
+ u'MxDeviceInstrument',
+ u'MxDeviceAudioEffect',
+ u'MxDeviceMidiEffect']
 display_pattern = re.compile(u'\\d|\xb0|/|\\%|\\.|\\:|\\-|\\+|inf')
-unit_pattern = re.compile('inf\\s*[A-z]+$|\\d\\s*[A-z]+$')
-string_pattern = re.compile('[A-z]+$')
+unit_pattern = re.compile(u'inf\\s*[A-z]+$|\\d\\s*[A-z]+$')
+string_pattern = re.compile(u'[A-z]+$')
 
 def _get_parameter_by_name(device, name):
     parameters = device.parameters if liveobj_valid(device) else []
@@ -46,14 +40,14 @@ def _try_to_round_number(parameter_string):
 
 def get_parameter_display_value(parameter):
     parameter_string = unicode(parameter)
-    found_string = ('').join(display_pattern.findall(parameter_string))
+    found_string = u''.join(display_pattern.findall(parameter_string))
     if found_string in (u'inf', u'-inf'):
         parameter_display = found_string
     else:
         value = _try_to_round_number(found_string)
         parameter_display = unicode(value) if value is not None else parameter_string
-        if found_string.startswith('+'):
-            parameter_display = '+' + parameter_display
+        if found_string.startswith(u'+'):
+            parameter_display = u'+' + parameter_display
     return parameter_display
 
 
@@ -61,8 +55,8 @@ def get_parameter_unit(parameter):
     parameter_string = unicode(parameter)
     value = unit_pattern.findall(parameter_string)
     if value:
-        return ('').join(string_pattern.findall(value[0]))
-    return ''
+        return u''.join(string_pattern.findall(value[0]))
+    return u''
 
 
 def strip_formatted_string(str):
@@ -70,15 +64,14 @@ def strip_formatted_string(str):
     Remove multiple whitespaces (including new lines) and whitespaces at the beginning
     and end of the given string.
     """
-    return re.sub('\\s\\s+', ' ', str).strip()
+    return re.sub(u'\\s\\s+', u' ', str).strip()
 
 
 def convert_color_index(color_index):
     from ..colors import UNCOLORED_INDEX
     if color_index is None:
         return UNCOLORED_INDEX
-    else:
-        return color_index
+    return color_index
 
 
 def determine_color_label_index(item):
@@ -87,17 +80,16 @@ def determine_color_label_index(item):
     -1 otherwise. The number represents the index of the color label in the list of
     *all* color labels (i.e. including currently invisible/disabled labels)
     """
-    match = re.search('^color:colors=(\\d+)$', item.uri)
+    match = re.search(u'^color:colors=(\\d+)$', item.uri)
     is_color_label = match is not None
     if is_color_label:
         return int(match.group(1)) - 1
-    else:
-        return -1
+    return -1
 
 
 class ModelAdapter(EventObject):
 
-    def __init__(self, adaptee=None, *a, **k):
+    def __init__(self, adaptee = None, *a, **k):
         assert liveobj_valid(adaptee)
         super(ModelAdapter, self).__init__(*a, **k)
         self._adaptee = adaptee
@@ -112,15 +104,15 @@ class ModelAdapter(EventObject):
 
     @property
     def _live_ptr(self):
-        if hasattr(self._adaptee, '_live_ptr'):
+        if hasattr(self._adaptee, u'_live_ptr'):
             return self._adaptee._live_ptr
         return id(self._adaptee)
 
-    def _alias_observable_property(self, prop_name, alias_name, getter=None):
+    def _alias_observable_property(self, prop_name, alias_name, getter = None):
         default_getter = lambda self_: getattr(self_._adaptee, prop_name)
         aliased_prop = property(getter or default_getter)
         setattr(self.__class__, alias_name, aliased_prop)
-        notifier = getattr(self, 'notify_' + alias_name)
+        notifier = getattr(self, u'notify_' + alias_name)
         self.register_slot(Slot(self._adaptee, notifier, prop_name))
 
 
@@ -128,18 +120,18 @@ class ClipAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         super(ClipAdapter, self).__init__(*a, **k)
-        self.register_slot(self._adaptee, self.notify_name, 'name')
+        self.register_slot(self._adaptee, self.notify_name, u'name')
 
     @listenable_property
     def name(self):
         name = self._adaptee.name
         if len(name.strip()) == 0:
-            name = 'MIDI clip' if self._adaptee.is_midi_clip else 'Audio clip'
+            name = u'MIDI clip' if self._adaptee.is_midi_clip else u'Audio clip'
         return name
 
     @property
     def positions(self):
-        return getattr(self._adaptee, 'positions', None)
+        return getattr(self._adaptee, u'positions', None)
 
     @property
     def warping(self):
@@ -147,17 +139,17 @@ class ClipAdapter(ModelAdapter):
 
 
 class DeviceParameterAdapter(ModelAdapter):
-    __events__ = (u'hasAutomation', )
+    __events__ = (u'hasAutomation',)
 
     def __init__(self, *a, **k):
         super(DeviceParameterAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('automation_state', 'hasAutomation', getter=lambda self_: self_._has_automation())
-        self.register_slot(self._adaptee, self.notify_displayValue, 'value')
-        self.register_slot(self._adaptee, self.notify_unit, 'value')
-        self.register_slot(self._adaptee, self.notify_automationActive, 'automation_state')
-        self.register_slot(self._adaptee, self.notify_isActive, 'state')
+        self._alias_observable_property(u'automation_state', u'hasAutomation', getter=lambda self_: self_._has_automation())
+        self.register_slot(self._adaptee, self.notify_displayValue, u'value')
+        self.register_slot(self._adaptee, self.notify_unit, u'value')
+        self.register_slot(self._adaptee, self.notify_automationActive, u'automation_state')
+        self.register_slot(self._adaptee, self.notify_isActive, u'state')
         try:
-            self.register_slot(self._adaptee, self.notify_valueItems, 'value_items')
+            self.register_slot(self._adaptee, self.notify_valueItems, u'value_items')
         except EventError:
             pass
 
@@ -167,22 +159,21 @@ class DeviceParameterAdapter(ModelAdapter):
             return self._adaptee.value_items
         return []
 
-    def _get_image_filenames(self, small_images=False):
+    def _get_image_filenames(self, small_images = False):
         device = self.canonical_parent
-        if not hasattr(device, 'class_name'):
+        if not hasattr(device, u'class_name'):
             return []
-        else:
-            custom_images = None
-            if liveobj_valid(device):
-                try:
-                    custom_images = device.get_value_item_icons(getattr(self._adaptee, 'original_parameter', self._adaptee))
-                except (AttributeError, RuntimeError):
-                    pass
+        custom_images = None
+        if liveobj_valid(device):
+            try:
+                custom_images = device.get_value_item_icons(getattr(self._adaptee, u'original_parameter', self._adaptee))
+            except (AttributeError, RuntimeError):
+                pass
 
-            if custom_images is not None:
-                return get_image_filenames_from_ids(custom_images, small_images)
+        if custom_images is not None:
+            return get_image_filenames_from_ids(custom_images, small_images)
+        else:
             return get_image_filenames(self.original_name, device.class_name, small_images)
-            return
 
     @listenable_property
     def valueItemImages(self):
@@ -221,9 +212,9 @@ class EditModeOptionAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         super(EditModeOptionAdapter, self).__init__(*a, **k)
-        if hasattr(self._adaptee, 'active_index'):
-            self._alias_observable_property('active_index', 'activeIndex', getter=lambda self_: getattr(self_._adaptee, 'active_index', 0))
-        self._alias_observable_property('default_label', 'choices', getter=lambda self_: self_._choices)
+        if hasattr(self._adaptee, u'active_index'):
+            self._alias_observable_property(u'active_index', u'activeIndex', getter=lambda self_: getattr(self_._adaptee, u'active_index', 0))
+        self._alias_observable_property(u'default_label', u'choices', getter=lambda self_: self_._choices)
 
     @property
     def activeIndex(self):
@@ -231,20 +222,20 @@ class EditModeOptionAdapter(ModelAdapter):
 
     @property
     def _choices(self):
-        return getattr(self._adaptee, 'labels', [self._adaptee.default_label])
+        return getattr(self._adaptee, u'labels', [self._adaptee.default_label])
 
 
 class SimplerDeviceAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         super(SimplerDeviceAdapter, self).__init__(*a, **k)
-        self.register_slot(self._adaptee.view, self.notify_selected_slice, 'selected_slice')
+        self.register_slot(self._adaptee.view, self.notify_selected_slice, u'selected_slice')
         get_parameter = partial(_get_parameter_by_name, self._adaptee)
-        self.sample_start = get_parameter('S Start')
-        self.sample_length = get_parameter('S Length')
-        self.loop_length = get_parameter('S Loop Length')
-        self.loop_on = get_parameter('S Loop On')
-        self.zoom = get_parameter('Zoom')
+        self.sample_start = get_parameter(u'S Start')
+        self.sample_length = get_parameter(u'S Length')
+        self.loop_length = get_parameter(u'S Loop Length')
+        self.loop_on = get_parameter(u'S Loop On')
+        self.zoom = get_parameter(u'Zoom')
         self.__on_sample_changed.subject = self._adaptee
         self.__on_sample_changed()
 
@@ -261,13 +252,13 @@ class SimplerDeviceAdapter(ModelAdapter):
 
         return slice_times
 
-    @listens('sample')
+    @listens(u'sample')
     def __on_sample_changed(self):
-        self.register_slot(self._adaptee.sample, self.notify_start_marker, 'start_marker')
-        self.register_slot(self._adaptee.sample, self.notify_end_marker, 'end_marker')
-        self.register_slot(self._adaptee.sample, self.notify_slices, 'slices')
-        self.register_slot(self._adaptee.sample, self.notify_slicing_sensitivity, 'slicing_sensitivity')
-        self.register_slot(self._adaptee.sample, self.notify_gain, 'gain')
+        self.register_slot(self._adaptee.sample, self.notify_start_marker, u'start_marker')
+        self.register_slot(self._adaptee.sample, self.notify_end_marker, u'end_marker')
+        self.register_slot(self._adaptee.sample, self.notify_slices, u'slices')
+        self.register_slot(self._adaptee.sample, self.notify_slicing_sensitivity, u'slicing_sensitivity')
+        self.register_slot(self._adaptee.sample, self.notify_gain, u'gain')
 
     @listenable_property
     def slices(self):
@@ -317,7 +308,7 @@ class SimplerDeviceAdapter(ModelAdapter):
 
 class VisibleAdapter(ModelAdapter):
 
-    def __init__(self, adaptee=None, *a, **k):
+    def __init__(self, adaptee = None, *a, **k):
         super(VisibleAdapter, self).__init__(adaptee=adaptee, *a, **k)
         self.__on_enabled_changed.subject = adaptee
 
@@ -325,43 +316,43 @@ class VisibleAdapter(ModelAdapter):
     def visible(self):
         return self._adaptee.is_enabled()
 
-    @listens('enabled')
+    @listens(u'enabled')
     def __on_enabled_changed(self, enabled):
         self.notify_visible()
 
 
 class TrackMixAdapter(VisibleAdapter):
-    __events__ = (u'scrollOffset', )
+    __events__ = (u'scrollOffset',)
 
     def __init__(self, *a, **k):
         super(TrackMixAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('scroll_offset', 'scrollOffset')
+        self._alias_observable_property(u'scroll_offset', u'scrollOffset')
 
 
 class TrackControlAdapter(VisibleAdapter):
-    __events__ = (u'track_control_mode', )
+    __events__ = (u'track_control_mode',)
 
     def __init__(self, *a, **k):
         super(TrackControlAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('selected_mode', 'track_control_mode')
+        self._alias_observable_property(u'selected_mode', u'track_control_mode')
 
 
 class OptionsListAdapter(VisibleAdapter):
-    __events__ = (u'selectedItem', )
+    __events__ = (u'selectedItem',)
 
     def __init__(self, *a, **k):
         super(OptionsListAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('selected_item', 'selectedItem')
+        self._alias_observable_property(u'selected_item', u'selectedItem')
 
 
 class ItemListAdapter(VisibleAdapter):
-    __events__ = (u'selectedItem', )
+    __events__ = (u'selectedItem',)
 
     def __init__(self, *a, **k):
         super(ItemListAdapter, self).__init__(*a, **k)
         self.__on_selected_item_changed.subject = self._adaptee.item_provider
 
-    @listens('selected_item')
+    @listens(u'selected_item')
     def __on_selected_item_changed(self):
         self.notify_selectedItem()
 
@@ -374,22 +365,22 @@ class ItemSlotAdapter(ModelAdapter):
 
     @property
     def icon(self):
-        return getattr(self._adaptee, 'icon', '')
+        return getattr(self._adaptee, u'icon', u'')
 
 
 class DeviceAdapter(ModelAdapter):
-    __events__ = (u'is_active', )
+    __events__ = (u'is_active',)
 
     def __init__(self, *a, **k):
         from ..device_util import is_drum_pad, find_chain_or_track, find_rack
         super(DeviceAdapter, self).__init__(*a, **k)
         item = self._unwrapped_item()
-        if hasattr(item, 'is_active'):
+        if hasattr(item, u'is_active'):
             self.__on_is_active_changed.subject = item
         elif is_drum_pad(item):
             self.__on_is_active_changed.subject = item.canonical_parent
             self.__on_mute_changed.subject = item
-        if hasattr(item, 'name'):
+        if hasattr(item, u'name'):
             self.__on_name_changed.subject = item
         self._chain = find_chain_or_track(item)
         self._rack_chain = find_chain_or_track(find_rack(item))
@@ -397,25 +388,25 @@ class DeviceAdapter(ModelAdapter):
         self.__on_rack_color_index_changed.subject = self._rack_chain
 
     def _unwrapped_item(self):
-        return getattr(self._adaptee, 'item', self._adaptee)
+        return getattr(self._adaptee, u'item', self._adaptee)
 
     @listenable_property
     def navigation_name(self):
         item = self._unwrapped_item()
-        name = getattr(item, 'name', '')
-        if hasattr(item, 'class_name') and item.class_name in DEVICE_TYPES_WITH_PRESET_NAME:
+        name = getattr(item, u'name', u'')
+        if hasattr(item, u'class_name') and item.class_name in DEVICE_TYPES_WITH_PRESET_NAME:
             return name
         else:
-            return getattr(item, 'class_display_name', name)
+            return getattr(item, u'class_display_name', name)
 
     @property
     def class_name(self):
         import Live
         item = self._unwrapped_item()
         if isinstance(item, Live.DrumPad.DrumPad):
-            return 'DrumPad'
+            return u'DrumPad'
         else:
-            return getattr(item, 'class_name', '')
+            return getattr(item, u'class_name', u'')
 
     @property
     def nestingLevel(self):
@@ -432,21 +423,21 @@ class DeviceAdapter(ModelAdapter):
         except AttributeError:
             return True
 
-    @listens('is_active')
+    @listens(u'is_active')
     def __on_is_active_changed(self):
         self.notify_is_active()
 
-    @listens('mute')
+    @listens(u'mute')
     def __on_mute_changed(self):
         self.notify_is_active()
 
-    @listens('name')
+    @listens(u'name')
     def __on_name_changed(self):
         self.notify_navigation_name()
 
     @property
     def icon(self):
-        return getattr(self._adaptee, 'icon', '')
+        return getattr(self._adaptee, u'icon', u'')
 
     @listenable_property
     def chain_color_index(self):
@@ -454,7 +445,7 @@ class DeviceAdapter(ModelAdapter):
             return convert_color_index(self._chain.color_index)
         return -1
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_chain_color_index_changed(self):
         self.notify_chain_color_index()
 
@@ -464,62 +455,62 @@ class DeviceAdapter(ModelAdapter):
             return convert_color_index(self._rack_chain.color_index)
         return -1
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_rack_color_index_changed(self):
         self.notify_rack_color_index()
 
 
 class TrackAdapter(ModelAdapter):
-    __events__ = (u'activated', )
+    __events__ = (u'activated',)
 
     def __init__(self, *a, **k):
         super(TrackAdapter, self).__init__(*a, **k)
-        if hasattr(self._adaptee, 'mute'):
+        if hasattr(self._adaptee, u'mute'):
             self.__on_mute_changed.subject = self._adaptee
             self.__on_solo_changed.subject = self._adaptee
             self.__on_muted_via_solo_changed.subject = self._adaptee
         self.has_playing_clip = False
         self._update_has_playing_clip()
-        if hasattr(self._adaptee, 'playing_slot_index'):
+        if hasattr(self._adaptee, u'playing_slot_index'):
             self.__on_playing_slot_index_changed.subject = self._adaptee
         try:
-            if hasattr(self._adaptee.parent_track, 'is_frozen'):
+            if hasattr(self._adaptee.parent_track, u'is_frozen'):
                 self.__on_is_frozen_changed.subject = self._adaptee.parent_track
         except AttributeError:
             pass
-        else:
-            try:
-                self.register_slot(self._adaptee, self.notify_colorIndex, 'color_index')
-            except EventError:
-                pass
-            else:
-                try:
-                    self.register_slot(self._adaptee.parent_track, self.notify_parentColorIndex, 'color_index')
-                except AttributeError:
-                    pass
-                else:
-                    try:
-                        self.register_slot(self._adaptee, self.notify_isFrozen, 'is_frozen')
-                    except EventError:
-                        pass
 
-                try:
-                    self.register_slot(self._adaptee, self.notify_arm, 'arm')
-                except EventError:
-                    pass
+        try:
+            self.register_slot(self._adaptee, self.notify_colorIndex, u'color_index')
+        except EventError:
+            pass
 
-            try:
-                self.register_slot(self._adaptee, self.notify_outputRouting, 'output_routing_type')
-            except EventError:
-                pass
+        try:
+            self.register_slot(self._adaptee.parent_track, self.notify_parentColorIndex, u'color_index')
+        except AttributeError:
+            pass
+
+        try:
+            self.register_slot(self._adaptee, self.notify_isFrozen, u'is_frozen')
+        except EventError:
+            pass
+
+        try:
+            self.register_slot(self._adaptee, self.notify_arm, u'arm')
+        except EventError:
+            pass
+
+        try:
+            self.register_slot(self._adaptee, self.notify_outputRouting, u'output_routing_type')
+        except EventError:
+            pass
 
     @property
     def isFoldable(self):
-        return getattr(self._adaptee, 'is_foldable', False)
+        return getattr(self._adaptee, u'is_foldable', False)
 
     @property
     def canShowChains(self):
-        return getattr(self._adaptee, 'can_show_chains', False)
+        return getattr(self._adaptee, u'can_show_chains', False)
 
     @property
     def containsDrumRack(self):
@@ -552,9 +543,7 @@ class TrackAdapter(ModelAdapter):
         try:
             if self._adaptee.can_be_armed:
                 return self._adaptee.arm
-            else:
-                return False
-
+            return False
         except AttributeError:
             return False
 
@@ -565,49 +554,45 @@ class TrackAdapter(ModelAdapter):
         except AttributeError:
             return False
 
-    @listens('is_frozen')
+    @listens(u'is_frozen')
     def __on_is_frozen_changed(self):
         self.notify_parent_track_frozen()
 
-    @listens('mute')
+    @listens(u'mute')
     def __on_mute_changed(self):
         self.notify_activated()
 
-    @listens('solo')
+    @listens(u'solo')
     def __on_solo_changed(self):
         self.notify_activated()
 
-    @listens('muted_via_solo')
+    @listens(u'muted_via_solo')
     def __on_muted_via_solo_changed(self):
         self.notify_activated()
 
-    @listens('playing_slot_index')
+    @listens(u'playing_slot_index')
     def __on_playing_slot_index_changed(self):
         self._update_has_playing_clip()
         self.notify_playingClip()
 
     def _update_has_playing_clip(self):
-        has_playing_clip = self._adaptee.playing_slot_index >= 0 if hasattr(self._adaptee, 'playing_slot_index') else False
+        has_playing_clip = self._adaptee.playing_slot_index >= 0 if hasattr(self._adaptee, u'playing_slot_index') else False
         if has_playing_clip != self.has_playing_clip:
             self.has_playing_clip = has_playing_clip
             self.notify_hasPlayingClip()
 
     def _playing_clip_slot(self):
-        if hasattr(self._adaptee, 'playing_slot_index'):
+        if hasattr(self._adaptee, u'playing_slot_index'):
             try:
                 if self._adaptee.playing_slot_index >= 0:
                     return self._adaptee.clip_slots[self._adaptee.playing_slot_index]
             except RuntimeError:
                 pass
 
-        return
-
     def _playing_clip(self):
         playing_clip_slot = self._playing_clip_slot()
         if playing_clip_slot is not None:
             return playing_clip_slot.clip
-        else:
-            return
 
     @listenable_property
     def colorIndex(self):
@@ -646,11 +631,10 @@ class TrackAdapter(ModelAdapter):
 
     @listenable_property
     def outputRouting(self):
-        routing_type = getattr(self._adaptee, 'output_routing_type', None)
+        routing_type = getattr(self._adaptee, u'output_routing_type', None)
         if routing_type is not None:
             return routing_type.display_name
-        else:
-            return ''
+        return u''
 
     @listenable_property
     def hasPlayingClip(self):
@@ -662,18 +646,18 @@ class TrackAdapter(ModelAdapter):
 
 
 class TrackListAdapter(VisibleAdapter):
-    __events__ = (u'selectedTrack', )
+    __events__ = (u'selectedTrack',)
 
     def __init__(self, *a, **k):
         super(TrackListAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('selected_track', 'selectedTrack')
+        self._alias_observable_property(u'selected_track', u'selectedTrack')
 
 
 class BrowserItemAdapter(ModelAdapter):
 
     @property
     def icon(self):
-        return getattr(self._adaptee, 'icon', '')
+        return getattr(self._adaptee, u'icon', u'')
 
     @property
     def color_label_index(self):
@@ -687,22 +671,22 @@ class BrowserListWrapper(EventObject):
     each browser item.
     """
 
-    def __init__(self, browser_list, notifier=None, *a, **k):
+    def __init__(self, browser_list, notifier = None, *a, **k):
         super(BrowserListWrapper, self).__init__(*a, **k)
         self._browser_list = browser_list
         self._notifier = notifier
-        slot = Slot(browser_list, self.notify, 'items')
+        slot = Slot(browser_list, self.notify, u'items')
         slot.connect()
         self.register_slot(slot)
 
     @staticmethod
     def _serialize_browser_item(item):
-        return {'id': item.uri, 
-           'name': item.name, 
-           'is_loadable': item.is_loadable, 
-           'is_device': item.is_device, 
-           'icon': getattr(item, 'icon', ''), 
-           'color_label_index': determine_color_label_index(item)}
+        return {u'id': item.uri,
+         u'name': item.name,
+         u'is_loadable': item.is_loadable,
+         u'is_device': item.is_device,
+         u'icon': getattr(item, u'icon', u''),
+         u'color_label_index': determine_color_label_index(item)}
 
     def to_json(self):
         return map(self._serialize_browser_item, self._browser_list.items)
@@ -713,7 +697,6 @@ class BrowserListWrapper(EventObject):
     def disconnect(self):
         super(BrowserListWrapper, self).disconnect()
         self._browser_list = None
-        return
 
 
 class LiveDialogAdapter(VisibleAdapter):
@@ -723,8 +706,7 @@ class LiveDialogAdapter(VisibleAdapter):
         text = self._adaptee.text
         if text is not None:
             return strip_formatted_string(text)
-        else:
-            return ''
+        return u''
 
 
 class RoutingAdapter(VisibleAdapter):
@@ -732,9 +714,6 @@ class RoutingAdapter(VisibleAdapter):
 
     def __init__(self, *a, **k):
         super(RoutingAdapter, self).__init__(*a, **k)
-        self._alias_observable_property('routing_type_list', 'routingTypeList', lambda self_: [
-         self_._adaptee.routing_type_list])
-        self._alias_observable_property('routing_channel_list', 'routingChannelList', lambda self_: [
-         self_._adaptee.routing_channel_list])
-        self._alias_observable_property('routing_channel_position_list', 'routingChannelPositionList', lambda self_: [
-         self_._adaptee.routing_channel_position_list])
+        self._alias_observable_property(u'routing_type_list', u'routingTypeList', lambda self_: [self_._adaptee.routing_type_list])
+        self._alias_observable_property(u'routing_channel_list', u'routingChannelList', lambda self_: [self_._adaptee.routing_channel_list])
+        self._alias_observable_property(u'routing_channel_position_list', u'routingChannelPositionList', lambda self_: [self_._adaptee.routing_channel_position_list])

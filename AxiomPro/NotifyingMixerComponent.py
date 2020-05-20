@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/NotifyingMixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/NotifyingMixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.MixerComponent import MixerComponent
 from _Framework.PhysicalDisplayElement import PhysicalDisplayElement
@@ -15,17 +10,14 @@ class NotifyingMixerComponent(MixerComponent):
         self._update_callback = None
         MixerComponent.__init__(self, num_tracks)
         self._bank_display = None
-        return
 
     def disconnect(self):
         MixerComponent.disconnect(self)
         self._update_callback = None
-        return
 
     def set_update_callback(self, callback):
-        assert callback == None or dir(callback).count('im_func') is 1
+        assert callback == None or dir(callback).count(u'im_func') is 1
         self._update_callback = callback
-        return
 
     def set_bank_display(self, display):
         assert isinstance(display, PhysicalDisplayElement)
@@ -45,7 +37,6 @@ class NotifyingMixerComponent(MixerComponent):
         super(NotifyingMixerComponent, self).update()
         if self._update_callback != None:
             self._update_callback()
-        return
 
     def _tracks_to_use(self):
         return tuple(self.song().visible_tracks) + tuple(self.song().return_tracks)
@@ -54,7 +45,6 @@ class NotifyingMixerComponent(MixerComponent):
         MixerComponent._reassign_tracks(self)
         if self._update_callback != None:
             self._update_callback()
-        return
 
     def _bank_up_value(self, value):
         old_offset = int(self._track_offset)
@@ -63,10 +53,9 @@ class NotifyingMixerComponent(MixerComponent):
             if value != 0 and old_offset != self._track_offset:
                 min_track = self._track_offset + 1
                 max_track = min(len(self._tracks_to_use()), min_track + len(self._channel_strips))
-                self._bank_display.display_message('Tracks ' + str(min_track) + ' - ' + str(max_track))
+                self._bank_display.display_message(u'Tracks ' + str(min_track) + u' - ' + str(max_track))
             else:
                 self._bank_display.update()
-        return
 
     def _bank_down_value(self, value):
         old_offset = int(self._track_offset)
@@ -75,7 +64,6 @@ class NotifyingMixerComponent(MixerComponent):
             if value != 0 and old_offset != self._track_offset:
                 min_track = self._track_offset + 1
                 max_track = min(len(self._tracks_to_use()), min_track + len(self._channel_strips))
-                self._bank_display.display_message('Tracks ' + str(min_track) + ' - ' + str(max_track))
+                self._bank_display.display_message(u'Tracks ' + str(min_track) + u' - ' + str(max_track))
             else:
                 self._bank_display.update()
-        return

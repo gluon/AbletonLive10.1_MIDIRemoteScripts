@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/mode.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/mode.py
 u"""
 Mode handling components.
 """
@@ -18,27 +13,35 @@ from .control import control_color, ButtonControl, ButtonControlBase
 def tomode(thing):
     if thing is None:
         return Mode()
-    else:
-        if isinstance(thing, Mode):
-            return thing
-        if hasattr(thing, 'set_enabled'):
-            return EnablingMode(thing)
-        if isinstance(thing, tuple) and len(thing) == 2:
-            if isinstance(thing[0], Component) and isinstance(thing[1], (Layer, CompoundLayer)):
-                return LayerMode(*thing)
-            if callable(thing[0]) and callable(thing[1]):
-                mode = Mode()
-                mode.enter_mode, mode.leave_mode = thing
-                return mode
-        if callable(thing):
-            mode = Mode()
-            mode.enter_mode = thing
-            return mode
-        if is_iterable(thing):
-            return CompoundMode(*thing)
-        if is_contextmanager(thing):
-            return ContextManagerMode(thing)
+    if isinstance(thing, Mode):
         return thing
+    if hasattr(thing, u'set_enabled'):
+        return EnablingMode(thing)
+    if isinstance(thing, tuple) and len(thing) == 2:
+        if isinstance(thing[0], Component) and isinstance(thing[1], (Layer, CompoundLayer)):
+            return LayerMode(*thing)
+        if callable(thing[0]) and callable(thing[1]):
+            mode = Mode()
+            mode.enter_mode, mode.leave_mode = thing
+            return mode
+    if callable(thing):
+        mode = Mode()
+        mode.enter_mode = thing
+        return mode
+    if is_iterable(thing):
+        return CompoundMode(*thing)
+    if is_contextmanager(thing):
+        return ContextManagerMode(thing)
+    return thing
+
+
+def to_camel_case_name(mode_name, separator = u''):
+    return separator.join(map(lambda s: s.capitalize(), mode_name.split(u'_')))
+
+
+def pop_last_mode(component, mode):
+    if len(component.active_modes) > 1:
+        component.pop_mode(mode)
 
 
 class Mode(object):
@@ -65,7 +68,7 @@ class ContextManagerMode(Mode):
     Turns any context manager into a mode object.
     """
 
-    def __init__(self, context_manager=None, *a, **k):
+    def __init__(self, context_manager = None, *a, **k):
         super(ContextManagerMode, self).__init__(*a, **k)
         self._context_manager = context_manager
 
@@ -74,7 +77,6 @@ class ContextManagerMode(Mode):
 
     def leave_mode(self):
         self._context_manager.__exit__(None, None, None)
-        return
 
     def __exit__(self, exc_type, exc_value, traceback):
         return self._context_manager.__exit__(exc_type, exc_value, traceback)
@@ -91,11 +93,10 @@ class EnablingMode(Mode):
     as long is it has a set_enabled method.
     """
 
-    def __init__(self, enableable=None, *a, **k):
+    def __init__(self, enableable = None, *a, **k):
         super(EnablingMode, self).__init__(*a, **k)
         assert enableable is not None
         self._enableable = enableable
-        return
 
     def enter_mode(self):
         self._enableable.set_enabled(True)
@@ -110,7 +111,7 @@ class LazyEnablingMode(Mode):
     enables it while the mode is active.
     """
 
-    def __init__(self, factory=None, *a, **k):
+    def __init__(self, factory = None, *a, **k):
         super(LazyEnablingMode, self).__init__(*a, **k)
         self._factory = factory
 
@@ -127,12 +128,11 @@ class LazyEnablingMode(Mode):
 
 class LayerModeBase(Mode):
 
-    def __init__(self, component=None, layer=None, *a, **k):
+    def __init__(self, component = None, layer = None, *a, **k):
         super(LayerModeBase, self).__init__(*a, **k)
         assert component is not None
         self._component = component
         self._layer = layer
-        return
 
     def _get_component(self):
         if callable(self._component):
@@ -151,7 +151,6 @@ class LayerMode(LayerModeBase):
 
     def leave_mode(self):
         self._get_component().layer = None
-        return
 
 
 class AddLayerMode(LayerModeBase):
@@ -193,13 +192,12 @@ class SetAttributeMode(Mode):
     was active.
     """
 
-    def __init__(self, obj=None, attribute=None, value=None, *a, **k):
+    def __init__(self, obj = None, attribute = None, value = None, *a, **k):
         super(SetAttributeMode, self).__init__(*a, **k)
         self._obj = obj
         self._attribute = attribute
         self._old_value = None
         self._value = value
-        return
 
     def _get_object(self):
         if callable(self._obj):
@@ -209,7 +207,6 @@ class SetAttributeMode(Mode):
     def enter_mode(self):
         self._old_value = getattr(self._get_object(), self._attribute, None)
         setattr(self._get_object(), self._attribute, self._value)
-        return
 
     def leave_mode(self):
         if getattr(self._get_object(), self._attribute) == self._value:
@@ -222,7 +219,7 @@ class DelayMode(Mode):
     """
 
     @depends(parent_task_group=None)
-    def __init__(self, mode=None, delay=None, parent_task_group=None, *a, **k):
+    def __init__(self, mode = None, delay = None, parent_task_group = None, *a, **k):
         super(DelayMode, self).__init__(*a, **k)
         assert mode is not None
         assert parent_task_group is not None
@@ -231,7 +228,6 @@ class DelayMode(Mode):
         self._mode_entered = False
         self._delay_task = parent_task_group.add(task.sequence(task.wait(delay), task.run(self._enter_mode_delayed)))
         self._delay_task.kill()
-        return
 
     def _enter_mode_delayed(self):
         self._mode_entered = True
@@ -253,11 +249,11 @@ class ModeButtonControl(ButtonControlBase):
     """
 
     class State(ButtonControlBase.State):
-        mode_selected_color = control_color('DefaultButton.On')
-        mode_unselected_color = control_color('DefaultButton.Off')
-        mode_group_active_color = control_color('DefaultButton.On')
+        mode_selected_color = control_color(u'DefaultButton.On')
+        mode_unselected_color = control_color(u'DefaultButton.Off')
+        mode_group_active_color = control_color(u'DefaultButton.On')
 
-        def __init__(self, modes_component=None, mode_name=None, mode_selected_color=None, mode_unselected_color=None, mode_group_active_color=None, *a, **k):
+        def __init__(self, modes_component = None, mode_name = None, mode_selected_color = None, mode_unselected_color = None, mode_group_active_color = None, *a, **k):
             assert modes_component is not None
             assert mode_name is not None
             self._modes_component = modes_component
@@ -270,13 +266,12 @@ class ModeButtonControl(ButtonControlBase):
             if mode_group_active_color is not None:
                 self.mode_group_active_color = mode_group_active_color
             self.__on_selected_mode_changed.subject = self._modes_component
-            return
 
         @property
         def mode_name(self):
             return self._mode_name
 
-        @listens('selected_mode')
+        @listens(u'selected_mode')
         def __on_selected_mode_changed(self, mode):
             self._send_current_color()
 
@@ -295,17 +290,17 @@ class ModeButtonControl(ButtonControlBase):
 class ModeButtonBehaviour(object):
     u"""
     Strategy that determines how the mode button of a specific mode
-    behaves. The protocol is a follows:
-
+    behaves. The protocol is as follows:
+    
     1. When the button is pressed, the press_immediate is called.
-
+    
     2. If the button is released shortly, the release_immediate is
        called.
-
+    
     3. However, if MOMENTARY_DELAY is elapsed before release,
        press_delayed is called and release_immediate will never be
        called.
-
+    
     4. release_delayed will be called when the button is released and
        more than MOMENTARY_DELAY time has passed since press.
     """
@@ -326,22 +321,40 @@ class ModeButtonBehaviour(object):
         pass
 
 
-class LatchingBehaviour(ModeButtonBehaviour):
+class ImmediateBehaviour(ModeButtonBehaviour):
     u"""
-    Behaviour that will jump back to the previous mode when the button
-    is released after having been hold for some time.  If the button
-    is quickly pressed, the selected mode will stay.
+    Behaviour that just goes to the pressed mode immediately with no latching or magic.
     """
 
     def press_immediate(self, component, mode):
         component.push_mode(mode)
 
+
+class LatchingBehaviour(ImmediateBehaviour):
+    u"""
+    Behaviour that will jump back to the previous mode when the button
+    is released after having been held for some time.  If the button
+    is quickly pressed, the selected mode will stay.
+    """
+
     def release_immediate(self, component, mode):
         component.pop_unselected_modes()
 
     def release_delayed(self, component, mode):
-        if len(component.active_modes) > 1:
-            component.pop_mode(mode)
+        pop_last_mode(component, mode)
+
+
+class MomentaryBehaviour(ImmediateBehaviour):
+    u"""
+    Behaviour that will jump back to the previous mode regardless of how long the button
+    is held.
+    """
+
+    def release_immediate(self, component, mode):
+        pop_last_mode(component, mode)
+
+    def release_delayed(self, component, mode):
+        pop_last_mode(component, mode)
 
 
 class ReenterBehaviour(LatchingBehaviour):
@@ -349,11 +362,10 @@ class ReenterBehaviour(LatchingBehaviour):
     Like latching, but calls a callback when the mode is-reentered.
     """
 
-    def __init__(self, on_reenter=None, *a, **k):
+    def __init__(self, on_reenter = None, *a, **k):
         super(ReenterBehaviour, self).__init__(*a, **k)
         if on_reenter is not None:
             self.on_reenter = on_reenter
-        return
 
     def press_immediate(self, component, mode):
         was_active = component.selected_mode == mode
@@ -405,19 +417,19 @@ class ModesComponent(Component):
     u"""
     A ModesComponent handles the selection of different modes of the
     component. It improves the ModeSelectorComponent in several ways:
-
+    
     - A mode is an object with two methods for entering and exiting
       the mode.  You do not need to know about all the modes
       registered.
-
+    
     - Any object convertible by 'tomode' can be passed as mode.
-
+    
     - Modes are identified by strings.
-
+    
     - The component will dynamically generate controls of the form:
-
+    
           [mode-name]_button = ModeButtonControl()
-
+    
     The modes component behaves like a stack.  Several modes can be
     active at the same time, but the component will make sure that
     only the one at the top (aka 'selected_mode') will be entered at a
@@ -428,15 +440,16 @@ class ModesComponent(Component):
     cycle_mode_button = ButtonControl()
     default_behaviour = LatchingBehaviour()
 
-    def __init__(self, *a, **k):
+    def __init__(self, enable_skinning = False, support_momentary_mode_cycling = True, *a, **k):
         super(ModesComponent, self).__init__(*a, **k)
+        self._enable_skinning = enable_skinning
+        self._support_momentary_mode_cycling = support_momentary_mode_cycling
         self._last_toggle_value = 0
         self._mode_toggle = None
         self._mode_list = []
         self._mode_map = {}
         self._last_selected_mode = None
         self._mode_stack = StackingResource(self._do_enter_mode, self._do_leave_mode)
-        return
 
     def disconnect(self):
         self._mode_stack.release_all()
@@ -446,7 +459,7 @@ class ModesComponent(Component):
     def selected_mode(self):
         u"""
         Mode that is currently the top of the mode stack. Setting the
-        selected mode explictly will also cleanup the mode stack.
+        selected mode explicitly will also cleanup the mode stack.
         """
         return self._mode_stack.owner or self._last_selected_mode
 
@@ -462,15 +475,13 @@ class ModesComponent(Component):
                     self._mode_stack.release_all()
         else:
             self._last_selected_mode = mode
-        return
 
     @property
     def selected_groups(self):
         entry = self._mode_map.get(self.selected_mode, None)
         if entry:
             return entry.groups
-        else:
-            return set()
+        return set()
 
     @property
     def active_modes(self):
@@ -507,14 +518,14 @@ class ModesComponent(Component):
         """
         self._mode_stack.release_stacked()
 
-    def add_mode(self, name, mode_or_component, cycle_mode_button_color=None, groups=set(), behaviour=None):
+    def add_mode(self, name, mode_or_component, cycle_mode_button_color = None, groups = set(), behaviour = None):
         u"""
         Adds a mode of the given name into the component.  The mode
         object should be a Mode or Component instance.
-
+        
         If 'group' is not None, the mode will be put in the group
         identified by the passed object.  When several modes are grouped:
-
+        
           * Any of the group buttons will cancel the current mode when
             the current mode belongs to the group.
         """
@@ -526,7 +537,6 @@ class ModesComponent(Component):
         self._mode_list.append(name)
         self._mode_map[name] = _ModeEntry(mode=mode, cycle_mode_button_color=cycle_mode_button_color, behaviour=behaviour, groups=groups)
         self.add_mode_button_control(name, behaviour)
-        return
 
     @property
     def modes(self):
@@ -536,31 +546,35 @@ class ModesComponent(Component):
         entry = self._mode_map.get(name, None)
         if entry:
             return entry.groups
-        else:
-            return set()
+        return set()
 
     def add_mode_button_control(self, mode_name, behaviour):
-        button_control = make_mode_button_control(self, mode_name, behaviour)
-        self.add_control('%s_button' % mode_name, button_control)
+        colors = {}
+        if self._enable_skinning:
+            mode_color_basebame = u'Mode.' + to_camel_case_name(mode_name)
+            colors = {u'mode_selected_color': mode_color_basebame + u'.On',
+             u'mode_unselected_color': mode_color_basebame + u'.Off',
+             u'mode_group_active_color': mode_color_basebame + u'.On'}
+        button_control = make_mode_button_control(self, mode_name, behaviour, **colors)
+        self.add_control(u'%s_button' % mode_name, button_control)
         self._update_mode_buttons(self.selected_mode)
 
     def _get_mode_behaviour(self, name):
         entry = self._mode_map.get(name, None)
         if entry is not None:
             return entry.behaviour
-        else:
-            return self.default_behaviour
+        return self.default_behaviour
 
     def get_mode(self, name):
         entry = self._mode_map.get(name, None)
         return entry and entry.mode
 
     def get_mode_button(self, name):
-        return getattr(self, '%s_button' % name)
+        return getattr(self, u'%s_button' % name)
 
     def _update_mode_buttons(self, selected):
         if self.is_enabled():
-            for name, entry in self._mode_map.iteritems():
+            for name, _ in self._mode_map.iteritems():
                 self._get_mode_behaviour(name).update_button(self, name, selected)
 
     @cycle_mode_button.pressed
@@ -570,7 +584,7 @@ class ModesComponent(Component):
 
     @cycle_mode_button.released_delayed
     def cycle_mode_button(self, button):
-        if len(self._mode_list) and self.selected_mode != self._mode_list[0]:
+        if self._support_momentary_mode_cycling and len(self._mode_list) and self.selected_mode != self._mode_list[0]:
             self.cycle_mode(-1)
 
     def _update_cycle_mode_button(self, selected):
@@ -578,9 +592,8 @@ class ModesComponent(Component):
         color = entry.cycle_mode_button_color if entry else None
         if color is not None:
             self.cycle_mode_button.color = color
-        return
 
-    def cycle_mode(self, delta=1):
+    def cycle_mode(self, delta = 1):
         current_index = self._mode_list.index(self.selected_mode) if self.selected_mode else -delta
         current_index = (current_index + delta) % len(self._mode_list)
         self.selected_mode = self._mode_list[current_index]
@@ -598,7 +611,6 @@ class ModesComponent(Component):
             self._update_mode_buttons(None)
             self._update_cycle_mode_button(None)
             self.notify_selected_mode(None)
-        return
 
     def on_enabled_changed(self):
         super(ModesComponent, self).on_enabled_changed()
@@ -615,10 +627,9 @@ class EnablingModesComponent(ModesComponent):
     enabled while the 'enabled' mode is active.
     """
 
-    def __init__(self, component=None, enabled_color='DefaultButton.On', disabled_color='DefaultButton.Off', *a, **k):
+    def __init__(self, component = None, enabled_color = u'DefaultButton.On', disabled_color = u'DefaultButton.Off', *a, **k):
         super(EnablingModesComponent, self).__init__(*a, **k)
         component.set_enabled(False)
-        self.add_mode('disabled', None, disabled_color)
-        self.add_mode('enabled', component, enabled_color)
-        self.selected_mode = 'disabled'
-        return
+        self.add_mode(u'disabled', None, disabled_color)
+        self.add_mode(u'enabled', component, enabled_color)
+        self.selected_mode = u'disabled'

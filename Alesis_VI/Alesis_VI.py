@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Alesis_VI/Alesis_VI.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Alesis_VI/Alesis_VI.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ControlSurface import ControlSurface
 from _Framework.MidiMap import make_encoder, MidiMap as MidiMapBase
@@ -17,14 +12,16 @@ class MidiMap(MidiMapBase):
 
     def __init__(self, *a, **k):
         super(MidiMap, self).__init__(*a, **k)
-        self.add_momentary_button('Stop', 0, 118, MIDI_CC_TYPE)
-        self.add_momentary_button('Play', 0, 119, MIDI_CC_TYPE)
-        self.add_momentary_button('Loop', 0, 115, MIDI_CC_TYPE)
-        self.add_momentary_button('Record', 0, 114, MIDI_CC_TYPE)
-        self.add_momentary_button('Forward', 0, 117, MIDI_CC_TYPE)
-        self.add_momentary_button('Backward', 0, 116, MIDI_CC_TYPE)
-        self.add_matrix('Volume_Encoders', make_encoder, 0, [
-         range(20, 32) + [35, 41, 46, 47]], MIDI_CC_TYPE)
+        self.add_momentary_button(u'Stop', 0, 118, MIDI_CC_TYPE)
+        self.add_momentary_button(u'Play', 0, 119, MIDI_CC_TYPE)
+        self.add_momentary_button(u'Loop', 0, 115, MIDI_CC_TYPE)
+        self.add_momentary_button(u'Record', 0, 114, MIDI_CC_TYPE)
+        self.add_momentary_button(u'Forward', 0, 117, MIDI_CC_TYPE)
+        self.add_momentary_button(u'Backward', 0, 116, MIDI_CC_TYPE)
+        self.add_matrix(u'Volume_Encoders', make_encoder, 0, [range(20, 32) + [35,
+          41,
+          46,
+          47]], MIDI_CC_TYPE)
 
     def add_momentary_button(self, name, channel, number, midi_message_type):
         assert name not in self.keys()
@@ -37,8 +34,8 @@ class Alesis_VI(ControlSurface):
         super(Alesis_VI, self).__init__(*a, **k)
         with self.component_guard():
             midimap = MidiMap()
-            transport = TransportComponent(name='Transport', is_enabled=False, layer=Layer(play_button=midimap['Play'], stop_button=midimap['Stop'], loop_button=midimap['Loop'], record_button=midimap['Record'], seek_forward_button=midimap['Forward'], seek_backward_button=midimap['Backward']))
-            mixer_size = len(midimap['Volume_Encoders'])
-            mixer = MixerComponent(mixer_size, name='Mixer', is_enabled=False, layer=Layer(volume_controls=midimap['Volume_Encoders']))
+            transport = TransportComponent(name=u'Transport', is_enabled=False, layer=Layer(play_button=midimap[u'Play'], stop_button=midimap[u'Stop'], loop_button=midimap[u'Loop'], record_button=midimap[u'Record'], seek_forward_button=midimap[u'Forward'], seek_backward_button=midimap[u'Backward']))
+            mixer_size = len(midimap[u'Volume_Encoders'])
+            mixer = MixerComponent(mixer_size, name=u'Mixer', is_enabled=False, layer=Layer(volume_controls=midimap[u'Volume_Encoders']))
             transport.set_enabled(True)
             mixer.set_enabled(True)

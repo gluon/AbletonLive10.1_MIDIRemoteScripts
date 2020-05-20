@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/ClipActionsComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/ClipActionsComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.SubjectSlot import Subject, subject_slot
@@ -12,7 +7,7 @@ from _Framework.Control import ButtonControl
 from .consts import ACTION_BUTTON_COLORS
 _Q = Live.Song.Quantization
 
-def duplicate_clip(song, slot, should_launch=False):
+def duplicate_clip(song, slot, should_launch = False):
     try:
         clip = slot.clip if slot is not None else None
         if clip is not None:
@@ -34,8 +29,6 @@ def duplicate_clip(song, slot, should_launch=False):
     except (AttributeError, TypeError):
         pass
 
-    return
-
 
 def double_clip(clip):
     try:
@@ -56,7 +49,7 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
     double_button = ButtonControl(**ACTION_BUTTON_COLORS)
     quantize_button = ButtonControl(**ACTION_BUTTON_COLORS)
     quantization_component = None
-    __subject_events__ = (u'selected_clip', )
+    __subject_events__ = (u'selected_clip',)
 
     def __init__(self, target_track_component, *a, **k):
         super(ClipActionsComponent, self).__init__(*a, **k)
@@ -66,7 +59,6 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
         self._selected_clip = None
         self._track = self.song().view.selected_track
         self._on_selection_changed()
-        return
 
     def use_selected_track(self, use_selected_track):
         self._use_selected_track = use_selected_track
@@ -107,13 +99,13 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
             self._track = self.song().view.selected_track
             self._on_selection_changed()
 
-    @subject_slot('target_track')
+    @subject_slot(u'target_track')
     def _on_track_changed(self):
         if not self._use_selected_track:
             self._track = self._target_track_component.target_track
             self._on_selection_changed()
 
-    @subject_slot('playing_slot_index')
+    @subject_slot(u'playing_slot_index')
     def _on_selection_changed(self):
         self._selected_clip = None
         if self._track in self.song().tracks:
@@ -124,7 +116,6 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
         else:
             self._on_selection_changed.subject = None
         self._update_control_states()
-        return
 
     def _update_control_states(self):
         can_perform_clip_action = self.can_perform_clip_action()

@@ -1,19 +1,14 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/parameter_slot_description.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/parameter_slot_description.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ..base import find_if, listenable_property, listens_group, liveobj_valid, EventObject
-RESULTING_NAME_KEY = 'ResultingName'
-DISPLAY_NAME_KEY = 'DisplayName'
-CONDITION_NAME_KEY = 'ConditionName'
-CONDITIONS_LIST_NAME_KEY = 'ConditionsListName'
-PREDICATE_KEY = 'Predicate'
-OPERAND_NAME_KEY = 'Operand'
-AND = 'and'
-OR = 'or'
+RESULTING_NAME_KEY = u'ResultingName'
+DISPLAY_NAME_KEY = u'DisplayName'
+CONDITION_NAME_KEY = u'ConditionName'
+CONDITIONS_LIST_NAME_KEY = u'ConditionsListName'
+PREDICATE_KEY = u'Predicate'
+OPERAND_NAME_KEY = u'Operand'
+AND = u'and'
+OR = u'or'
 
 def find_parameter(name, host):
     parameters = host.parameters if host != None else []
@@ -26,7 +21,7 @@ class ParameterSlotDescription(EventObject):
     the values of other parameters. To retrieve the chosen parameter name
     turn the slot into a string.
     Parameter aliasing is possible by providing a custom name to with_name method.
-
+    
     Examples:
       - slot = use('A').if_parameter('B').has_value('1.0')
       - slot = use('A').if_parameter('B').does_not_have_value('1.0')
@@ -35,16 +30,15 @@ class ParameterSlotDescription(EventObject):
       - parameter_name = str(slot)
       - display_name = slot.display_name
     """
-    __events__ = (u'content', )
+    __events__ = (u'content',)
 
     def __init__(self, *a, **k):
         super(ParameterSlotDescription, self).__init__(*a, **k)
         self._parameter_host = None
-        self._default_parameter_name = ''
+        self._default_parameter_name = u''
         self._display_name = None
         self._conditions = []
         self._cached_content = (None, None)
-        return
 
     def _calc_content(self):
         parameter_name = self._default_parameter_name
@@ -52,10 +46,7 @@ class ParameterSlotDescription(EventObject):
         for condition in self._conditions:
             result = True
             for subcond in condition[CONDITIONS_LIST_NAME_KEY]:
-                result = eval('%s %s %s' % (
-                 result,
-                 subcond[OPERAND_NAME_KEY],
-                 subcond[PREDICATE_KEY](find_parameter(subcond[CONDITION_NAME_KEY], self._parameter_host))))
+                result = eval(u'%s %s %s' % (result, subcond[OPERAND_NAME_KEY], subcond[PREDICATE_KEY](find_parameter(subcond[CONDITION_NAME_KEY], self._parameter_host))))
                 if not result:
                     continue
 
@@ -64,10 +55,9 @@ class ParameterSlotDescription(EventObject):
                 display_name = condition[DISPLAY_NAME_KEY]
                 break
 
-        return (
-         parameter_name, display_name)
+        return (parameter_name, display_name)
 
-    @listens_group('value')
+    @listens_group(u'value')
     def __on_condition_value_changed(self, _parameter):
         new_content = self._calc_content()
         if new_content != self._cached_content:
@@ -84,19 +74,18 @@ class ParameterSlotDescription(EventObject):
         self.__on_condition_value_changed.replace_subjects([ find_parameter(name, self._parameter_host) for name in params_names ])
 
     def if_parameter(self, parameter_name):
-        self._conditions.append({RESULTING_NAME_KEY: self._default_parameter_name, 
-           DISPLAY_NAME_KEY: self._display_name, 
-           CONDITIONS_LIST_NAME_KEY: [
-                                    {CONDITION_NAME_KEY: parameter_name, 
-                                       OPERAND_NAME_KEY: AND}]})
-        self._default_parameter_name = ''
+        self._conditions.append({RESULTING_NAME_KEY: self._default_parameter_name,
+         DISPLAY_NAME_KEY: self._display_name,
+         CONDITIONS_LIST_NAME_KEY: [{CONDITION_NAME_KEY: parameter_name,
+                                     OPERAND_NAME_KEY: AND}]})
+        self._default_parameter_name = u''
         self._display_name = None
         return self
 
     def chain_condition(self, operand, parameter_name):
-        assert len(self._conditions) > 0 and len(self._conditions[(-1)][CONDITIONS_LIST_NAME_KEY]) > 0 and not self._default_parameter_name
-        self._conditions[(-1)][CONDITIONS_LIST_NAME_KEY].append({CONDITION_NAME_KEY: parameter_name, 
-           OPERAND_NAME_KEY: operand})
+        assert len(self._conditions) > 0 and len(self._conditions[-1][CONDITIONS_LIST_NAME_KEY]) > 0 and not self._default_parameter_name
+        self._conditions[-1][CONDITIONS_LIST_NAME_KEY].append({CONDITION_NAME_KEY: parameter_name,
+         OPERAND_NAME_KEY: operand})
         return self
 
     def and_parameter(self, parameter_name):
@@ -106,8 +95,8 @@ class ParameterSlotDescription(EventObject):
         return self.chain_condition(OR, parameter_name)
 
     def _add_condition_predicate(self, predicate):
-        assert len(self._conditions) > 0 and PREDICATE_KEY not in self._conditions[(-1)][CONDITIONS_LIST_NAME_KEY][(-1)]
-        self._conditions[(-1)][CONDITIONS_LIST_NAME_KEY][(-1)][PREDICATE_KEY] = predicate
+        assert len(self._conditions) > 0 and PREDICATE_KEY not in self._conditions[-1][CONDITIONS_LIST_NAME_KEY][-1]
+        self._conditions[-1][CONDITIONS_LIST_NAME_KEY][-1][PREDICATE_KEY] = predicate
 
     def has_value(self, value):
         self._add_condition_predicate(lambda p: str(p) == value)

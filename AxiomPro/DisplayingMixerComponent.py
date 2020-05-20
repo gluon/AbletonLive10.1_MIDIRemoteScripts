@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/DisplayingMixerComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/AxiomPro/DisplayingMixerComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonElement import ButtonElement
 from _Framework.MixerComponent import MixerComponent
@@ -19,14 +14,12 @@ class DisplayingMixerComponent(MixerComponent):
         self._mute_button = None
         self._solo_button = None
         self._register_timer_callback(self._on_timer)
-        return
 
     def disconnect(self):
         self._unregister_timer_callback(self._on_timer)
         self._selected_tracks = None
         MixerComponent.disconnect(self)
         self._display = None
-        return
 
     def set_display(self, display):
         assert isinstance(display, PhysicalDisplayElement)
@@ -42,7 +35,6 @@ class DisplayingMixerComponent(MixerComponent):
             if self._solo_button != None:
                 self._solo_button.add_value_listener(self._solo_value)
             self.update()
-        return
 
     def set_mute_button(self, button):
         assert button == None or isinstance(button, ButtonElement) and button.is_momentary()
@@ -54,12 +46,11 @@ class DisplayingMixerComponent(MixerComponent):
             if self._mute_button != None:
                 self._mute_button.add_value_listener(self._mute_value)
             self.update()
-        return
 
     def _on_timer(self):
         sel_track = None
         while len(self._selected_tracks) > 0:
-            track = self._selected_tracks[(-1)]
+            track = self._selected_tracks[-1]
             if track != None and track.has_midi_input and track.can_be_armed and not track.arm:
                 sel_track = track
                 break
@@ -92,7 +83,6 @@ class DisplayingMixerComponent(MixerComponent):
                 sel_track.arm = True
                 sel_track.view.select_instrument()
         self._selected_tracks = []
-        return
 
     def _solo_value(self, value):
         assert self._solo_button != None
@@ -100,15 +90,14 @@ class DisplayingMixerComponent(MixerComponent):
         if self._display != None and self.song().view.selected_track not in (self.song().master_track, None):
             if value != 0:
                 track = self.song().view.selected_track
-                display_string = str(track.name) + ': Solo '
+                display_string = str(track.name) + u': Solo '
                 if track.solo:
-                    display_string += 'On'
+                    display_string += u'On'
                 else:
-                    display_string += 'Off'
+                    display_string += u'Off'
                 self._display.display_message(display_string)
             else:
                 self._display.update()
-        return
 
     def _mute_value(self, value):
         assert self._mute_button != None
@@ -116,15 +105,14 @@ class DisplayingMixerComponent(MixerComponent):
         if self._display != None and self.song().view.selected_track not in (self.song().master_track, None):
             if value != 0:
                 track = self.song().view.selected_track
-                display_string = str(track.name) + ': Mute '
+                display_string = str(track.name) + u': Mute '
                 if track.mute:
-                    display_string += 'On'
+                    display_string += u'On'
                 else:
-                    display_string += 'Off'
+                    display_string += u'Off'
                 self._display.display_message(display_string)
             else:
                 self._display.update()
-        return
 
     def _next_track_value(self, value):
         MixerComponent._next_track_value(self, value)

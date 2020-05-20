@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/combo.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/elements/combo.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap
 from contextlib import contextmanager
@@ -19,7 +14,7 @@ class WrapperElement(CompoundElement, ProxyBase):
     u"""
     Helper class for implementing a wrapper for a specific control,
     forwarding most basic operations to it.
-
+    
     Note that the wrapped control element is not registered to allow
     this flexibly specific implementations.
     """
@@ -27,10 +22,10 @@ class WrapperElement(CompoundElement, ProxyBase):
     class ProxiedInterface(CompoundElement.ProxiedInterface):
 
         def __getattr__(self, name):
-            wrapped = self.outer.__dict__['_wrapped_control']
+            wrapped = self.outer.__dict__[u'_wrapped_control']
             return getattr(wrapped.proxied_interface, name)
 
-    def __init__(self, wrapped_control=None, *a, **k):
+    def __init__(self, wrapped_control = None, *a, **k):
         super(WrapperElement, self).__init__(*a, **k)
         self._wrapped_control = get_element(wrapped_control)
         self._parameter_slot = ParameterSlot()
@@ -41,7 +36,7 @@ class WrapperElement(CompoundElement, ProxyBase):
             return self._wrapped_control
 
     def _is_initialized(self):
-        return '_wrapped_control' in self.__dict__
+        return u'_wrapped_control' in self.__dict__
 
     def register_wrapped(self):
         self.register_control_element(self._wrapped_control)
@@ -63,7 +58,6 @@ class WrapperElement(CompoundElement, ProxyBase):
     def on_nested_control_element_lost(self, control):
         if control == self._wrapped_control:
             self._parameter_slot.control = None
-        return
 
     def on_nested_control_element_value(self, value, control):
         if control == self._wrapped_control:
@@ -73,13 +67,11 @@ class WrapperElement(CompoundElement, ProxyBase):
         if self._parameter_slot.parameter == None:
             self.request_listen_nested_control_elements()
         self._parameter_slot.parameter = parameter
-        return
 
     def release_parameter(self):
         if self._parameter_slot.parameter != None:
             self.unrequest_listen_nested_control_elements()
         self._parameter_slot.parameter = None
-        return
 
 
 class ComboElement(WrapperElement):
@@ -88,11 +80,11 @@ class ComboElement(WrapperElement):
     the button values when all the modifiers have the specified state,
     and silently discard them when they are not. If no state is provided
     for the modifiers, being pressed is assumed as the target state.
-
+    
     When using resources, this element:
       - Grabs the modifiers at all times.
       - Grabs the action button only when all modifiers have the right state.
-
+    
     This means that the action button can be used at the same time in
     the same Layer in a combined and un-combined fashion.  The setters
     of the layer buttons will be called properly so the button gets
@@ -102,10 +94,9 @@ class ComboElement(WrapperElement):
     """
     priority_increment = 0.5
 
-    def __init__(self, control=None, modifier=[], *a, **k):
+    def __init__(self, control = None, modifier = [], *a, **k):
         super(ComboElement, self).__init__(wrapped_control=control, *a, **k)
-        self._combo_modifiers = map(get_element, modifier) if not isinstance(modifier, basestring) and is_iterable(modifier) else [
-         get_element(modifier)]
+        self._combo_modifiers = map(get_element, modifier) if not isinstance(modifier, basestring) and is_iterable(modifier) else [get_element(modifier)]
         assert all(imap(lambda x: x.is_momentary(), self._combo_modifiers))
         self.register_control_elements(*self._combo_modifiers)
         self.request_listen_nested_control_elements()
@@ -116,11 +107,10 @@ class ComboElement(WrapperElement):
 
     def get_control_element_priority(self, element, priority):
         if element == self._wrapped_control:
-            assert priority is None or 1 - priority + int(priority) > self.priority_increment, 'Attempting to increase the priority over a whole unit. ' + 'Make sure the combo element is not inside another combo element'
+            assert priority is None or 1 - priority + int(priority) > self.priority_increment, u'Attempting to increase the priority over a whole unit. ' + u'Make sure the combo element is not inside another combo element'
             priority = DEFAULT_PRIORITY if priority is None else priority
             return priority + self.priority_increment
-        else:
-            return priority
+        return priority
 
     def on_nested_control_element_received(self, control):
         if control != self._wrapped_control:
@@ -162,13 +152,12 @@ class EventElement(NotifyingControlElement, ProxyBase, ButtonElementMixin):
     event_value = 1
     _subject = None
 
-    def __init__(self, subject=None, event_name=None, *a, **k):
+    def __init__(self, subject = None, event_name = None, *a, **k):
         assert subject is not None
         assert event_name is not None
         super(EventElement, self).__init__(*a, **k)
         self._subject = subject
         self.register_slot(subject, self._on_event, event_name)
-        return
 
     @property
     def proxied_object(self):
@@ -176,7 +165,7 @@ class EventElement(NotifyingControlElement, ProxyBase, ButtonElementMixin):
 
     @property
     def proxied_interface(self):
-        return getattr(self._subject, 'proxied_interface', self._subject)
+        return getattr(self._subject, u'proxied_interface', self._subject)
 
     def _on_event(self, *a, **k):
         self.notify_value(self.event_value)
@@ -185,11 +174,11 @@ class EventElement(NotifyingControlElement, ProxyBase, ButtonElementMixin):
         return False
 
     def reset(self):
-        getattr(self._subject, 'reset', nop)()
+        getattr(self._subject, u'reset', nop)()
 
     def send_value(self, *a, **k):
         try:
-            send_value = super(EventElement, self).__getattr__('send_value')
+            send_value = super(EventElement, self).__getattr__(u'send_value')
         except AttributeError:
             send_value = nop
 
@@ -197,7 +186,7 @@ class EventElement(NotifyingControlElement, ProxyBase, ButtonElementMixin):
 
     def set_light(self, *a, **k):
         try:
-            set_light = super(EventElement, self).__getattr__('set_light')
+            set_light = super(EventElement, self).__getattr__(u'set_light')
         except AttributeError:
             set_light = nop
 
@@ -211,7 +200,7 @@ class DoublePressContext(EventObject):
     and B2, the sequence press(B1), press(B2), press(B1) does not
     trigger a double press event regardless of how fast it happens.
     """
-    __events__ = (u'break_double_press', )
+    __events__ = (u'break_double_press',)
 
     @contextmanager
     def breaking_double_press(self):
@@ -231,7 +220,7 @@ class DoublePressElement(WrapperElement):
     u"""
     Element wrapper that provides a facade with two events,
     single_press and double_press.
-
+    
     The single_press() and double_press() methods create non-momentary
     button-like controls that represent these events.  Note that these
     controls are individual and have their own ownership, put the
@@ -242,7 +231,7 @@ class DoublePressElement(WrapperElement):
     DOUBLE_PRESS_MAX_DELAY = defaults.MOMENTARY_DELAY
 
     @depends(double_press_context=GLOBAL_DOUBLE_PRESS_CONTEXT_PROVIDER)
-    def __init__(self, wrapped_control=None, double_press_context=None, *a, **k):
+    def __init__(self, wrapped_control = None, double_press_context = None, *a, **k):
         super(DoublePressElement, self).__init__(wrapped_control=wrapped_control, *a, **k)
         self.register_control_element(self._wrapped_control)
         self._double_press_context = double_press_context
@@ -260,7 +249,7 @@ class DoublePressElement(WrapperElement):
                 self._double_press_task.kill()
         super(DoublePressElement, self).on_nested_control_element_value(value, control)
 
-    @listens('break_double_press')
+    @listens(u'break_double_press')
     def __on_break_double_press(self):
         if not self._double_press_task.is_killed:
             self._double_press_task.kill()
@@ -269,20 +258,18 @@ class DoublePressElement(WrapperElement):
     def finish_single_press(self):
         self.__on_break_double_press.subject = None
         self.notify_single_press()
-        return
 
     def finish_double_press(self):
         self.__on_break_double_press.subject = None
         self.notify_double_press()
-        return
 
     @lazy_attribute
     def single_press(self):
-        return EventElement(self, 'single_press')
+        return EventElement(self, u'single_press')
 
     @lazy_attribute
     def double_press(self):
-        return EventElement(self, 'double_press')
+        return EventElement(self, u'double_press')
 
 
 class MultiElement(CompoundElement, ButtonElementMixin):
@@ -297,9 +284,7 @@ class MultiElement(CompoundElement, ButtonElementMixin):
             found = find_if(lambda x: x is not None, imap(lambda c: getattr(c.proxied_interface, name, None), self.outer.nested_control_elements()))
             if found is not None:
                 return found
-            else:
-                raise AttributeError
-                return
+            raise AttributeError
 
     def __init__(self, *controls, **k):
         super(MultiElement, self).__init__(**k)
@@ -318,10 +303,10 @@ class MultiElement(CompoundElement, ButtonElementMixin):
             self.notify_value(value)
 
     def is_pressed(self):
-        return find_if(lambda c: getattr(c, 'is_pressed', const(False))(), self.owned_control_elements()) != None
+        return find_if(lambda c: getattr(c, u'is_pressed', const(False))(), self.owned_control_elements()) != None
 
     def is_momentary(self):
-        return find_if(lambda c: getattr(c, 'is_momentary', const(False))(), self.nested_control_elements()) != None
+        return find_if(lambda c: getattr(c, u'is_momentary', const(False))(), self.nested_control_elements()) != None
 
     def on_nested_control_element_received(self, control):
         pass
@@ -336,7 +321,7 @@ class ToggleElement(WrapperElement):
     a toggle state.
     """
 
-    def __init__(self, on_control=None, off_control=None, *a, **k):
+    def __init__(self, on_control = None, off_control = None, *a, **k):
         super(ToggleElement, self).__init__(*a, **k)
         self._on_control = get_element(on_control)
         self._off_control = get_element(off_control)
@@ -353,4 +338,3 @@ class ToggleElement(WrapperElement):
         self._wrapped_control = self._on_control if self._toggled else self._off_control
         if self._wrapped_control != None:
             self.register_control_element(self._wrapped_control)
-        return

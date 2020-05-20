@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/value_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/value_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listenable_property, listens
 from ableton.v2.control_surface import Component, ParameterSlot
@@ -18,13 +13,13 @@ def convert_value_to_graphic(value):
     if index is not None and index < len(consts.GRAPH_VOL):
         graphic_display_string = consts.GRAPH_VOL[index]
     else:
-        graphic_display_string = ' '
+        graphic_display_string = u' '
     return graphic_display_string
 
 
 class ValueDisplayComponentBase(Component):
 
-    def __init__(self, display_label=' ', display_seg_start=0, *a, **k):
+    def __init__(self, display_label = u' ', display_seg_start = 0, *a, **k):
         super(ValueDisplayComponentBase, self).__init__(*a, **k)
         self._label_data_source = DisplayDataSource(display_label)
         self._value_data_source = DisplayDataSource()
@@ -53,9 +48,8 @@ class ValueDisplayComponentBase(Component):
 
     def _set_display(self, display, source):
         if display:
-            display.set_data_sources((None, ) * NUM_SEGMENTS)
+            display.set_data_sources((None,) * NUM_SEGMENTS)
             display.segment(self._display_seg_start).set_data_source(source)
-        return
 
     def update(self):
         super(ValueDisplayComponentBase, self).update()
@@ -74,13 +68,13 @@ class ValueComponentBase(Component):
     def create_display_component(self, *a, **k):
         raise NotImplementedError
 
-    def __init__(self, display_label=' ', display_seg_start=0, encoder_touch_delay=0, *a, **k):
+    def __init__(self, display_label = u' ', display_seg_start = 0, encoder_touch_delay = 0, *a, **k):
         super(ValueComponentBase, self).__init__(*a, **k)
         encoder = EncoderControl(touch_event_delay=encoder_touch_delay)
         encoder.touched = ValueComponentBase.__on_encoder_touched
         encoder.released = ValueComponentBase.__on_encoder_released
         encoder.value = ValueComponentBase.__on_encoder_value
-        self.add_control('encoder', encoder)
+        self.add_control(u'encoder', encoder)
         self._display = self.create_display_component(display_label=display_label, display_seg_start=display_seg_start)
         self._display.set_enabled(False)
 
@@ -109,7 +103,7 @@ class ValueDisplayComponent(ValueDisplayComponentBase):
     Display for values from standard Python properties.
     """
 
-    def __init__(self, property_name=None, subject=None, display_format='%f', view_transform=None, graphic_transform=None, *a, **k):
+    def __init__(self, property_name = None, subject = None, display_format = u'%f', view_transform = None, graphic_transform = None, *a, **k):
         super(ValueDisplayComponent, self).__init__(*a, **k)
         self._subject = subject
         self._property_name = property_name
@@ -120,7 +114,6 @@ class ValueDisplayComponent(ValueDisplayComponentBase):
             self.graphic_transform = graphic_transform
         self.register_slot(subject, self._on_value_changed, property_name)
         self._on_value_changed()
-        return
 
     def view_transform(self, x):
         return x
@@ -154,7 +147,7 @@ class ValueComponent(ValueComponentBase):
     def create_display_component(self, *a, **k):
         return ValueDisplayComponent(parent=self, property_name=self._property_name, subject=self._subject, display_format=self._display_format, view_transform=(lambda x: self.view_transform(x)), graphic_transform=(lambda x: self.graphic_transform(x)), *a, **k)
 
-    def __init__(self, property_name=None, subject=None, display_format='%f', model_transform=None, view_transform=None, graphic_transform=None, encoder_factor=None, *a, **k):
+    def __init__(self, property_name = None, subject = None, display_format = u'%f', model_transform = None, view_transform = None, graphic_transform = None, encoder_factor = None, *a, **k):
         self._property_name = property_name
         self._subject = subject
         self._display_format = display_format
@@ -168,7 +161,6 @@ class ValueComponent(ValueComponentBase):
         if encoder_factor is not None:
             self.encoder_factor = encoder_factor
         self._original_encoder_factor = self.encoder_factor
-        return
 
     def model_transform(self, x):
         u"""
@@ -210,7 +202,7 @@ class ParameterValueDisplayComponent(ValueDisplayComponentBase):
     Display for values from device parameters.
     """
 
-    def __init__(self, device_parameter=None, *a, **k):
+    def __init__(self, device_parameter = None, *a, **k):
         super(ParameterValueDisplayComponent, self).__init__(*a, **k)
         self._on_value_changed.subject = device_parameter
         self._on_value_changed()
@@ -221,7 +213,7 @@ class ParameterValueDisplayComponent(ValueDisplayComponentBase):
     def get_graphic_string(self):
         return convert_parameter_value_to_graphic(self._on_value_changed.subject)
 
-    @listens('value')
+    @listens(u'value')
     def _on_value_changed(self):
         self.update()
         self.notify_value_string()
@@ -237,7 +229,7 @@ class ParameterValueComponent(ValueComponentBase):
     def create_display_component(self, *a, **k):
         return ParameterValueDisplayComponent(device_parameter=self._parameter_slot.parameter, *a, **k)
 
-    def __init__(self, device_parameter=None, *a, **k):
+    def __init__(self, device_parameter = None, *a, **k):
         self._parameter_slot = ParameterSlot(device_parameter)
         super(ParameterValueComponent, self).__init__(*a, **k)
         self.register_disconnectable(self._parameter_slot)

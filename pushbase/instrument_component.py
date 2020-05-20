@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/instrument_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/instrument_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from contextlib import contextmanager
 from itertools import ifilter
@@ -21,16 +16,16 @@ DEFAULT_SCALE = SCALES[0]
 
 class NoteLayout(EventObject):
 
-    def __init__(self, song=None, preferences=dict(), *a, **k):
+    def __init__(self, song = None, preferences = dict(), *a, **k):
         assert liveobj_valid(song)
         super(NoteLayout, self).__init__(*a, **k)
         self._song = song
         self._scale = self._get_scale_from_name(self._song.scale_name)
         self._preferences = preferences
-        self._is_in_key = self._preferences.setdefault('is_in_key', True)
-        self._is_fixed = self._preferences.setdefault('is_fixed', False)
-        self._interval = self._song.get_data('push-note-layout-interval', 3)
-        self._is_horizontal = self._song.get_data('push-note-layout-horizontal', True)
+        self._is_in_key = self._preferences.setdefault(u'is_in_key', True)
+        self._is_fixed = self._preferences.setdefault(u'is_fixed', False)
+        self._interval = self._song.get_data(u'push-note-layout-interval', 3)
+        self._is_horizontal = self._song.get_data(u'push-note-layout-horizontal', True)
         self.__on_root_note_changed.subject = self._song
         self.__on_scale_name_changed.subject = self._song
 
@@ -63,7 +58,7 @@ class NoteLayout(EventObject):
     @is_in_key.setter
     def is_in_key(self, is_in_key):
         self._is_in_key = is_in_key
-        self._preferences['is_in_key'] = self._is_in_key
+        self._preferences[u'is_in_key'] = self._is_in_key
         self.notify_is_in_key(self._is_in_key)
 
     @listenable_property
@@ -73,7 +68,7 @@ class NoteLayout(EventObject):
     @is_fixed.setter
     def is_fixed(self, is_fixed):
         self._is_fixed = is_fixed
-        self._preferences['is_fixed'] = self._is_fixed
+        self._preferences[u'is_fixed'] = self._is_fixed
         self.notify_is_fixed(self._is_fixed)
 
     @listenable_property
@@ -84,7 +79,7 @@ class NoteLayout(EventObject):
     def interval(self, interval):
         if interval != self._interval:
             self._interval = interval
-            self._song.set_data('push-note-layout-interval', interval)
+            self._song.set_data(u'push-note-layout-interval', interval)
             self.notify_interval(interval)
 
     @listenable_property
@@ -95,17 +90,17 @@ class NoteLayout(EventObject):
     def is_horizontal(self, is_horizontal):
         if is_horizontal != self._is_horizontal:
             self._is_horizontal = is_horizontal
-            self._song.set_data('push-note-layout-horizontal', is_horizontal)
+            self._song.set_data(u'push-note-layout-horizontal', is_horizontal)
             self.notify_is_horizontal(is_horizontal)
 
     def _get_scale_from_name(self, name):
         return find_if(lambda scale: scale.name == name, SCALES) or DEFAULT_SCALE
 
-    @listens('root_note')
+    @listens(u'root_note')
     def __on_root_note_changed(self):
         self.notify_root_note(self._song.root_note)
 
-    @listens('scale_name')
+    @listens(u'scale_name')
     def __on_scale_name_changed(self):
         self._scale = self._get_scale_from_name(self._song.scale_name)
         self.notify_scale(self._scale)
@@ -116,11 +111,11 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
     Class that sets up the button matrix as a piano, using different
     selectable layouts for the notes.
     """
-    __events__ = (u'pattern', )
+    __events__ = (u'pattern',)
     matrix = control_matrix(PadControl)
     delete_button = ButtonControl()
 
-    def __init__(self, note_layout=None, *a, **k):
+    def __init__(self, note_layout = None, *a, **k):
         assert note_layout is not None
         super(InstrumentComponent, self).__init__(*a, **k)
         self._note_layout = note_layout
@@ -136,18 +131,15 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         self.__on_detail_clip_changed()
         self._slider = SlideComponent(slideable=self, parent=self)
         self._touch_slider = SlideableTouchStripComponent(touch_slideable=self, parent=self)
-        for event in (u'scale', u'root_note', u'is_in_key', u'is_fixed', u'is_horizontal',
-                      u'interval'):
+        for event in (u'scale', u'root_note', u'is_in_key', u'is_fixed', u'is_horizontal', u'interval'):
             self.register_slot(self._note_layout, self._on_note_layout_changed, event)
 
         self._update_pattern()
-        return
 
-    @listens('detail_clip')
+    @listens(u'detail_clip')
     def __on_detail_clip_changed(self):
         clip = self.song.view.detail_clip
         self.set_detail_clip(clip if liveobj_valid(clip) and clip.is_midi_clip else None)
-        return
 
     def set_detail_clip(self, clip):
         if clip != self._detail_clip:
@@ -157,11 +149,10 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
             self._on_loop_end_changed.subject = clip
             self._on_clip_notes_changed()
 
-    @listens('notes')
+    @listens(u'notes')
     def _on_clip_notes_changed(self):
         if self._detail_clip:
-            self._has_notes = [
-             False] * 128
+            self._has_notes = [False] * 128
             loop_start = self._detail_clip.loop_start
             loop_length = self._detail_clip.loop_end - loop_start
             notes = self._detail_clip.get_notes(loop_start, 0, loop_length, 128)
@@ -170,11 +161,11 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
 
         self.notify_contents()
 
-    @listens('loop_start')
+    @listens(u'loop_start')
     def _on_loop_start_changed(self):
         self._on_loop_selection_changed()
 
-    @listens('loop_end')
+    @listens(u'loop_end')
     def _on_loop_end_changed(self):
         self._on_loop_selection_changed()
 
@@ -215,9 +206,9 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
     def _first_scale_note_offset(self):
         if not self._note_layout.is_in_key:
             return self._note_layout.notes[0]
+        elif self._note_layout.notes[0] == 0:
+            return 0
         else:
-            if self._note_layout.notes[0] == 0:
-                return 0
             return len(self._note_layout.notes) - index_if(lambda n: n >= 12, self._note_layout.notes)
 
     @property
@@ -319,7 +310,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
 
     def show_pitch_range_notification(self):
         if self.is_enabled() and self.show_notifications:
-            self.show_notification(('Play {start_note} to {end_note}').format(start_note=pitch_index_to_string(self.pattern.note(0, 0).index), end_note=pitch_index_to_string(self.pattern.note(self.width - 1, self.height - 1).index)))
+            self.show_notification(u'Play {start_note} to {end_note}'.format(start_note=pitch_index_to_string(self.pattern.note(0, 0).index), end_note=pitch_index_to_string(self.pattern.note(self.width - 1, self.height - 1).index)))
 
     def _update_scale(self):
         self._align_first_note()
@@ -341,8 +332,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         self.notify_pattern()
 
     def _invert_and_swap_coordinates(self, coordinates):
-        return (
-         coordinates[1], self.height - 1 - coordinates[0])
+        return (coordinates[1], self.height - 1 - coordinates[0])
 
     def _get_note_info_for_coordinate(self, coordinate):
         x, y = self._invert_and_swap_coordinates(coordinate)
@@ -350,26 +340,25 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
 
     def _update_button_color(self, button):
         note_info = self._get_note_info_for_coordinate(button.coordinate)
-        button.color = 'Instrument.' + note_info.color
+        button.color = u'Instrument.' + note_info.color
 
     def _button_should_be_enabled(self, button):
         return self._get_note_info_for_coordinate(button.coordinate).index != None
 
     def _note_translation_for_button(self, button):
         note_info = self._get_note_info_for_coordinate(button.coordinate)
-        return (
-         note_info.index, note_info.channel)
+        return (note_info.index, note_info.channel)
 
     def _set_button_control_properties(self, button):
         super(InstrumentComponent, self)._set_button_control_properties(button)
-        button.sensitivity_profile = 'default' if self._takeover_pads else 'instrument'
+        button.sensitivity_profile = u'default' if self._takeover_pads else u'instrument'
 
     def _update_matrix(self):
         self._update_control_from_script()
         self._update_note_translations()
         self._update_led_feedback()
 
-    def _get_pattern(self, first_note=None):
+    def _get_pattern(self, first_note = None):
         if first_note is None:
             first_note = int(round(self._first_note))
         interval = self._note_layout.interval
@@ -388,22 +377,25 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
             else:
                 interval = 8
         elif not self._note_layout.is_in_key:
-            interval = [
-             0, 2, 4, 5, 7, 9, 10, 11][interval]
+            interval = [0,
+             2,
+             4,
+             5,
+             7,
+             9,
+             10,
+             11][interval]
         if self._note_layout.is_horizontal:
-            steps = [
-             1, interval]
+            steps = [1, interval]
             origin = [offset, 0]
         else:
-            steps = [
-             interval, 1]
+            steps = [interval, 1]
             origin = [0, offset]
         return MelodicPattern(steps=steps, scale=notes, origin=origin, root_note=octave * 12, chromatic_mode=not self._note_layout.is_in_key, width=width, height=height)
 
     def _update_aftertouch(self):
         if self.is_enabled() and self._aftertouch_control != None:
-            self._aftertouch_control.send_value('mono')
-        return
+            self._aftertouch_control.send_value(u'mono')
 
 
 class SelectedNotesProvider(EventObject):
@@ -436,13 +428,12 @@ class SelectedNotesProvider(EventObject):
 
 class SelectedNotesInstrumentComponent(InstrumentComponent):
 
-    def __init__(self, note_editor_component=None, *a, **k):
+    def __init__(self, note_editor_component = None, *a, **k):
         assert note_editor_component is not None
         super(SelectedNotesInstrumentComponent, self).__init__(*a, **k)
         self.selected_notes_provider = self.register_disconnectable(SelectedNotesProvider())
         with self._updating_selected_notes_model():
-            self.selected_notes_provider.selected_notes = self.song.view.selected_track.get_data('push-instrument-selected-notes', [
-             DEFAULT_START_NOTE])
+            self.selected_notes_provider.selected_notes = self.song.view.selected_track.get_data(u'push-instrument-selected-notes', [DEFAULT_START_NOTE])
         self._note_editor_component = note_editor_component
         self.__on_pressed_step_changed.subject = self._note_editor_component
         self._pitches = []
@@ -450,7 +441,6 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
         self._show_notes_in_selected_step_task = self._tasks.add(task.sequence(task.wait(defaults.MOMENTARY_DELAY), task.run(self._show_notes_in_selected_step))).kill()
         self.__on_position_changed.subject = self
         self.__on_selected_track_changed.subject = self.song.view
-        return
 
     def set_matrix(self, matrix):
         super(SelectedNotesInstrumentComponent, self).set_matrix(matrix)
@@ -493,8 +483,8 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
 
     def _get_color_for_button_in_selected_step(self, button):
         if button.identifier in self._note_editor_component.notes_in_selected_step:
-            return 'Instrument.SelectedNote'
-        return 'Instrument.' + self._get_note_info_for_coordinate(button.coordinate).color
+            return u'Instrument.SelectedNote'
+        return u'Instrument.' + self._get_note_info_for_coordinate(button.coordinate).color
 
     def _show_notes_in_selected_step(self):
         for button in self.matrix:
@@ -519,7 +509,7 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
     def _is_note_editor_step_active(self):
         return len(list(self._note_editor_component.active_steps)) > 0
 
-    @listens('active_steps')
+    @listens(u'active_steps')
     def __on_pressed_step_changed(self):
         if self._is_note_editor_step_active():
             if self._show_notes_in_selected_step_task.is_killed:
@@ -533,23 +523,23 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
             button.color = self._get_color_for_button_in_selected_step(button)
         else:
             note_info = self._get_note_info_for_coordinate(button.coordinate)
-            button.color = 'Instrument.SelectedNote' if note_info.index in self.selected_notes_provider.selected_notes else 'Instrument.' + note_info.color
+            button.color = u'Instrument.SelectedNote' if note_info.index in self.selected_notes_provider.selected_notes else u'Instrument.' + note_info.color
 
     def _set_button_control_properties(self, button):
         super(SelectedNotesInstrumentComponent, self)._set_button_control_properties(button)
         button.set_mode(PlayableControl.Mode.listenable if self.select_button.is_pressed else PlayableControl.Mode.playable_and_listenable)
 
-    @listens('position')
+    @listens(u'position')
     def __on_position_changed(self):
         self.show_pitch_range_notification()
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         with self._updating_selected_notes_model():
-            self.selected_notes_provider.selected_notes = self.song.view.selected_track.get_data('push-instrument-selected-notes', [DEFAULT_START_NOTE])
+            self.selected_notes_provider.selected_notes = self.song.view.selected_track.get_data(u'push-instrument-selected-notes', [DEFAULT_START_NOTE])
 
     @contextmanager
     def _updating_selected_notes_model(self):
         yield
-        self.song.view.selected_track.set_data('push-instrument-selected-notes', self.selected_notes_provider.selected_notes)
+        self.song.view.selected_track.set_data(u'push-instrument-selected-notes', self.selected_notes_provider.selected_notes)
         self._update_led_feedback()

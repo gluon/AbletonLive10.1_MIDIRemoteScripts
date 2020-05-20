@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/decoration.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/decoration.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 import Live
@@ -16,7 +11,7 @@ def get_parameter_by_name(decorator, name):
 
 
 def get_parameter_automation_state(parameter):
-    return getattr(parameter, 'automation_state', AutomationState.none)
+    return getattr(parameter, u'automation_state', AutomationState.none)
 
 
 class LiveObjectDict(dict):
@@ -40,12 +35,12 @@ class LiveObjectDict(dict):
         return super(LiveObjectDict, self).get(self._transform_key(key), *default)
 
     def _transform_key(self, key):
-        assert hasattr(key, '_live_ptr')
+        assert hasattr(key, u'_live_ptr')
         return key._live_ptr
 
     def update(self, *a, **k):
         trans = self._transform_key
-        super(LiveObjectDict, self).update(*[ (trans(key), v) for key, v in a ], **dict((trans(key), k[key]) for key in k))
+        super(LiveObjectDict, self).update(*[ (trans(key), v) for key, v in a ], **dict(((trans(key), k[key]) for key in k)))
 
     def prune(self, keys):
         transformed_keys = map(self._transform_key, keys)
@@ -59,14 +54,12 @@ class LiveObjectDict(dict):
 
 class LiveObjectDecorator(CompoundDisconnectable, Proxy):
 
-    def __init__(self, live_object=None, additional_properties={}):
+    def __init__(self, live_object = None, additional_properties = {}):
         assert live_object is not None
         super(LiveObjectDecorator, self).__init__(proxied_object=live_object)
         self._live_object = live_object
         for name, value in additional_properties.iteritems():
             setattr(self, name, value)
-
-        return
 
     def __eq__(self, other):
         return id(self) == id(other) or self._live_object == other
@@ -88,7 +81,7 @@ class DecoratorFactory(CompoundDisconnectable):
         super(DecoratorFactory, self).__init__(*a, **k)
         self.decorated_objects = LiveObjectDict()
 
-    def decorate(self, live_object, additional_properties={}, **k):
+    def decorate(self, live_object, additional_properties = {}, **k):
         if self._should_be_decorated(live_object):
             if not self.decorated_objects.get(live_object, None):
                 self.decorated_objects[live_object] = self.register_disconnectable(self._get_decorated_object(live_object, additional_properties, **k))
@@ -110,13 +103,12 @@ class DecoratorFactory(CompoundDisconnectable):
 
 
 class NotifyingList(EventObject):
-    __events__ = (u'index', )
+    __events__ = (u'index',)
 
-    def __init__(self, available_values, default_value=None, *a, **k):
+    def __init__(self, available_values, default_value = None, *a, **k):
         super(NotifyingList, self).__init__(*a, **k)
         self._index = default_value if default_value is not None else 0
         self._available_values = available_values
-        return
 
     @property
     def available_values(self):
@@ -136,7 +128,7 @@ class NotifyingList(EventObject):
 
 class PitchParameter(InternalParameter):
 
-    def __init__(self, integer_value_host=None, decimal_value_host=None, *a, **k):
+    def __init__(self, integer_value_host = None, decimal_value_host = None, *a, **k):
         super(PitchParameter, self).__init__(*a, **k)
         self._integer_value_host = integer_value_host
         self._decimal_value_host = decimal_value_host
@@ -144,35 +136,35 @@ class PitchParameter(InternalParameter):
         self._on_decimal_value_changed.subject = decimal_value_host
         self._on_integer_value_automation_state_changed.subject = integer_value_host
         self._on_decimal_value_automation_state_changed.subject = decimal_value_host
-        self._integer_value = getattr(integer_value_host, 'value', 0)
-        self._decimal_value = getattr(decimal_value_host, 'value', 0.0)
+        self._integer_value = getattr(integer_value_host, u'value', 0)
+        self._decimal_value = getattr(decimal_value_host, u'value', 0.0)
         self.adjust_finegrain = False
 
-    @listens('value')
+    @listens(u'value')
     def _on_integer_value_changed(self):
         new_integer_value = self._integer_value_host.value
         if self._integer_value != new_integer_value:
             self._integer_value = new_integer_value
             self.notify_value()
 
-    @listens('value')
+    @listens(u'value')
     def _on_decimal_value_changed(self):
         new_decimal_value = self._decimal_value_host.value
         if self._decimal_value != new_decimal_value:
             self._decimal_value = new_decimal_value
             self.notify_value()
 
-    @listens('automation_state')
+    @listens(u'automation_state')
     def _on_integer_value_automation_state_changed(self):
         self.notify_automation_state()
 
-    @listens('automation_state')
+    @listens(u'automation_state')
     def _on_decimal_value_automation_state_changed(self):
         self.notify_automation_state()
 
     @property
     def _combined_value(self):
-        return getattr(self._integer_value_host, 'value', 0) + (getattr(self._decimal_value_host, 'value', 0.0) - 0.5)
+        return getattr(self._integer_value_host, u'value', 0) + (getattr(self._decimal_value_host, u'value', 0.0) - 0.5)
 
     def _get_value(self):
         return self._combined_value
@@ -212,7 +204,7 @@ class PitchParameter(InternalParameter):
         if new_value < 0 or new_value > 1:
             offset = 1 if new_value < 0 else -1
             new_value += offset
-            self._set_coarse(getattr(self._integer_value_host, 'value', 0) - offset)
+            self._set_coarse(getattr(self._integer_value_host, u'value', 0) - offset)
         self._decimal_value = new_value
         if liveobj_valid(self._decimal_value_host):
             self._decimal_value_host.value = new_value
@@ -227,15 +219,15 @@ class PitchParameter(InternalParameter):
 
     @property
     def min(self):
-        return getattr(self._integer_value_host, 'min', 0) - getattr(self._decimal_value_host, 'min', 0.0)
+        return getattr(self._integer_value_host, u'min', 0) - getattr(self._decimal_value_host, u'min', 0.0)
 
     @property
     def max(self):
-        return getattr(self._integer_value_host, 'max', 1) + getattr(self._decimal_value_host, 'max', 1.0)
+        return getattr(self._integer_value_host, u'max', 1) + getattr(self._decimal_value_host, u'max', 1.0)
 
     @property
     def display_value(self):
-        return ('{0:.2f}st').format(self._combined_value)
+        return u'{0:.2f}st'.format(self._combined_value)
 
     @property
     def default_value(self):

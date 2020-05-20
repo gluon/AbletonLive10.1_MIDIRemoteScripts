@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_modes.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/browser_modes.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends, liveobj_valid
@@ -42,11 +37,10 @@ class BrowserComponentMode(LazyEnablingMode):
 
 class BrowseModeBase(Mode):
 
-    def __init__(self, enabling_mode=None, *a, **k):
+    def __init__(self, enabling_mode = None, *a, **k):
         assert enabling_mode is not None
         super(BrowseModeBase, self).__init__()
         self.enabling_mode = enabling_mode
-        return
 
     def enter_mode(self):
         self.enabling_mode.enter_mode()
@@ -68,7 +62,6 @@ class HotswapBrowseMode(BrowseModeBase):
         if self._in_hotswap_mode:
             self._hotswap_mode.leave_mode()
             self._drum_group_component.hotswap_indication_mode = None
-        return
 
     def _enter_hotswap_mode(self):
         self._hotswap_mode.enter_mode()
@@ -76,15 +69,15 @@ class HotswapBrowseMode(BrowseModeBase):
         hotswap_target = self._browser.hotswap_target
         if liveobj_valid(hotswap_target):
             if isinstance(hotswap_target, Live.DrumPad.DrumPad):
-                self._drum_group_component.hotswap_indication_mode = 'current_pad'
+                self._drum_group_component.hotswap_indication_mode = u'current_pad'
             elif isinstance(hotswap_target, Live.RackDevice.RackDevice) and hotswap_target.can_have_drum_pads and hotswap_target == self._drum_group_component.drum_group_device:
-                self._drum_group_component.hotswap_indication_mode = 'all_pads'
+                self._drum_group_component.hotswap_indication_mode = u'all_pads'
 
 
 class AddDeviceMode(HotswapBrowseMode):
 
     @depends(selection=None)
-    def __init__(self, song, browser, selection=None, *a, **k):
+    def __init__(self, song, browser, selection = None, *a, **k):
         super(AddDeviceMode, self).__init__(*a, **k)
         self._song = song
         self._browser = browser
@@ -98,7 +91,6 @@ class AddDeviceMode(HotswapBrowseMode):
             self._browser.hotswap_target = None
             self._browser.filter_type = get_filter_type_for_track(self._song)
         super(AddDeviceMode, self).enter_mode()
-        return
 
 
 class AddTrackMode(BrowseModeBase):
@@ -110,7 +102,6 @@ class AddTrackMode(BrowseModeBase):
     def enter_mode(self):
         self._browser.hotswap_target = None
         super(AddTrackMode, self).enter_mode()
-        return
 
 
 class BrowseMode(HotswapBrowseMode):

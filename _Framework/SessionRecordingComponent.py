@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SessionRecordingComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/SessionRecordingComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .CompoundComponent import CompoundComponent
 from .SubjectSlot import subject_slot
@@ -38,7 +33,7 @@ class SessionRecordingComponent(CompoundComponent):
     Orchestrates the session recording (clip slot based) workflow.
     """
 
-    def __init__(self, clip_creator=None, view_controller=None, *a, **k):
+    def __init__(self, clip_creator = None, view_controller = None, *a, **k):
         super(SessionRecordingComponent, self).__init__(*a, **k)
         assert clip_creator
         assert view_controller
@@ -51,18 +46,17 @@ class SessionRecordingComponent(CompoundComponent):
         self._length_press_state = None
         self._new_scene_button = None
         song = self.song()
-        self._automation_toggle, self._re_enable_automation_toggle, self._delete_automation = self.register_components(ToggleComponent('session_automation_record', song), ToggleComponent('re_enable_automation_enabled', song, read_only=True), ToggleComponent('has_envelopes', None, read_only=True))
+        self._automation_toggle, self._re_enable_automation_toggle, self._delete_automation = self.register_components(ToggleComponent(u'session_automation_record', song), ToggleComponent(u're_enable_automation_enabled', song, read_only=True), ToggleComponent(u'has_envelopes', None, read_only=True))
         self._on_tracks_changed_in_live.subject = song
         self._on_is_playing_changed_in_live.subject = song
         self._track_subject_slots = self.register_slot_manager()
         self._reconnect_track_listeners()
-        self.register_slot(song, self.update, 'overdub')
-        self.register_slot(song, self.update, 'session_record_status')
-        self.register_slot(song.view, self.update, 'selected_track')
-        self.register_slot(song.view, self.update, 'selected_scene')
-        self.register_slot(song.view, self.update, 'detail_clip')
+        self.register_slot(song, self.update, u'overdub')
+        self.register_slot(song, self.update, u'session_record_status')
+        self.register_slot(song.view, self.update, u'selected_track')
+        self.register_slot(song.view, self.update, u'selected_scene')
+        self.register_slot(song.view, self.update, u'detail_clip')
         self._clip_creator.fixed_length = 8.0
-        return
 
     def set_record_button(self, button):
         self._record_button = button
@@ -119,33 +113,32 @@ class SessionRecordingComponent(CompoundComponent):
             selected_track = song.view.selected_track
             clip_slot = song.view.highlighted_clip_slot
             can_new = clip_slot != None and clip_slot.clip or selected_track.can_be_armed and selected_track.playing_slot_index >= 0
-            new_button.set_light(can_new or 'DefaultButton.Disabled')
-        return
+            new_button.set_light(can_new or u'DefaultButton.Disabled')
 
     def _update_new_scene_button(self):
         if self._new_scene_button and self.is_enabled():
             song = self.song()
             track_is_playing = find_if(lambda x: x.playing_slot_index >= 0, song.tracks)
             can_new = not song.view.selected_scene.is_empty or track_is_playing
-            self._new_scene_button.set_light(can_new or 'DefaultButton.Disabled')
+            self._new_scene_button.set_light(can_new or u'DefaultButton.Disabled')
 
     def _update_record_button(self):
         if self._record_button and self.is_enabled():
             song = self.song()
             status = song.session_record_status
             if status == Live.Song.SessionRecordStatus.transition:
-                self._record_button.set_light('Recording.Transition')
+                self._record_button.set_light(u'Recording.Transition')
             elif status == Live.Song.SessionRecordStatus.on or song.session_record:
                 self._record_button.turn_on()
             else:
                 self._record_button.turn_off()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_re_enable_automation_value(self, value):
         if self.is_enabled() and value:
             self.song().re_enable_automation()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_delete_automation_value(self, value):
         if self.is_enabled() and value:
             clip = self._get_playing_clip()
@@ -169,22 +162,22 @@ class SessionRecordingComponent(CompoundComponent):
     def _handle_limitation_error_on_scene_creation(self):
         pass
 
-    @subject_slot('tracks')
+    @subject_slot(u'tracks')
     def _on_tracks_changed_in_live(self):
         self._reconnect_track_listeners()
 
-    @subject_slot('is_playing')
+    @subject_slot(u'is_playing')
     def _on_is_playing_changed_in_live(self):
         if self.is_enabled():
             self._update_record_button()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_record_button_value(self, value):
         if self.is_enabled() and value:
             if not self._stop_recording():
                 self._start_recording()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_new_scene_button_value(self, value):
         if self.is_enabled() and value and self._prepare_new_action():
             song = self.song()
@@ -194,7 +187,7 @@ class SessionRecordingComponent(CompoundComponent):
             except Live.Base.LimitationError:
                 self._handle_limitation_error_on_scene_creation()
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_scene_list_new_button_value(self, value):
         if self.is_enabled() and value and self._prepare_new_action():
             song = self.song()
@@ -208,9 +201,8 @@ class SessionRecordingComponent(CompoundComponent):
                 self._handle_limitation_error_on_scene_creation()
 
             self._view_selected_clip_detail()
-        return
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_new_button_value(self, value):
         if self.is_enabled() and value and self._prepare_new_action():
             song = self.song()
@@ -279,16 +271,16 @@ class SessionRecordingComponent(CompoundComponent):
         view = self.song().view
         if view.highlighted_clip_slot.clip:
             view.detail_clip = view.highlighted_clip_slot.clip
-        self._view_controller.show_view('Detail/Clip')
+        self._view_controller.show_view(u'Detail/Clip')
 
     def _reconnect_track_listeners(self):
         manager = self._track_subject_slots
         manager.disconnect()
         for track in self.song().tracks:
             if track.can_be_armed:
-                manager.register_slot(track, self.update, 'arm')
-                manager.register_slot(track, self.update, 'playing_slot_index')
-                manager.register_slot(track, self.update, 'fired_slot_index')
+                manager.register_slot(track, self.update, u'arm')
+                manager.register_slot(track, self.update, u'playing_slot_index')
+                manager.register_slot(track, self.update, u'fired_slot_index')
 
     def _set_scene_list_mode(self, scene_list_mode):
         self._scene_list_mode = scene_list_mode

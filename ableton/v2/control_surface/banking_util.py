@@ -1,17 +1,12 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/banking_util.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/banking_util.py
 from __future__ import absolute_import, print_function, unicode_literals
 from math import ceil
 from copy import deepcopy
 from ..base import liveobj_valid
 MX_MAIN_BANK_INDEX = -1
-BANK_FORMAT = 'Bank %d'
-BANK_PARAMETERS_KEY = 'Parameters'
-BANK_MAIN_KEY = 'Main'
+BANK_FORMAT = u'Bank %d'
+BANK_PARAMETERS_KEY = u'Parameters'
+BANK_MAIN_KEY = u'Main'
 
 def has_bank_count(device):
     if liveobj_valid(device):
@@ -54,7 +49,7 @@ def all_parameters(device):
     return []
 
 
-def device_bank_count(device, bank_size=8, definition=None, definitions=None):
+def device_bank_count(device, bank_size = 8, definition = None, definitions = None):
     count = 0
     if liveobj_valid(device):
         definition = definition or definitions.get(device.class_name, {})
@@ -73,7 +68,7 @@ def device_bank_definition(device, definitions):
     return definition
 
 
-def device_bank_names(device, bank_size=8, definitions=None):
+def device_bank_names(device, bank_size = 8, definitions = None):
     names = []
     if liveobj_valid(device):
         class_name = device.class_name
@@ -81,8 +76,7 @@ def device_bank_names(device, bank_size=8, definitions=None):
             names = definitions[class_name].keys()
         elif has_bank_count(device) and has_bank_names(device, definitions):
             offset = int(has_main_bank(device, definitions))
-            names = [ device.get_bank_name(index - offset) for index in xrange(device_bank_count(device, definitions=definitions))
-                    ]
+            names = [ device.get_bank_name(index - offset) for index in xrange(device_bank_count(device, definitions=definitions)) ]
             if has_main_bank(device, definitions) and not names[0]:
                 names[0] = BANK_MAIN_KEY
         else:

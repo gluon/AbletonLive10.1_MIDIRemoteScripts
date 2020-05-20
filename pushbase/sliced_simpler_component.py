@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/sliced_simpler_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/sliced_simpler_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.control_surface.components import PlayableComponent, Slideable, SlideComponent
@@ -19,7 +14,7 @@ MAX_NUMBER_SLICES = 64
 
 class NullQuantizer(object):
 
-    def quantize_pitch(self, _pitch, _source=None):
+    def quantize_pitch(self, _pitch, _source = None):
         pass
 
 
@@ -30,13 +25,12 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
     page_length = 4
     page_offset = 0
 
-    def __init__(self, quantizer=None, *a, **k):
+    def __init__(self, quantizer = None, *a, **k):
         self._position = 0
         super(SlicedSimplerComponent, self).__init__(touch_slideable=self, dragging_enabled=True, *a, **k)
         self._simpler = None
         self._quantizer = quantizer or NullQuantizer()
         self.selected_notes_provider = self.register_disconnectable(SelectedNotesProvider())
-        return
 
     def _get_position(self):
         return self._position
@@ -57,8 +51,7 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
 
     @property
     def max_pitch(self):
-        return BASE_SLICING_NOTE + self._coordinate_to_slice_index((
-         0, self.width - 1))
+        return BASE_SLICING_NOTE + self._coordinate_to_slice_index((0, self.width - 1))
 
     def set_simpler(self, simpler):
         self._simpler = simpler
@@ -71,7 +64,6 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         self._update_led_feedback()
         self.update()
         self.notify_selected_target_note()
-        return
 
     def set_matrix(self, matrix):
         super(SlicedSimplerComponent, self).set_matrix(matrix)
@@ -82,25 +74,25 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         if self.is_enabled():
             self.notify_position()
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_track_color_changed(self):
         self._update_led_feedback()
 
-    @listens('slices')
+    @listens(u'slices')
     def __on_slices_changed(self):
         self._update_led_feedback()
 
-    @listens('view.selected_slice')
+    @listens(u'view.selected_slice')
     def __on_selected_slice_changed(self):
         self._update_led_feedback()
         self.selected_notes_provider.selected_notes = self._get_selected_note()
         self.notify_selected_target_note()
 
-    @listens('pad_slicing')
+    @listens(u'pad_slicing')
     def __on_pad_slicing_changed(self):
         self._update_led_feedback()
 
-    @listens('slicing_style')
+    @listens(u'slicing_style')
     def __on_slicing_style_changed(self):
 
         def set_pad_slicing():
@@ -117,8 +109,7 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         slices = list(self._slices())
         selected_slice = self._selected_slice()
         index = slices.index(selected_slice) if selected_slice in slices else 0
-        return [
-         BASE_SLICING_NOTE + index]
+        return [BASE_SLICING_NOTE + index]
 
     @listenable_property
     def selected_target_note(self):
@@ -133,12 +124,11 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
             return self._simpler.view.selected_slice
         return -1
 
-    @listens('sample')
+    @listens(u'sample')
     def __on_file_changed(self):
         self.__on_slices_changed.subject = self._simpler.sample if liveobj_valid(self._simpler) else None
         self._update_led_feedback()
         self.notify_selected_target_note()
-        return
 
     def _coordinate_to_slice_index(self, coordinate):
         y, x = coordinate
@@ -152,19 +142,18 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         slices = self._slices()
         length_of_slices = len(slices)
         if index < length_of_slices:
-            button.color = 'SlicedSimpler.SliceSelected' if slices[index] == self._selected_slice() else 'SlicedSimpler.SliceUnselected'
+            button.color = u'SlicedSimpler.SliceSelected' if slices[index] == self._selected_slice() else u'SlicedSimpler.SliceUnselected'
         elif self._should_show_next_slice(index, length_of_slices):
             button.color = self._next_slice_color()
         else:
-            button.color = 'SlicedSimpler.NoSlice'
+            button.color = u'SlicedSimpler.NoSlice'
 
     def _note_translation_for_button(self, button):
         identifier = BASE_SLICING_NOTE + self._coordinate_to_slice_index(button.coordinate)
-        return (
-         identifier, PAD_FEEDBACK_CHANNEL)
+        return (identifier, PAD_FEEDBACK_CHANNEL)
 
     def _next_slice_color(self):
-        return 'SlicedSimpler.NextSlice'
+        return u'SlicedSimpler.NextSlice'
 
     def _should_show_next_slice(self, index, length_of_slices):
         return index == length_of_slices and liveobj_valid(self._simpler) and self._simpler.pad_slicing and liveobj_valid(self._simpler.sample) and self._simpler.sample.slicing_style == Live.Sample.SlicingStyle.manual
@@ -179,7 +168,7 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         has_notes = liveobj_valid(clip) and not clip.is_audio_clip and len(clip.get_notes(0, pitch, DISTANT_FUTURE, 1)) > 0
         if has_notes:
             clip.remove_notes(0, pitch, DISTANT_FUTURE, 1)
-            slice_label = 'Slice %d' % (index + 1)
+            slice_label = u'Slice %d' % (index + 1)
             self.show_notification(MessageBoxText.DELETE_NOTES % slice_label)
         return has_notes
 
@@ -202,7 +191,7 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
         self._set_control_pads_from_script(bool(value))
 
     def _try_quantize_notes_for_slice(self, index):
-        self._quantizer.quantize_pitch(BASE_SLICING_NOTE + index, 'slice')
+        self._quantizer.quantize_pitch(BASE_SLICING_NOTE + index, u'slice')
 
     def _on_matrix_pressed(self, button):
         if liveobj_valid(self._simpler) and liveobj_valid(self._simpler.sample):

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/actions.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/actions.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
 from pushbase.actions import CaptureAndInsertSceneComponent as CaptureAndInsertSceneComponentBase
@@ -11,7 +6,7 @@ from .clip_decoration import ClipDecoratedPropertiesCopier
 
 class CaptureAndInsertSceneComponent(CaptureAndInsertSceneComponentBase):
 
-    def __init__(self, name=None, decorator_factory=None, *a, **k):
+    def __init__(self, name = None, decorator_factory = None, *a, **k):
         super(CaptureAndInsertSceneComponent, self).__init__(name, *a, **k)
         self._decorator_factory = decorator_factory
 
@@ -30,8 +25,6 @@ class CaptureAndInsertSceneComponent(CaptureAndInsertSceneComponentBase):
                 slot_ix = track.playing_slot_index
                 if slot_ix > -1:
                     return track.clip_slots[slot_ix].clip
-                else:
-                    return
 
             played_clips = [ get_playing_clip(track) for track in self.song.tracks ]
             super(CaptureAndInsertSceneComponent, self).post_trigger_action()

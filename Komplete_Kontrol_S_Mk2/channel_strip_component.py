@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/channel_strip_component.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Komplete_Kontrol_S_Mk2/channel_strip_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 from ableton.v2.base import listens, liveobj_valid
@@ -16,7 +11,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
     def __init__(self, *a, **k):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._meter_display_callback = None
-        return
 
     def set_meter_display_callback(self, callback):
         self._meter_display_callback = callback
@@ -24,7 +18,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
         self._on_implicit_arm_changed.subject = self._track if liveobj_valid(self._track) and self._track.can_be_armed else None
-        return
 
     def select_track(self):
         if liveobj_valid(self._track) and self.song.view.selected_track != self._track:
@@ -56,29 +49,26 @@ class ChannelStripComponent(ChannelStripComponentBase):
             self._on_output_meter_left_changed()
         elif self._meter_display_callback:
             self._meter_display_callback((0, 0))
-        return
 
     def _on_arm_changed(self):
         self.track_arm_display.value = int(self._track.can_be_armed and (self._track.arm or self._track.implicit_arm)) if liveobj_valid(self._track) else 0
 
-    @listens('implicit_arm')
+    @listens(u'implicit_arm')
     def _on_implicit_arm_changed(self):
         self._on_arm_changed()
 
-    @listens('has_audio_output')
+    @listens(u'has_audio_output')
     def _on_has_audio_output_changed(self):
         self._update_output_listeners()
 
-    @listens('output_meter_left')
+    @listens(u'output_meter_left')
     def _on_output_meter_left_changed(self):
         self._update_meter_display()
 
-    @listens('output_meter_right')
+    @listens(u'output_meter_right')
     def _on_output_meter_right_changed(self):
         self._update_meter_display()
 
     def _update_meter_display(self):
         if self._meter_display_callback:
-            self._meter_display_callback((
-             int(self._track.output_meter_left * 127),
-             int(self._track.output_meter_right * 127)))
+            self._meter_display_callback((int(self._track.output_meter_left * 127), int(self._track.output_meter_right * 127)))

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/pad_sensitivity.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/pad_sensitivity.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import repeat
 from ableton.v2.base import find_if, second, nop, task
@@ -14,27 +9,26 @@ class PadUpdateComponent(Component):
     Sets a set of parameters for different pads.  It keeps a set of
     profiles, and maps a profile to each pad.  It caches all
     modifications to the pad profiles, updating later optimally.
-
+    
     The all_pads parameter contains the pads identifiers.
-
+    
     The parameter_sender is a function that is used to update the
     pads. It takes the parameters as first value and a second optional
     value indicating the pad to update, or None to update all possible
     pads.
     """
 
-    def __init__(self, all_pads=tuple(), parameter_sender=nop, default_profile=None, update_delay=0, *a, **k):
+    def __init__(self, all_pads = tuple(), parameter_sender = nop, default_profile = None, update_delay = 0, *a, **k):
         assert find_if(lambda pad: pad < 0 or pad > 63, all_pads or []) == None
         super(PadUpdateComponent, self).__init__(*a, **k)
         self.parameter_sender = parameter_sender
         self._all_pads = set(all_pads)
         self._modified_pads = set(all_pads)
-        self._profiles = {'default': default_profile}
-        self._profile_for = dict(zip(all_pads, repeat('default')))
-        self._profile_count = {'default': len(all_pads)}
+        self._profiles = {u'default': default_profile}
+        self._profile_for = dict(zip(all_pads, repeat(u'default')))
+        self._profile_count = {u'default': len(all_pads)}
         self._update_task = self._tasks.add(task.sequence(task.wait(update_delay), task.run(self._update_modified)))
         self._update_task.restart()
-        return
 
     def set_profile(self, profile_id, parameters):
         self._profiles[profile_id] = parameters

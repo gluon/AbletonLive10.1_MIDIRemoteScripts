@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/RemoteSL/MixerController.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/RemoteSL/MixerController.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .RemoteSLComponent import RemoteSLComponent
@@ -51,8 +46,6 @@ class MixerController(RemoteSLComponent):
             if track and track.name_has_listener(self.__on_track_name_changed):
                 track.remove_name_listener(self.__on_track_name_changed)
 
-        return
-
     def remote_sl_parent(self):
         return self.__parent
 
@@ -65,20 +58,20 @@ class MixerController(RemoteSLComponent):
         elif cc_no in mx_select_button_ccs:
             self.__handle_select_button_ccs(cc_no, cc_value)
         elif cc_no in mx_first_button_row_ccs:
-            channel_strip = self.__strips[(cc_no - MX_FIRST_BUTTON_ROW_BASE_CC)]
+            channel_strip = self.__strips[cc_no - MX_FIRST_BUTTON_ROW_BASE_CC]
             if cc_value == CC_VAL_BUTTON_PRESSED:
                 channel_strip.first_button_pressed()
         elif cc_no in mx_second_button_row_ccs:
-            channel_strip = self.__strips[(cc_no - MX_SECOND_BUTTON_ROW_BASE_CC)]
+            channel_strip = self.__strips[cc_no - MX_SECOND_BUTTON_ROW_BASE_CC]
             if cc_value == CC_VAL_BUTTON_PRESSED:
                 channel_strip.second_button_pressed()
         elif cc_no in mx_slider_row_ccs:
-            channel_strip = self.__strips[(cc_no - MX_SLIDER_ROW_BASE_CC)]
+            channel_strip = self.__strips[cc_no - MX_SLIDER_ROW_BASE_CC]
             channel_strip.slider_moved(cc_value)
         elif cc_no in ts_ccs:
             self.__handle_transport_ccs(cc_no, cc_value)
         else:
-            assert False, 'unknown FX midi message'
+            assert False, u'unknown FX midi message'
 
     def build_midi_map(self, script_handle, midi_map_handle):
         needs_takeover = True
@@ -121,8 +114,7 @@ class MixerController(RemoteSLComponent):
                 track.remove_name_listener(self.__on_track_name_changed)
 
         self.__assigned_tracks = []
-        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (
-         self.song().master_track,)
+        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (self.song().master_track,)
         for s in self.__strips:
             if track_index < len(all_tracks):
                 track = all_tracks[track_index]
@@ -133,7 +125,7 @@ class MixerController(RemoteSLComponent):
                 self.__assigned_tracks.append(track)
             else:
                 s.set_assigned_track(None)
-                track_names.append('')
+                track_names.append(u'')
                 parameters.append(None)
             track_index += 1
 
@@ -148,11 +140,9 @@ class MixerController(RemoteSLComponent):
                 page_down_value = CC_VAL_BUTTON_PRESSED
             self.send_midi((self.cc_status_byte(), MX_DISPLAY_PAGE_UP, page_up_value))
             self.send_midi((self.cc_status_byte(), MX_DISPLAY_PAGE_DOWN, page_down_value))
-        return
 
     def __handle_page_up_down_ccs(self, cc_no, cc_value):
-        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (
-         self.song().master_track,)
+        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (self.song().master_track,)
         if cc_no == MX_DISPLAY_PAGE_UP:
             if cc_value == CC_VAL_BUTTON_PRESSED:
                 if len(all_tracks) > NUM_CONTROLS_PER_ROW and self.__strip_offset < len(all_tracks) - NUM_CONTROLS_PER_ROW:
@@ -166,7 +156,7 @@ class MixerController(RemoteSLComponent):
                     self.__validate_strip_offset()
                     self.__reassign_strips()
         else:
-            assert False, 'unknown Display midi message'
+            assert False, u'unknown Display midi message'
 
     def __handle_select_button_ccs(self, cc_no, cc_value):
         if cc_no == MX_SELECT_SLIDER_ROW:
@@ -179,7 +169,7 @@ class MixerController(RemoteSLComponent):
             if cc_value == CC_VAL_BUTTON_PRESSED:
                 self.__set_slider_mode(SLIDER_MODE_SEND)
         else:
-            assert False, 'unknown select row midi message'
+            assert False, u'unknown select row midi message'
 
     def __handle_transport_ccs(self, cc_no, cc_value):
         if cc_no == TS_REWIND_CC:
@@ -210,7 +200,7 @@ class MixerController(RemoteSLComponent):
             self.__transport_locked = cc_value != CC_VAL_BUTTON_RELEASED
             self.__on_transport_lock_changed()
         else:
-            assert False, 'unknown Transport CC ' + str(cc_no)
+            assert False, u'unknown Transport CC ' + str(cc_no)
 
     def __on_transport_lock_changed(self):
         for strip in self.__strips:
@@ -230,8 +220,7 @@ class MixerController(RemoteSLComponent):
         self.__reassign_strips()
 
     def __validate_strip_offset(self):
-        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (
-         self.song().master_track,)
+        all_tracks = tuple(self.song().visible_tracks) + tuple(self.song().return_tracks) + (self.song().master_track,)
         self.__strip_offset = min(self.__strip_offset, len(all_tracks) - 1)
         self.__strip_offset = max(0, self.__strip_offset)
 
@@ -254,26 +243,17 @@ class MixerController(RemoteSLComponent):
 
     def __update_selected_row_leds(self):
         if self.__slider_mode == SLIDER_MODE_VOLUME:
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_PRESSED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_PRESSED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
         elif self.__slider_mode == SLIDER_MODE_PAN:
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_RELEASED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_PRESSED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_PRESSED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
         elif self.__slider_mode >= SLIDER_MODE_SEND:
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_RELEASED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
-            self.send_midi((self.cc_status_byte(),
-             MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_PRESSED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SLIDER_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_FIRST_BUTTON_ROW, CC_VAL_BUTTON_RELEASED))
+            self.send_midi((self.cc_status_byte(), MX_SELECT_SECOND_BUTTON_ROW, CC_VAL_BUTTON_PRESSED))
 
     def __on_record_mode_changed(self):
         if self.__transport_locked or not self.support_mkII():
@@ -325,7 +305,6 @@ class MixerChannelStrip():
         self.__index = index
         self.__assigned_track = None
         self.__control_second_button = True
-        return
 
     def song(self):
         return self.__mixer_controller.song()
@@ -347,7 +326,6 @@ class MixerChannelStrip():
                 self.__assigned_track.add_arm_listener(self._on_arm_changed)
         self._on_mute_changed()
         self._on_arm_changed()
-        return
 
     def slider_parameter(self):
         slider_mode = self.__mixer_controller.slider_mode()
@@ -360,21 +338,17 @@ class MixerChannelStrip():
                 send_index = slider_mode - SLIDER_MODE_SEND
                 if send_index < len(self.__assigned_track.mixer_device.sends):
                     return self.__assigned_track.mixer_device.sends[send_index]
-                return
+                else:
+                    return None
         else:
-            return
-        return
+            return None
 
     def slider_moved(self, cc_value):
-        assert self.__assigned_track == None or self.slider_parameter() == None, 'should only be reached when the slider was not realtime mapped '
-        return
+        assert self.__assigned_track == None or self.slider_parameter() == None, u'should only be reached when the slider was not realtime mapped '
 
     def take_control_of_second_button(self, take_control):
         if self.__mixer_controller.support_mkII():
-            self.__mixer_controller.remote_sl_parent().send_midi((
-             self.__mixer_controller.cc_status_byte(),
-             self.__index + MX_SECOND_BUTTON_ROW_BASE_CC,
-             0))
+            self.__mixer_controller.remote_sl_parent().send_midi((self.__mixer_controller.cc_status_byte(), self.__index + MX_SECOND_BUTTON_ROW_BASE_CC, 0))
         self.__control_second_button = take_control
         self._on_mute_changed()
         self._on_arm_changed()
@@ -397,17 +371,11 @@ class MixerChannelStrip():
             value = 0
             if self.__assigned_track in tuple(self.song().tracks) + tuple(self.song().return_tracks) and not self.__assigned_track.mute:
                 value = 1
-            self.__mixer_controller.remote_sl_parent().send_midi((
-             self.__mixer_controller.cc_status_byte(),
-             self.__index + MX_FIRST_BUTTON_ROW_BASE_CC,
-             value))
+            self.__mixer_controller.remote_sl_parent().send_midi((self.__mixer_controller.cc_status_byte(), self.__index + MX_FIRST_BUTTON_ROW_BASE_CC, value))
 
     def _on_arm_changed(self):
         if self.__control_second_button and self.__mixer_controller.support_mkII():
             value = 0
             if self.__assigned_track and self.__assigned_track in self.song().tracks and self.__assigned_track.can_be_armed and self.__assigned_track.arm:
                 value = 1
-            self.__mixer_controller.remote_sl_parent().send_midi((
-             self.__mixer_controller.cc_status_byte(),
-             self.__index + MX_SECOND_BUTTON_ROW_BASE_CC,
-             value))
+            self.__mixer_controller.remote_sl_parent().send_midi((self.__mixer_controller.cc_status_byte(), self.__index + MX_SECOND_BUTTON_ROW_BASE_CC, value))

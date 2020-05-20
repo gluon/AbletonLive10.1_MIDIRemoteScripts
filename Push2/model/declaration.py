@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/model/declaration.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/model/declaration.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count
 
@@ -54,7 +49,12 @@ def is_reference_property_decl(decl):
 
 
 def is_value_property_type(decl):
-    return decl.property_type in (int, long, float, unicode, str, bool)
+    return decl.property_type in (int,
+     long,
+     float,
+     unicode,
+     str,
+     bool)
 
 
 def is_custom_property(decl):
@@ -69,7 +69,7 @@ class view_property(property_declaration):
     sentinel = object()
     GLOBAL_ORDER = count()
 
-    def __init__(self, property_type, default_value=sentinel, depends=(), *a, **k):
+    def __init__(self, property_type, default_value = sentinel, depends = (), *a, **k):
         super(view_property, self).__init__(*a, **k)
         self.property_type = property_type
         self.default_value = default_value
@@ -78,26 +78,23 @@ class view_property(property_declaration):
         depends = depends
 
     def __repr__(self):
-        return '<%s %r>' % (
-         self.__class__.__name__,
-         self.property_type)
+        return u'<%s %r>' % (self.__class__.__name__, self.property_type)
 
     def visit(self, name, visitor):
-        if name == 'id':
+        if name == u'id':
             raise WrongIdPropertyDeclaration
         visitor.visit_view_property(name, self)
 
 
 class custom_property(view_property):
 
-    def __init__(self, property_type, wrapper_class=None, *a, **k):
+    def __init__(self, property_type, wrapper_class = None, *a, **k):
         assert wrapper_class is not None
         super(custom_property, self).__init__(property_type=property_type, *a, **k)
         self.wrapper_class = wrapper_class
-        return
 
     def visit(self, name, visitor):
-        if name == 'id':
+        if name == u'id':
             raise WrongIdPropertyDeclaration
         visitor.visit_custom_property(name, self)
 
@@ -109,14 +106,14 @@ class id_property(property_declaration):
 
     @staticmethod
     def id_attribute_getter(obj):
-        if hasattr(obj, '__id__'):
+        if hasattr(obj, u'__id__'):
             return unicode(obj.__id__)
-        if hasattr(obj, '_live_ptr'):
+        if hasattr(obj, u'_live_ptr'):
             return unicode(obj._live_ptr)
         return unicode(id(obj))
 
     def visit(self, name, visitor):
-        if name != 'id':
+        if name != u'id':
             raise WrongIdPropertyDeclaration
         visitor.visit_id_property(name, self)
 
@@ -128,9 +125,7 @@ class listof(object):
         self.property_type = property_type
 
     def __repr__(self):
-        return '<%s %r>' % (
-         self.__class__.__name__,
-         self.property_type)
+        return u'<%s %r>' % (self.__class__.__name__, self.property_type)
 
 
 class listmodel(listof):
@@ -152,8 +147,7 @@ class ModelVisitor(object):
         self.visit_class_declarations(class_)
 
     def visit_class_declarations(self, class_):
-        view_properties = ((
-         isinstance(decl, property_declaration) and name, decl) for name, decl in class_.__dict__.iteritems())
+        view_properties = ((name, decl) for name, decl in class_.__dict__.iteritems() if isinstance(decl, property_declaration))
         for name, decl in sorted(view_properties, key=lambda item: item[1].order):
             decl.visit(name, self)
 
@@ -172,7 +166,7 @@ class ModelVisitor(object):
         elif is_list_property_decl(decl):
             self.visit_list_property(name, decl)
         else:
-            raise Exception('Invalid property declaration')
+            raise Exception(u'Invalid property declaration')
 
     def visit_reference_property(self, name, decl):
         pass
@@ -196,7 +190,7 @@ class ModelVisitor(object):
         elif is_view_model_property_decl(decl.property_type):
             self.visit_complex_list_property(name, decl, decl.property_type.property_type)
         else:
-            raise Exception('Invalid property declaration')
+            raise Exception(u'Invalid property declaration')
 
     def visit_value_list_property(self, name, decl, value_type):
         pass

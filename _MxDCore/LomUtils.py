@@ -1,19 +1,15 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_MxDCore/LomUtils.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_MxDCore/LomUtils.py
 from __future__ import absolute_import, print_function, unicode_literals
-import sys, types
+import sys
+import types
 from itertools import chain, ifilter
 from .MxDUtils import TupleWrapper
 from .LomTypes import cs_base_classes, TUPLE_TYPES, PROPERTY_TYPES, EXTRA_CS_FUNCTIONS, ENUM_TYPES, ROOT_KEYS, LIVE_APP, MFLPropertyFormats, LomObjectError, LomAttributeError, get_exposed_property_names_for_type, get_exposed_property_info, is_class, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable
 
 def create_lom_doc_string(lom_object):
-    description = ''
-    if hasattr(lom_object, '__doc__') and isinstance(lom_object.__doc__, basestring) and len(lom_object.__doc__) > 0:
-        description = 'description %s' % lom_object.__doc__.replace('\n', ' ').replace(',', '\\,')
+    description = u''
+    if hasattr(lom_object, u'__doc__') and isinstance(lom_object.__doc__, basestring) and len(lom_object.__doc__) > 0:
+        description = u'description %s' % lom_object.__doc__.replace(u'\n', u' ').replace(u',', u'\\,')
     return description
 
 
@@ -56,11 +52,10 @@ class LomInformation(object):
     def _add_child(self, real_prop, prop_name):
         type_name = (real_prop.__class__ if real_prop != None else PROPERTY_TYPES[prop_name]).__name__
         self._children.append((prop_name, type_name))
-        return
 
     def _generate_object_info(self, lom_object, epii_version):
         if isinstance(lom_object, cs_base_classes()):
-            property_names = ifilter(lambda prop: not prop.startswith('_'), dir(lom_object))
+            property_names = ifilter(lambda prop: not prop.startswith(u'_'), dir(lom_object))
             functions_implemented_by_mxdcore = EXTRA_CS_FUNCTIONS
         else:
             property_names = get_exposed_property_names_for_type(type(lom_object), epii_version)
@@ -81,31 +76,29 @@ class LomInformation(object):
                 prop_info = get_exposed_property_info(type(lom_object), prop_name, epii_version)
                 prop_type = real_prop.__class__.__name__
                 if prop_info and prop_info.format == MFLPropertyFormats.JSON:
-                    self._properties.append((prop_name, 'dict'))
+                    self._properties.append((prop_name, u'dict'))
                 elif prop_name in TUPLE_TYPES:
                     self._add_list_of_children(prop_name)
                 elif prop_name in PROPERTY_TYPES.keys():
                     self._add_child(real_prop, prop_name)
-                elif prop_name == 'canonical_parent':
+                elif prop_name == u'canonical_parent':
                     if real_prop != None:
                         self._children.append((prop_name, prop_type))
                 elif callable(real_prop):
-                    if not prop_name.endswith('_listener'):
+                    if not prop_name.endswith(u'_listener'):
                         self._functions.append((prop_name,))
-                elif prop_type == 'unicode':
-                    self._properties.append((prop_name, 'str'))
+                elif prop_type == u'unicode':
+                    self._properties.append((prop_name, u'str'))
                 elif prop_type not in (u'type', u'Enum'):
-                    info_type = 'int' if isinstance(real_prop, ENUM_TYPES) else prop_type
+                    info_type = u'int' if isinstance(real_prop, ENUM_TYPES) else prop_type
                     self._properties.append((prop_name, info_type))
         except (AssertionError, RuntimeError):
             pass
 
-        return
-
 
 class LomIntrospection(object):
 
-    def __init__(self, directory, exclude=[], *a, **k):
+    def __init__(self, directory, exclude = [], *a, **k):
         super(LomIntrospection, self).__init__(*a, **k)
         self._lom_classes = []
         self._lom_modules = []
@@ -117,7 +110,7 @@ class LomIntrospection(object):
         return self._lom_classes
 
     def _is_relevant_class(self, class_object):
-        return is_class(class_object) and hasattr(class_object, '__module__') and sys.modules.get(class_object.__module__) in self._lom_modules and class_object not in self._lom_classes and class_object not in self._excluded
+        return is_class(class_object) and hasattr(class_object, u'__module__') and sys.modules.get(class_object.__module__) in self._lom_modules and class_object not in self._lom_classes and class_object not in self._excluded
 
     def _process_class(self, class_object):
         processed = False
@@ -168,7 +161,7 @@ def is_control_surfaces_list(path_component):
 
 def wrap_control_surfaces_list(parent):
     assert parent in (None, get_root_prop(None, LIVE_APP))
-    return TupleWrapper.get_tuple_wrapper(parent, 'control_surfaces', element_filter=lambda e: isinstance(e, cs_base_classes()))
+    return TupleWrapper.get_tuple_wrapper(parent, u'control_surfaces', element_filter=lambda e: isinstance(e, cs_base_classes()))
 
 
 class LomPathCalculator(object):
@@ -191,7 +184,7 @@ class LomPathCalculator(object):
                     break
             elif lom_object in root_prop:
                 index = list(root_prop).index(lom_object)
-                component = '%s %d' % (key, index)
+                component = u'%s %d' % (key, index)
                 break
 
         return component
@@ -213,7 +206,7 @@ class LomPathCalculator(object):
                 property = getattr(parent, key)
                 if lom_object in property:
                     index = list(property).index(lom_object)
-                    component = '%s %d' % (key, index)
+                    component = u'%s %d' % (key, index)
                     break
 
         return component
@@ -221,8 +214,7 @@ class LomPathCalculator(object):
     def _prepend_path_component(self, component, components):
         if component != None:
             return [component] + components
-        else:
-            return []
+        return []
 
     def _calculate_path(self, lom_object, external_device_getter):
         components = []
@@ -259,7 +251,7 @@ class LomPathResolver(object):
     def _tuple_element_from_path(self, path_components):
         lom_object = None
         parent = None
-        attribute = path_components[(-1)]
+        attribute = path_components[-1]
         if len(path_components) > 1:
             parent = self._calculate_object_from_path(path_components[:-1])
         if is_control_surfaces_list(attribute):
@@ -275,12 +267,12 @@ class LomPathResolver(object):
         components = [lom_object]
         for component in path_components[1:]:
             try:
-                assert component.isdigit() and is_object_iterable(lom_object)
-                if not prev_component in TUPLE_TYPES.keys():
-                    raise AssertionError
+                if component.isdigit():
+                    assert is_object_iterable(lom_object)
+                    assert prev_component in TUPLE_TYPES.keys()
                     index = int(component)
                     if is_control_surfaces_list(prev_component):
-                        parent = components[(-2)] if len(components) > 1 else None
+                        parent = components[-2] if len(components) > 1 else None
                         tuple_wrapper = wrap_control_surfaces_list(parent)
                         lom_object = tuple_wrapper.get_list()[index]
                     else:
@@ -289,20 +281,20 @@ class LomPathResolver(object):
                     lom_object = getattr(lom_object, component)
                 components.append(lom_object)
             except IndexError:
-                raise LomAttributeError("invalid index of component '%s'" % prev_component)
+                raise LomAttributeError(u"invalid index of component '%s'" % prev_component)
             except AttributeError:
-                raise LomAttributeError("invalid path component '%s'" % component)
+                raise LomAttributeError(u"invalid path component '%s'" % component)
             else:
                 prev_component = component
 
         if not is_lom_object(lom_object, self._lom_classes):
-            raise LomObjectError("component '%s' is not an object" % prev_component)
+            raise LomObjectError(u"component '%s' is not an object" % prev_component)
         return lom_object
 
     def _calculate_object_from_path(self, path_components):
         lom_object = None
         if len(path_components) > 0:
             assert path_components[0] in ROOT_KEYS
-            selector = self._tuple_element_from_path if path_components[(-1)] in TUPLE_TYPES.keys() else self._property_object_from_path
+            selector = self._tuple_element_from_path if path_components[-1] in TUPLE_TYPES.keys() else self._property_object_from_path
             lom_object = selector(path_components)
         return lom_object

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxMixerController.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxMixerController.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .ParamMap import ParamMap
@@ -11,10 +6,9 @@ from .FaderfoxComponent import FaderfoxComponent
 from .consts import *
 
 class FaderfoxMixerController(FaderfoxComponent):
-    u"""Mixer parameters of LX2"""
     __module__ = __name__
-    __filter_funcs__ = [
-     'update_display', 'log']
+    __doc__ = u'Mixer parameters of LX2'
+    __filter_funcs__ = [u'update_display', u'log']
 
     def __init__(self, parent):
         FaderfoxMixerController.realinit(self, parent)
@@ -44,13 +38,13 @@ class FaderfoxMixerController(FaderfoxComponent):
             tracks = tuple(self.parent.song().tracks) + tuple(self.parent.song().return_tracks)
             if len(tracks) > idx:
                 track = tracks[idx]
-                if attr == 'solo':
+                if attr == u'solo':
                     self.helper.solo_track(track)
-                elif attr == 'arm':
+                elif attr == u'arm':
                     self.helper.arm_track(track)
-                elif attr == 'monitor':
+                elif attr == u'monitor':
                     self.helper.switch_monitor_track(track)
-                elif attr == 'cross_ab':
+                elif attr == u'cross_ab':
                     self.helper.switch_crossfader_ab(track)
                 else:
                     self.helper.toggle_track_attribute(track, attr)
@@ -59,7 +53,7 @@ class FaderfoxMixerController(FaderfoxComponent):
         if status == NOTEOFF_STATUS:
             return
         if channel == CHANNEL_SETUP2:
-            self.log('received note %s' % note_no)
+            self.log(u'received note %s' % note_no)
         if channel == CHANNEL_SETUP2 and note_no in TRACK_SELECT_NOTES:
             idx = note_no - TRACK_SELECT_NOTES[0]
             self.lv1_track_idx = note_no
@@ -67,20 +61,20 @@ class FaderfoxMixerController(FaderfoxComponent):
             if idx < len(tracks):
                 track = tracks[idx]
             elif self.helper.is_master_track_selected():
-                track = tracks[(-1)]
+                track = tracks[-1]
             else:
                 track = self.parent.song().master_track
             self.set_selected_track(track)
         if channel == CHANNEL_SETUP2 and note_no == MASTER_TRACK_SELECT_NOTE:
             self.lv1_track_idx = note_no
-            self.log('select master track')
+            self.log(u'select master track')
             self.set_selected_track(self.parent.song().master_track)
         if channel == TRACK_CHANNEL_SETUP2 and status == NOTEON_STATUS:
-            self.handle_status_note(note_no, MUTE_NOTES, 'mute')
-            self.handle_status_note(note_no, ARM_NOTES, 'arm')
-            self.handle_status_note(note_no, SOLO_NOTES, 'solo')
-            self.handle_status_note(note_no, MONITOR_NOTES, 'monitor')
-            self.handle_status_note(note_no, CROSS_AB_NOTES, 'cross_ab')
+            self.handle_status_note(note_no, MUTE_NOTES, u'mute')
+            self.handle_status_note(note_no, ARM_NOTES, u'arm')
+            self.handle_status_note(note_no, SOLO_NOTES, u'solo')
+            self.handle_status_note(note_no, MONITOR_NOTES, u'monitor')
+            self.handle_status_note(note_no, CROSS_AB_NOTES, u'cross_ab')
 
     def set_selected_track(self, track):
         if track and self.track_selected and not self.parent.song().view.selected_track == track:
@@ -132,8 +126,7 @@ class FaderfoxMixerController(FaderfoxComponent):
             self.lv1_track_idx = MASTER_TRACK_SELECT_NOTE
             self.parent.send_midi((175, 16, 16))
             if self.parent.is_live_5():
-                self.parent.send_midi((NOTEON_STATUS + CHANNEL_SETUP2,
-                 MASTER_TRACK_SELECT_NOTE, 64))
+                self.parent.send_midi((NOTEON_STATUS + CHANNEL_SETUP2, MASTER_TRACK_SELECT_NOTE, 64))
         else:
             idx = self.helper.selected_track_idx()
             if idx < 16:
@@ -143,10 +136,8 @@ class FaderfoxMixerController(FaderfoxComponent):
                 self.lv1_track_idx = note_no
                 self.parent.send_midi((175, 16, self.helper.selected_track_idx()))
                 if self.parent.is_live_5():
-                    self.log('send track note %s' % TRACK_SELECT_NOTES[self.helper.selected_track_idx()])
-                    self.parent.send_midi((NOTEON_STATUS + CHANNEL_SETUP2,
-                     TRACK_SELECT_NOTES[self.helper.selected_track_idx()],
-                     64))
+                    self.log(u'send track note %s' % TRACK_SELECT_NOTES[self.helper.selected_track_idx()])
+                    self.parent.send_midi((NOTEON_STATUS + CHANNEL_SETUP2, TRACK_SELECT_NOTES[self.helper.selected_track_idx()], 64))
 
     def map_track_params(self, script_handle, midi_map_handle):
         for idx in range(0, 16):
@@ -173,13 +164,13 @@ class FaderfoxMixerController(FaderfoxComponent):
         if self.parent.is_lv1:
             cc = LV1_MAIN_VOLUME_CC
         ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)
-        if hasattr(track.mixer_device, 'cue_volume'):
+        if hasattr(track.mixer_device, u'cue_volume'):
             parameter = track.mixer_device.cue_volume
             cc = CUE_VOLUME_CC
             if self.parent.is_lv1:
                 cc = LV1_CUE_VOLUME_CC
             ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)
-        if hasattr(track.mixer_device, 'crossfader'):
+        if hasattr(track.mixer_device, u'crossfader'):
             parameter = track.mixer_device.crossfader
             cc = CROSSFADER_CC
             ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)

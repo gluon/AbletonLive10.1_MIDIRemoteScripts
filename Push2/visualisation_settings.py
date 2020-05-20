@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/visualisation_settings.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/visualisation_settings.py
 from __future__ import absolute_import, print_function, unicode_literals
 import math
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR, COLOR_INDEX_TO_SCREEN_COLOR_SHADES
@@ -54,33 +49,33 @@ class VisualisationGuides(object):
         return origin_row * VisualisationSettings.row_spacing + guide_type + index * VisualisationSettings.row_spacing - origin_y
 
     @staticmethod
-    def button_left_x(index, origin_x=None):
+    def button_left_x(index, origin_x = None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.button_left)
 
     @staticmethod
-    def light_left_x(index, origin_x=None):
+    def light_left_x(index, origin_x = None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.light_left)
 
     @staticmethod
-    def light_right_x(index, origin_x=None):
+    def light_right_x(index, origin_x = None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.light_right)
 
     @staticmethod
-    def button_right_x(index, origin_x=None):
+    def button_right_x(index, origin_x = None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.button_right)
 
     @staticmethod
-    def row_top_y(index, origin_y=None):
+    def row_top_y(index, origin_y = None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.row_top)
 
     @staticmethod
-    def body_top_y(index, origin_y=None):
+    def body_top_y(index, origin_y = None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.body_top)
 
     @staticmethod
-    def body_bottom_y(index, origin_y=None):
+    def body_bottom_y(index, origin_y = None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.body_bottom)
 
     @staticmethod
-    def row_bottom_y(index, origin_y=None):
+    def row_bottom_y(index, origin_y = None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.row_bottom)

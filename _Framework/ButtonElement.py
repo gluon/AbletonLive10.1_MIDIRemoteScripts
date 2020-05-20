@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ButtonElement.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ButtonElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .InputControlElement import InputControlElement, MIDI_CC_TYPE
@@ -17,11 +12,10 @@ class ButtonValue(object):
     """
     midi_value = 0
 
-    def __init__(self, midi_value=None, *a, **k):
+    def __init__(self, midi_value = None, *a, **k):
         super(ButtonValue, self).__init__(*a, **k)
         if midi_value is not None:
             self.midi_value = midi_value
-        return
 
     def __int__(self):
         return self.midi_value
@@ -91,7 +85,7 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
         is_momentary = nop
         is_pressed = nop
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, skin=Skin(), undo_step_handler=DummyUndoStepHandler(), *a, **k):
+    def __init__(self, is_momentary, msg_type, channel, identifier, skin = Skin(), undo_step_handler = DummyUndoStepHandler(), *a, **k):
         super(ButtonElement, self).__init__(msg_type, channel, identifier, *a, **k)
         self.__is_momentary = bool(is_momentary)
         self._last_received_value = -1
@@ -131,4 +125,3 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
     def disconnect(self):
         super(ButtonElement, self).disconnect()
         self._undo_step_handler = None
-        return

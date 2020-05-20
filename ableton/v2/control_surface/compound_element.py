@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/compound_element.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/compound_element.py
 from __future__ import absolute_import, print_function, unicode_literals
 from collections import OrderedDict
 from itertools import ifilter
@@ -12,7 +7,7 @@ from ..base import BooleanContext, first, second, listens_group
 
 class NestedElementClient(ControlElementClient):
 
-    def __init__(self, compound=None, client=None, **k):
+    def __init__(self, compound = None, client = None, **k):
         super(NestedElementClient, self).__init__(**k)
         self.compound = compound
         self.client = client
@@ -27,17 +22,17 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
     registered elements, once the CompoundElement's resource itself is grabbed. Changes
     to the ownership of the owned elements will be notified and the CompoundElement will
     be reassigned to its client.
-
+    
     The CompoundElement's value event notifies whenever any owned Element notifies its
     value event.
-
-    Iterating over a CompoundElement or accessing it's elements by index or slice returns
+    
+    Iterating over a CompoundElement or accessing its elements by index or slice returns
     the registered Control Element if it's owned or None in case another client grabbed
     it.
     """
     _is_resource_based = False
 
-    def __init__(self, control_elements=None, *a, **k):
+    def __init__(self, control_elements = None, *a, **k):
         super(CompoundElement, self).__init__(*a, **k)
         resource = self.resource
         original_grab_resource = resource.grab
@@ -59,28 +54,27 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         self._listen_nested_requests = 0
         if control_elements is not None:
             self.register_control_elements(*control_elements)
-        return
 
     def on_nested_control_element_received(self, control):
         u"""
         Is called when the CompoundElement owns the registered Control Element.
-        Can be overriden to react to ownership changes.
+        Can be overridden to react to ownership changes.
         """
         pass
 
     def on_nested_control_element_lost(self, control):
         u"""
-        Is called when the CompoundElement does no longer own the registered
+        Is called when the CompoundElement no longer owns the registered
         Control Element.
-        Can be overriden to react to ownership changes.
+        Can be overridden to react to ownership changes.
         """
         pass
 
     def on_nested_control_element_value(self, value, control):
         u"""
         Is called when an owned Control Element notifies its value event.
-
-        By default, the notification is fowarded to the CompoundElements value event
+        
+        By default, the notification is forwarded to the CompoundElement's value event
         with the corresponding Control Element that triggered it.
         """
         self.notify_value(value, control)
@@ -160,13 +154,13 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
     def request_listen_nested_control_elements(self):
         u"""
         By default, the compound control element will listen to its
-        nested control elements IFF he himself has listeners.  This is
+        nested control elements IF he himself has listeners.  This is
         important, because for nested InputControlElements, the
-        existence of listeners determine wether they will send the
+        existence of listeners determines whether they will send the
         MIDI messages to Live or to the script.
-
+        
         You can force the compound to listen to its nested elements
-        using this methods.  The compound will then listen to them IFF
+        using this method.  The compound will then listen to them IF
         the number of requests is greater than the number of
         unrequests OR it has listeners.
         """
@@ -200,7 +194,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
                 self._nested_control_elements[control] = False
         self.on_nested_control_element_lost(control)
 
-    @listens_group('value')
+    @listens_group(u'value')
     def __on_nested_control_element_value(self, value, sender):
         if self.owns_control_element(sender):
             self.on_nested_control_element_value(value, sender)
@@ -214,7 +208,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         if owner and not self._disable_notify_owner_on_button_ownership_change:
             self.notify_ownership_change(owner, True)
 
-    def _grab_nested_control_elements(self, client, priority=None, **k):
+    def _grab_nested_control_elements(self, client, priority = None, **k):
         was_resource_based = self._is_resource_based
         self._is_resource_based = True
         nested_client = self._get_nested_client(client)
@@ -247,15 +241,12 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         for element, owned in self._nested_control_elements.iteritems():
             yield element if owned else None
 
-        return
-
     def __getitem__(self, index_or_slice):
         if isinstance(index_or_slice, slice):
             items = self._nested_control_elements.items()[index_or_slice]
-            return [ element if owned else None for element, owned in items ]
+            return [ (element if owned else None) for element, owned in items ]
         else:
             element, owned = self._nested_control_elements.items()[index_or_slice]
             if owned:
                 return element
-            return
-            return
+            return None

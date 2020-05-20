@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/SliderModesComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/SliderModesComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ButtonElement import ButtonElement
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
@@ -22,7 +17,6 @@ class SliderModesComponent(ModeSelectorComponent):
         super(SliderModesComponent, self).disconnect()
         self._mixer = None
         self._sliders = None
-        return
 
     def set_mode_buttons(self, buttons):
         assert isinstance(buttons, (tuple, type(None)))
@@ -32,14 +26,12 @@ class SliderModesComponent(ModeSelectorComponent):
         self._modes_buttons = []
         if buttons != None:
             for button in buttons:
-                if not isinstance(button, ButtonElement):
-                    raise AssertionError
-                    identify_sender = True
-                    button.add_value_listener(self._mode_value, identify_sender)
-                    self._modes_buttons.append(button)
+                assert isinstance(button, ButtonElement)
+                identify_sender = True
+                button.add_value_listener(self._mode_value, identify_sender)
+                self._modes_buttons.append(button)
 
         self.update()
-        return
 
     def number_of_modes(self):
         return 8
@@ -68,9 +60,6 @@ class SliderModesComponent(ModeSelectorComponent):
                 elif self._mode_index == 1:
                     strip.set_pan_control(slider)
                 elif self._mode_index < 5:
-                    send_controls = [
-                     None, None, None]
+                    send_controls = [None, None, None]
                     send_controls[self._mode_index - 2] = slider
                     strip.set_send_controls(tuple(send_controls))
-
-        return

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/NotifyingControlElement.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/NotifyingControlElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from .SubjectSlot import Subject, SubjectEvent
 from .ControlElement import ControlElement
@@ -12,5 +7,4 @@ class NotifyingControlElement(Subject, ControlElement):
     u"""
     Class representing control elements that can send values
     """
-    __subject_events__ = (
-     SubjectEvent(name='value', doc=' Called when the control element receives a MIDI value\n                             from the hardware '),)
+    __subject_events__ = (SubjectEvent(name=u'value', doc=u' Called when the control element receives a MIDI value\n                             from the hardware '),)

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/KeyLab_Essential/control_element_utils.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/KeyLab_Essential/control_element_utils.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends
@@ -13,12 +8,12 @@ from . import sysex
 from .ringed_encoder import RingedEncoderElement
 
 @depends(skin=None)
-def create_button(identifier, name, channel=0, skin=None):
+def create_button(identifier, name, channel = 0, skin = None):
     return ButtonElement(True, MIDI_NOTE_TYPE, channel, identifier, name=name, skin=skin)
 
 
 @depends(skin=None)
-def create_pad_led(identifier, name, skin=None):
+def create_pad_led(identifier, name, skin = None):
 
     def make_send_value_generator(id):
 
@@ -28,10 +23,8 @@ def create_pad_led(identifier, name, skin=None):
 
         return send_message_generator
 
-    return ColorSysexElement(skin=skin, send_message_generator=make_send_value_generator(identifier), default_value=(0,
-                                                                                                                     0,
-                                                                                                                     0), optimized=True, name=name)
+    return ColorSysexElement(skin=skin, send_message_generator=make_send_value_generator(identifier), default_value=(0, 0, 0), optimized=True, name=name)
 
 
 def create_ringed_encoder(identifier, ring_element_identifier, name):
-    return RingedEncoderElement(MIDI_CC_TYPE, 0, identifier, map_mode=Live.MidiMap.MapMode.relative_signed_bit, ring_element=InputControlElement(MIDI_CC_TYPE, 0, ring_element_identifier, name=name + '_Ring_Element'), name=name)
+    return RingedEncoderElement(MIDI_CC_TYPE, 0, identifier, map_mode=Live.MidiMap.MapMode.relative_signed_bit, ring_element=InputControlElement(MIDI_CC_TYPE, 0, ring_element_identifier, name=name + u'_Ring_Element'), name=name)

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_49_61_Classic/SliderSection.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_49_61_Classic/SliderSection.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Axiom.consts import *
@@ -25,7 +20,7 @@ class SliderSection:
         feedback_rule.cc_value_map = tuple()
         feedback_rule.delay_in_ms = -1.0
         for channel in range(16):
-            Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, self.__parent.song().master_track.mixer_device.volume, channel, AXIOM_SLI9, Live.MidiMap.MapMode.absolute_14_bit, feedback_rule, not needs_takeover)
+            Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, self.__parent.song().master_track.mixer_device.volume, channel, AXIOM_SLI9, Live.MidiMap.MapMode.absolute, feedback_rule, not needs_takeover)
 
         for channel in range(4):
             Live.MidiMap.forward_midi_cc(script_handle, midi_map_handle, channel, AXIOM_BUT9)
@@ -37,7 +32,7 @@ class SliderSection:
                     feedback_rule.cc_no = AXIOM_SLIDERS[slider]
                     feedback_rule.cc_value_map = tuple()
                     feedback_rule.delay_in_ms = -1.0
-                    Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, tracks[track_index].mixer_device.volume, channel, AXIOM_SLIDERS[slider], Live.MidiMap.MapMode.absolute_14_bit, feedback_rule, not needs_takeover)
+                    Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, tracks[track_index].mixer_device.volume, channel, AXIOM_SLIDERS[slider], Live.MidiMap.MapMode.absolute, feedback_rule, not needs_takeover)
                     Live.MidiMap.forward_midi_cc(script_handle, midi_map_handle, channel, AXIOM_BUTTONS[slider])
                 else:
                     break

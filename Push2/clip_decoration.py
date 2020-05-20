@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/clip_decoration.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/clip_decoration.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid, listenable_property, listens, EventObject
 from ableton.v2.control_surface import InternalParameter, DecoratorFactory, LiveObjectDecorator
@@ -23,7 +18,7 @@ class ClipPositions(EventObject):
     loop_length = listenable_property.managed(0.0)
     use_beat_time = listenable_property.managed(False)
 
-    def __init__(self, clip=None, *a, **k):
+    def __init__(self, clip = None, *a, **k):
         assert clip is not None
         super(ClipPositions, self).__init__(*a, **k)
         self._clip = clip
@@ -43,7 +38,6 @@ class ClipPositions(EventObject):
             self.__on_notes_changed.subject = clip
             self._update_start_end_note_times()
         self.update_all()
-        return
 
     @property
     def is_warping(self):
@@ -62,47 +56,47 @@ class ClipPositions(EventObject):
             beat_time_or_seconds = self._clip.seconds_to_sample_time(beat_time_or_seconds)
         return beat_time_or_seconds
 
-    @listens('start_marker')
+    @listens(u'start_marker')
     def __on_start_marker_changed(self):
         if not self._process_looping_update():
             self.start_marker = self._convert_to_desired_unit(self._clip.start_marker)
 
-    @listens('end_marker')
+    @listens(u'end_marker')
     def __on_end_marker_changed(self):
         if not self._process_looping_update():
             self.end_marker = self._convert_to_desired_unit(self._clip.end_marker)
 
-    @listens('loop_start')
+    @listens(u'loop_start')
     def __on_loop_start_changed(self):
         if not self._process_looping_update():
             self.loop_start = self._convert_to_desired_unit(self._clip.loop_start)
         self._update_loop_length()
 
-    @listens('loop_end')
+    @listens(u'loop_end')
     def __on_loop_end_changed(self):
         if not self._process_looping_update():
             self.loop_end = self._convert_to_desired_unit(self._clip.loop_end)
         self._update_loop_length()
 
-    @listens('is_recording')
+    @listens(u'is_recording')
     def __on_is_recording_changed(self):
         self._update_start_end()
         self.notify_is_recording()
 
-    @listens('warp_markers')
+    @listens(u'warp_markers')
     def __on_warp_markers_changed(self):
         self.update_all()
         self.notify_warp_markers()
 
-    @listens('looping')
+    @listens(u'looping')
     def __on_looping_changed(self):
         self.update_all()
 
-    @listens('warping')
+    @listens(u'warping')
     def __on_warping_changed(self):
         self.update_all()
 
-    @listens('notes')
+    @listens(u'notes')
     def __on_notes_changed(self):
         self._update_start_end_note_times()
         self._update_start_end()
@@ -144,7 +138,6 @@ class ClipPositions(EventObject):
             end = self.end_of_last_note
         self.start = min(start, self.loop_start if self._clip.looping else self.start_marker)
         self.end = max(end, self.loop_end)
-        return
 
     def update_all(self):
         self.notify_before_update_all()
@@ -167,13 +160,13 @@ class AudioClipZoomParameter(AudioClipTimelineNavigation, InternalParameter):
 
 
 class ClipDecoration(EventObject, LiveObjectDecorator):
-    __events__ = (u'zoom', )
+    __events__ = (u'zoom',)
 
     def __init__(self, *a, **k):
         super(ClipDecoration, self).__init__(*a, **k)
         self._positions = self.register_disconnectable(ClipPositions(self))
         parameter_type = AudioClipZoomParameter if self._live_object.is_audio_clip else MidiClipZoomParameter
-        self._zoom_parameter = parameter_type(name='Zoom', parent=self._live_object, clip=self)
+        self._zoom_parameter = parameter_type(name=u'Zoom', parent=self._live_object, clip=self)
         self._zoom_parameter.focus_object(self._zoom_parameter.start_marker_focus)
         self.register_disconnectable(self._zoom_parameter)
 
@@ -200,7 +193,7 @@ class ClipDecoratorFactory(DecoratorFactory):
 
 class ClipDecoratedPropertiesCopier(object):
 
-    def __init__(self, source_clip=None, destination_clip=None, decorator_factory=None):
+    def __init__(self, source_clip = None, destination_clip = None, decorator_factory = None):
         self._source_clip = source_clip
         self._destination_clip = destination_clip
         self._decorator_factory = decorator_factory

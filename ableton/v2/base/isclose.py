@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/isclose.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/isclose.py
 u"""
 Test implementation for an isclose() function, for possible inclusion in
 the Python standard library -- PEP0485
@@ -18,7 +13,7 @@ License: Apache License 2.0 http://opensource.org/licenses/apache2.0.php
 from __future__ import absolute_import, print_function, unicode_literals
 import math
 
-def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+def isclose(a, b, rel_tol = 1e-09, abs_tol = 0.0):
     u"""
     returns True if a is close in value to b. False otherwise
     :param a: one of the values to be tested
@@ -33,7 +28,7 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     is, NaN is not close to anything, even itself. inf and -inf are
     only close to themselves.
     The function can be used with any type that supports comparison,
-    substratcion and multiplication, including Decimal, Fraction, and
+    subtraction and multiplication, including Decimal, Fraction, and
     Complex
     Complex values are compared based on their absolute value.
     See PEP-0485 for a detailed description
@@ -41,7 +36,7 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     if a == b:
         return True
     if rel_tol < 0.0 or abs_tol < 0.0:
-        raise ValueError('error tolerances must be non-negative')
+        raise ValueError(u'error tolerances must be non-negative')
     if math.isinf(abs(a)) or math.isinf(abs(b)):
         return False
     diff = abs(b - a)

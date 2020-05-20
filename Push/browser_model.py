@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/browser_model.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/browser_model.py
 from __future__ import absolute_import, print_function, unicode_literals
 import os
 from functools import partial
@@ -25,11 +20,11 @@ class VirtualBrowserItem(object):
     u"""
     Quacks like a Live.Browser.BrowserItem
     """
-    source = ''
+    source = u''
     is_device = False
     is_loadable = False
 
-    def __init__(self, name='', children_query=nop, is_folder=False):
+    def __init__(self, name = u'', children_query = nop, is_folder = False):
         self.name = name
         self.is_folder = is_folder
         self.children_query = children_query
@@ -50,20 +45,20 @@ class BrowserListItem(ActionListItem):
     u"""
     List item representing a browser element
     """
-    URI_TO_NAME_FALLBACK = {'query:Synths': 'Instruments', 
-       'query:Drums': 'Drums', 
-       'query:UserLibrary': 'User Library', 
-       'query:Plugins': 'Plug-Ins'}
+    URI_TO_NAME_FALLBACK = {u'query:Synths': u'Instruments',
+     u'query:Drums': u'Drums',
+     u'query:UserLibrary': u'User Library',
+     u'query:Plugins': u'Plug-Ins'}
 
     def __str__(self):
         return self._item_name
 
     @lazy_attribute
     def _item_name(self):
-        item_name = os.path.splitext(self.content.name)[0] if self.content else ''
+        item_name = os.path.splitext(self.content.name)[0] if self.content else u''
         can_be_displayed = SpecialPhysicalDisplay.can_be_translated(SpecialPhysicalDisplay.ascii_translations, item_name)
         if not can_be_displayed:
-            uri = getattr(self.content, 'uri', '')
+            uri = getattr(self.content, u'uri', u'')
             return self.URI_TO_NAME_FALLBACK.get(uri, item_name)
         return item_name
 
@@ -87,7 +82,7 @@ class BrowserList(ActionList):
     browser = None
     item_type = BrowserListItem
 
-    def __init__(self, browser=None, *a, **k):
+    def __init__(self, browser = None, *a, **k):
         super(BrowserList, self).__init__(*a, **k)
         self.browser = browser
 
@@ -96,7 +91,7 @@ class BrowserModel(EventObject):
     u"""
     A browser model provides the data to a browser component as a
     sequence of BrowserLists.
-
+    
     The BrowserComponent will use equality to discard equivalent
     models and prevent unnecessary updating, override it when
     neccesary.
@@ -104,7 +99,7 @@ class BrowserModel(EventObject):
     __events__ = (u'content_lists', u'selection_updated')
     empty_list_messages = []
 
-    def __init__(self, browser=None, *a, **k):
+    def __init__(self, browser = None, *a, **k):
         super(BrowserModel, self).__init__(*a, **k)
         self._browser = browser
 
@@ -155,8 +150,7 @@ class EmptyBrowserModel(BrowserModel):
     A browser model that never returns anything, to be used for
     hotswap targets that do not make sense in Push.
     """
-    empty_list_messages = [
-     'Nothing to browse']
+    empty_list_messages = [u'Nothing to browse']
 
     @property
     def content_lists(self):
@@ -179,11 +173,10 @@ class FullBrowserModel(BrowserModel):
     nesting, which the BrowserComponent does not support so far.
     It always provides at least two columns.
     """
-    empty_list_messages = [
-     '<no tags>',
-     '<no devices>',
-     '<no presets>',
-     '<no presets>']
+    empty_list_messages = [u'<no tags>',
+     u'<no devices>',
+     u'<no presets>',
+     u'<no presets>']
 
     def __init__(self, *a, **k):
         super(FullBrowserModel, self).__init__(*a, **k)
@@ -196,8 +189,7 @@ class FullBrowserModel(BrowserModel):
         u"""
         Query for the initial items.
         """
-        return [
-         self.browser.sounds,
+        return [self.browser.sounds,
          self.browser.drums,
          self.browser.instruments,
          self.browser.audio_effects,
@@ -240,17 +232,16 @@ class FullBrowserModel(BrowserModel):
 
         if last_seleced_list_index != None:
             self.notify_selection_updated(last_seleced_list_index)
-        return
 
     def _push_content_list(self):
         if self._num_contents < len(self._contents):
             self._num_contents += 1
-            content = self._contents[(self._num_contents - 1)]
+            content = self._contents[self._num_contents - 1]
         else:
             assert self._num_contents == len(self._contents)
             content = self.make_content_list()
             level = len(self._contents)
-            slot = self.register_slot(content, partial(self._on_item_activated, level), 'item_activated')
+            slot = self.register_slot(content, partial(self._on_item_activated, level), u'item_activated')
             self._contents.append((content, slot))
             self._num_contents = len(self._contents)
         return content
@@ -293,7 +284,7 @@ class FullBrowserModel(BrowserModel):
             children = self.get_children(selected.content, level) if selected != None else []
             if children or is_folder or level < 1:
                 self._fit_content_lists(level + 2)
-                child_contents, _ = self._contents[(level + 1)]
+                child_contents, _ = self._contents[level + 1]
                 child_contents.assign_items(children)
             else:
                 self._fit_content_lists(level + 1)
@@ -301,20 +292,18 @@ class FullBrowserModel(BrowserModel):
             self._finalize_content_lists_change()
             if old_num_contents != self._num_contents:
                 self.notify_content_lists()
-        return
 
 
 class QueryingBrowserModel(FullBrowserModel):
     u"""
     Browser model that takes query objects to build up the model hierarchy
     """
-    empty_list_messages = [
-     '<no devices>',
-     '<no presets>',
-     '<no presets>',
-     '<no presets>']
+    empty_list_messages = [u'<no devices>',
+     u'<no presets>',
+     u'<no presets>',
+     u'<no presets>']
 
-    def __init__(self, queries=[], *a, **k):
+    def __init__(self, queries = [], *a, **k):
         super(QueryingBrowserModel, self).__init__(*a, **k)
         self.queries = queries
 

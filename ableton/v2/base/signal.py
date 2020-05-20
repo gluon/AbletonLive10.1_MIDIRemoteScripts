@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/signal.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/base/signal.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from .util import find_if, nop
@@ -15,7 +10,7 @@ def default_combiner(results):
 
 class Slot(object):
 
-    def __init__(self, callback=None, *a, **k):
+    def __init__(self, callback = None, *a, **k):
         super(Slot, self).__init__(*a, **k)
         self.callback = callback
 
@@ -28,7 +23,7 @@ class Slot(object):
 
 class IdentifyingSlot(Slot):
 
-    def __init__(self, sender=None, *a, **k):
+    def __init__(self, sender = None, *a, **k):
         super(IdentifyingSlot, self).__init__(*a, **k)
         self.sender = sender
 
@@ -41,27 +36,27 @@ class Signal(object):
     A signal object implements the observer pattern.  It can be
     connected to any number of slots (i.e. callbacks). Whenever the
     signal is called, all the slots are called.
-
+    
     The return value of this function will depend on the combiner.
     The combiner takes a generator of slot results and returns a
     value.  The slots whose results are not evaluated are not called.
     """
 
-    def __init__(self, combiner=default_combiner, sender=None, *a, **k):
+    def __init__(self, combiner = default_combiner, sender = None, *a, **k):
         super(Signal, self).__init__(*a, **k)
         self._slots = []
         self._combiner = combiner
 
-    def connect(self, slot, in_front=False, sender=None):
+    def connect(self, slot, in_front = False, sender = None):
         u"""
         Connects the signal to the slot. Does nothing if the slot is
         already connected. Returns the wrapper object that is used as
         a slot.
-
+        
         If 'in_front' is True, the slot will be put first, meaning it
         will be called before previously registered slots (by default
         it is put last).
-
+        
         If 'sender' is not None, it will be passed as last ordinal
         parameter to the slot when the signal is dispatched.
         """

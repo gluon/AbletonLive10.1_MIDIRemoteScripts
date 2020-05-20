@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/browser_modes.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/browser_modes.py
 u"""
 Different mode objects that turn live into different browsing modes.
 """
@@ -21,7 +16,7 @@ def can_browse_for_object(obj):
 class BrowserHotswapMode(Mode):
 
     @depends(selection=None)
-    def __init__(self, selection=None, application=None, *a, **k):
+    def __init__(self, selection = None, application = None, *a, **k):
         super(BrowserHotswapMode, self).__init__(*a, **k)
         self._selection = selection
         self._application = application
@@ -40,18 +35,17 @@ class BrowserHotswapMode(Mode):
 
     def leave_mode(self):
         self._application.browser.hotswap_target = None
-        return
 
     def _set_hotswap_target(self, hotswap_object):
         self._application.browser.hotswap_target = hotswap_object
-        self._application.view.show_view('Detail/DeviceChain')
+        self._application.view.show_view(u'Detail/DeviceChain')
 
 
 class BrowserAddEffectMode(Mode):
     insert_left = False
 
     @depends(selection=None)
-    def __init__(self, selection=None, browser=None, insert_left=None, application_view=None, *a, **k):
+    def __init__(self, selection = None, browser = None, insert_left = None, application_view = None, *a, **k):
         super(BrowserAddEffectMode, self).__init__(*a, **k)
         self._selection = selection
         self._browser = browser
@@ -60,7 +54,6 @@ class BrowserAddEffectMode(Mode):
         self._selection_for_insert = None
         if insert_left is not None:
             self.insert_left = insert_left
-        return
 
     def enter_mode(self):
         self._track_to_add_effect = self._selection.selected_track
@@ -69,7 +62,6 @@ class BrowserAddEffectMode(Mode):
         self._browser.filter_type = self.get_filter_type()
         if self._application_view.browse_mode:
             self._browser.hotswap_target = None
-        return
 
     def leave_mode(self):
         disabled = Live.Track.DeviceInsertMode.default
@@ -96,27 +88,26 @@ class BrowserAddEffectMode(Mode):
         midi_support = chain.has_midi_input
         supports_instrument = is_drum_pad or chain.has_midi_input and (chain.has_audio_output or isinstance(chain, Live.Track.Track))
         if self.insert_left:
-            left = chain.devices[(index - 1)] if index > 0 else None
+            left = chain.devices[index - 1] if index > 0 else None
             return filter_type_between(left, selected, midi_support, is_drum_pad, supports_instrument)
         else:
-            right = chain.devices[(index + 1)] if index < chain_len - 1 else None
+            right = chain.devices[index + 1] if index < chain_len - 1 else None
             return filter_type_between(selected, right, midi_support, is_drum_pad, supports_instrument)
-            return
 
 
-def filter_type_between(left, right, supports_midi=False, is_drum_pad=False, supports_instrument=False):
+def filter_type_between(left, right, supports_midi = False, is_drum_pad = False, supports_instrument = False):
     u"""
     Given 'left' and 'right' are two consecutive devices in a valid
     device chain, returns the appropriate browser filter type for valid
     devices fitting between them. Either 'left' or 'right' can be None
     to indicate chain boundaries.
-
+    
     A valid device chain with MIDI support has the following structure:
-
+    
         <midi effect>* <instrument> <audio effect>*
-
+    
     A valid device chain without MIDI support has the following structure:
-
+    
         <audio effect>*
     """
     Types = Live.Browser.FilterType
@@ -131,5 +122,4 @@ def filter_type_between(left, right, supports_midi=False, is_drum_pad=False, sup
             return Types.instrument_hotswap
         else:
             return Types.midi_effect_hotswap
-
     return Types.audio_effect_hotswap

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_encoder_element.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_encoder_element.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.elements import TouchEncoderElement as TouchEncoderElementBase
 
@@ -20,20 +15,19 @@ class TouchEncoderObserver(object):
 class TouchEncoderElement(TouchEncoderElementBase):
     u""" Class representing an encoder that is touch sensitive """
 
-    def __init__(self, undo_step_handler=None, delete_handler=None, *a, **k):
+    def __init__(self, undo_step_handler = None, undo_group = None, delete_handler = None, *a, **k):
         super(TouchEncoderElement, self).__init__(*a, **k)
         self._trigger_undo_step = False
         self._undo_step_open = False
         self._undo_step_handler = undo_step_handler
+        self._undo_group = undo_group
         self._delete_handler = delete_handler
         self.set_observer(None)
-        return
 
     def set_observer(self, observer):
         if observer is None:
             observer = TouchEncoderObserver()
         self._observer = observer
-        return
 
     def on_nested_control_element_value(self, value, control):
         self._trigger_undo_step = value
@@ -62,7 +56,6 @@ class TouchEncoderElement(TouchEncoderElementBase):
         if self.mapped_parameter() != None:
             super(TouchEncoderElement, self).release_parameter()
             self._observer.on_encoder_parameter(self)
-        return
 
     def receive_value(self, value):
         self._begin_undo_step()
@@ -71,14 +64,13 @@ class TouchEncoderElement(TouchEncoderElementBase):
     def disconnect(self):
         super(TouchEncoderElement, self).disconnect()
         self._undo_step_handler = None
-        return
 
     def _begin_undo_step(self):
         if self._undo_step_handler and self._trigger_undo_step:
-            self._undo_step_handler.begin_undo_step()
+            self._undo_step_handler.begin_undo_step(client=self._undo_group)
             self._trigger_undo_step = False
             self._undo_step_open = True
 
     def _end_undo_step(self):
         if self._undo_step_handler and self._undo_step_open:
-            self._undo_step_handler.end_undo_step()
+            self._undo_step_handler.end_undo_step(client=self._undo_group)

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/colors.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/colors.py
 from __future__ import absolute_import, print_function, unicode_literals
 from colorsys import rgb_to_hsv, hsv_to_rgb
 import MidiRemoteScript
@@ -31,9 +26,9 @@ def determine_shaded_color_index(color_index, shade_level):
     assert 0 <= shade_level <= 2
     if shade_level == 0:
         return color_index
+    elif color_index == WHITE_MIDI_VALUE:
+        return color_index + shade_level
     else:
-        if color_index == WHITE_MIDI_VALUE:
-            return color_index + shade_level
         return (color_index - 1) * 2 + 64 + shade_level
 
 
@@ -41,15 +36,15 @@ class IndexedColor(PushColor):
     needs_rgb_interface = True
     midi_value = None
 
-    def __init__(self, index=None, *a, **k):
+    def __init__(self, index = None, *a, **k):
         super(IndexedColor, self).__init__(midi_value=index, *a, **k)
 
     @staticmethod
-    def from_push_index(index, shade_level=0):
+    def from_push_index(index, shade_level = 0):
         return IndexedColor(determine_shaded_color_index(index, shade_level))
 
     @staticmethod
-    def from_live_index(index, shade_level=0):
+    def from_live_index(index, shade_level = 0):
         return IndexedColor(determine_shaded_color_index(translate_color_index(index), shade_level))
 
 
@@ -60,9 +55,7 @@ def translate_color_index(index):
     try:
         if index > -1:
             return COLOR_INDEX_TO_PUSH_INDEX[index]
-        else:
-            return TRANSLATED_WHITE_INDEX
-
+        return TRANSLATED_WHITE_INDEX
     except:
         return TRANSLATED_WHITE_INDEX
 
@@ -73,7 +66,7 @@ def inverse_translate_color_index(translated_index):
     matching color of Live [0..69].
     """
     assert 1 <= translated_index <= len(PUSH_INDEX_TO_COLOR_INDEX)
-    return PUSH_INDEX_TO_COLOR_INDEX[(translated_index - 1)]
+    return PUSH_INDEX_TO_COLOR_INDEX[translated_index - 1]
 
 
 class SelectedDrumPadColor(DynamicColorBase):
@@ -83,7 +76,7 @@ class SelectedDrumPadColor(DynamicColorBase):
     """
 
     @depends(percussion_instrument_finder=nop)
-    def __init__(self, song=None, percussion_instrument_finder=None, *a, **k):
+    def __init__(self, song = None, percussion_instrument_finder = None, *a, **k):
         assert liveobj_valid(song)
         super(SelectedDrumPadColor, self).__init__(*a, **k)
         self.song = song
@@ -91,16 +84,15 @@ class SelectedDrumPadColor(DynamicColorBase):
             self.__on_selected_track_color_index_changed.subject = self.song.view
             self.__on_instrument_changed.subject = percussion_instrument_finder
             self.__on_instrument_changed()
-        return
 
-    @listens('instrument')
+    @listens(u'instrument')
     def __on_instrument_changed(self):
         drum_group = self.__on_instrument_changed.subject.drum_group
         if liveobj_valid(drum_group):
             self.__on_selected_drum_pad_chains_changed.subject = drum_group.view
             self.__on_selected_drum_pad_chains_changed()
 
-    @listens('selected_drum_pad.chains')
+    @listens(u'selected_drum_pad.chains')
     def __on_selected_drum_pad_chains_changed(self):
         drum_pad = self.__on_selected_drum_pad_chains_changed.subject.selected_drum_pad
         if liveobj_valid(drum_pad) and drum_pad.chains:
@@ -109,18 +101,17 @@ class SelectedDrumPadColor(DynamicColorBase):
         else:
             self._update_midi_value(self.song.view.selected_track)
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_color_index_changed(self):
         chain = self.__on_color_index_changed.subject
         self._update_midi_value(chain)
 
-    @listens('selected_track.color_index')
+    @listens(u'selected_track.color_index')
     def __on_selected_track_color_index_changed(self):
         drum_group = self.__on_selected_drum_pad_chains_changed.subject
         drum_pad = drum_group.selected_drum_pad if liveobj_valid(drum_group) else None
         if not liveobj_valid(drum_pad) or not drum_pad.chains:
             self._update_midi_value(self.song.view.selected_track)
-        return
 
 
 class SelectedDrumPadColorFactory(DynamicColorFactory):
@@ -132,21 +123,20 @@ class SelectedDrumPadColorFactory(DynamicColorFactory):
 class SelectedDeviceChainColor(DynamicColorBase):
 
     @depends(device_provider=nop)
-    def __init__(self, device_provider=None, *a, **k):
+    def __init__(self, device_provider = None, *a, **k):
         super(SelectedDeviceChainColor, self).__init__(*a, **k)
         if device_provider is not None:
             self.__on_device_changed.subject = device_provider
             self.__on_device_changed()
-        return
 
-    @listens('device')
+    @listens(u'device')
     def __on_device_changed(self):
         device = self.__on_device_changed.subject.device
         chain = find_chain_or_track(device)
         self.__on_chain_color_index_changed.subject = chain
         self.__on_chain_color_index_changed()
 
-    @listens('color_index')
+    @listens(u'color_index')
     def __on_chain_color_index_changed(self):
         chain = self.__on_chain_color_index_changed.subject
         if liveobj_valid(chain):
@@ -161,7 +151,7 @@ class SelectedDeviceChainColorFactory(DynamicColorFactory):
 
 def make_color_factory_func(factory_class):
 
-    def make_color_factory(shade_level=0):
+    def make_color_factory(shade_level = 0):
         return factory_class(transformation=lambda color_index: determine_shaded_color_index(translate_color_index(color_index), shade_level))
 
     return make_color_factory
@@ -232,10 +222,9 @@ class ScreenColor(object):
         u"""
         Returns the red, green and blue components as a triple
         """
-        return (
-         self.red, self.green, self.blue)
+        return (self.red, self.green, self.blue)
 
-    def as_remote_script_color(self, alpha=255):
+    def as_remote_script_color(self, alpha = 255):
         u"""
         Creates a new C++ API color (internally a TColor)
         """
@@ -285,13 +274,8 @@ class ScreenColor(object):
         return ScreenColor.from_hsv(h, s, v)
 
 
-COLOR_INDEX_TO_PUSH_INDEX = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 7, 2, 4,
-                             6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 5, 1, 3, 5,
-                             7, 9, 11, 13, 15, 17, 19, 21, 22, 25, 17, 1, 3, 5, 7,
-                             9, 11, 13, 15, 17, 19, 21, 23, 25, 21, 2, 4, 6, 8, 10,
-                             12, 14, 20, 19, 18, 22, 23, 26, 6)
-PUSH_INDEX_TO_SCREEN_COLOR = (
- ScreenColor(255, 255, 255),
+COLOR_INDEX_TO_PUSH_INDEX = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 7, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 5, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 22, 25, 17, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 21, 2, 4, 6, 8, 10, 12, 14, 20, 19, 18, 22, 23, 26, 6)
+PUSH_INDEX_TO_SCREEN_COLOR = (ScreenColor(255, 255, 255),
  ScreenColor(237, 89, 56),
  ScreenColor(209, 23, 10),
  ScreenColor(255, 100, 0),
@@ -318,23 +302,14 @@ PUSH_INDEX_TO_SCREEN_COLOR = (
  ScreenColor(136, 66, 91),
  ScreenColor(255, 30, 50),
  ScreenColor(255, 74, 150))
-COLOR_INDEX_TO_SCREEN_COLOR = tuple([ PUSH_INDEX_TO_SCREEN_COLOR[push_index] for push_index in COLOR_INDEX_TO_PUSH_INDEX
-                                    ])
-COLOR_INDEX_TO_SCREEN_COLOR_SHADES = [
- tuple([ color.shade(0.2) for color in COLOR_INDEX_TO_SCREEN_COLOR
-      ]),
- tuple([ color.shade(0.5) for color in COLOR_INDEX_TO_SCREEN_COLOR
-      ]),
- tuple([ color.shade(0.7) for color in COLOR_INDEX_TO_SCREEN_COLOR
-      ]),
- tuple([ color.shade(0.7).adjust_saturation(-0.2) for color in COLOR_INDEX_TO_SCREEN_COLOR
-      ]),
- tuple([ color.adjust_saturation(-0.7) for color in COLOR_INDEX_TO_SCREEN_COLOR
-      ])]
-PUSH_INDEX_TO_COLOR_INDEX = (0, 14, 1, 15, 2, 16, 3, 17, 4, 18, 5, 19, 6, 20, 7, 21,
-                             8, 22, 9, 23, 10, 24, 11, 25, 12, 26)
-COLOR_TABLE = (
- (0, 0, 0),
+COLOR_INDEX_TO_SCREEN_COLOR = tuple([ PUSH_INDEX_TO_SCREEN_COLOR[push_index] for push_index in COLOR_INDEX_TO_PUSH_INDEX ])
+COLOR_INDEX_TO_SCREEN_COLOR_SHADES = [tuple([ color.shade(0.2) for color in COLOR_INDEX_TO_SCREEN_COLOR ]),
+ tuple([ color.shade(0.5) for color in COLOR_INDEX_TO_SCREEN_COLOR ]),
+ tuple([ color.shade(0.7) for color in COLOR_INDEX_TO_SCREEN_COLOR ]),
+ tuple([ color.shade(0.7).adjust_saturation(-0.2) for color in COLOR_INDEX_TO_SCREEN_COLOR ]),
+ tuple([ color.adjust_saturation(-0.7) for color in COLOR_INDEX_TO_SCREEN_COLOR ])]
+PUSH_INDEX_TO_COLOR_INDEX = (0, 14, 1, 15, 2, 16, 3, 17, 4, 18, 5, 19, 6, 20, 7, 21, 8, 22, 9, 23, 10, 24, 11, 25, 12, 26)
+COLOR_TABLE = ((0, 0, 0),
  (1, 16728114, 2),
  (2, 8389632, 4),
  (3, 13188096, 6),

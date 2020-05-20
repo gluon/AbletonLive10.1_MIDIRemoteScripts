@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_MK2/SessionComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_MK2/SessionComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Util import in_range
 from _Framework.SubjectSlot import subject_slot_group
@@ -18,9 +13,8 @@ class SessionComponent(SessionComponentBase):
 
     def _enable_skinning(self):
         super(SessionComponent, self)._enable_skinning()
-        self.set_stopped_clip_value('Session.StoppedClip')
-        scroll_components = (
-         self._horizontal_banking,
+        self.set_stopped_clip_value(u'Session.StoppedClip')
+        scroll_components = (self._horizontal_banking,
          self._horizontal_paginator,
          self._vertical_banking,
          self._vertical_paginator)
@@ -55,7 +49,6 @@ class SessionComponent(SessionComponentBase):
                     button.send_value(value_to_send)
                 else:
                     button.set_light(value_to_send)
-        return
 
     def _update_stop_all_clips_button(self):
         button = self._stop_all_button

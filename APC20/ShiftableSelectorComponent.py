@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/ShiftableSelectorComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/APC20/ShiftableSelectorComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from _Framework.Layer import Layer
@@ -48,7 +43,6 @@ class ShiftableSelectorComponent(ModeSelectorComponent):
         self._mode_callback = None
         self._note_matrix = None
         self._background = None
-        return
 
     def set_mode_toggle(self, button):
         super(ShiftableSelectorComponent, self).set_mode_toggle(button)
@@ -105,23 +99,21 @@ class ShiftableSelectorComponent(ModeSelectorComponent):
                     self._mixer.channel_strip(index).set_arm_button(None)
 
                 self._slider_modes.set_mode_buttons(self._arm_buttons)
-        return
 
     def _toggle_value(self, value):
         assert self._mode_toggle != None
         assert value in range(128)
         self._toggle_pressed = value > 0
         self._recalculate_mode()
-        return
 
     def _recalculate_mode(self):
         self.set_mode((int(self._toggle_pressed) + int(self._invert_assignment)) % self.number_of_modes())
 
     def _master_value(self, value):
-        if not self._master_button != None:
-            raise AssertionError
-            assert value in range(128)
-            if self.is_enabled() and self._invert_assignment == self._toggle_pressed and (not self._master_button.is_momentary() or value > 0):
+        assert self._master_button != None
+        assert value in range(128)
+        if self.is_enabled() and self._invert_assignment == self._toggle_pressed:
+            if not self._master_button.is_momentary() or value > 0:
                 for button in self._select_buttons:
                     button.turn_off()
 
@@ -151,7 +143,6 @@ class ShiftableSelectorComponent(ModeSelectorComponent):
                     self._set_session_navigation_controls(self._select_buttons[4], self._select_buttons[5], self._select_buttons[6], self._select_buttons[7])
                 self._zooming.set_ignore_buttons(self._note_mode_active)
                 self._on_note_mode_changed()
-        return
 
     def _on_note_mode_changed(self):
         assert self._master_button != None
@@ -160,4 +151,3 @@ class ShiftableSelectorComponent(ModeSelectorComponent):
                 self._master_button.turn_on()
             else:
                 self._master_button.turn_off()
-        return

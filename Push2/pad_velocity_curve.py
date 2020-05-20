@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/pad_velocity_curve.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/pad_velocity_curve.py
 from __future__ import absolute_import, print_function, unicode_literals
 import math
 from ableton.v2.base import SerializableListenableProperties, chunks, clamp, listenable_property, task
@@ -12,16 +7,83 @@ NUM_VELOCITY_CURVE_ENTRIES = 128
 LAST_INDEX_FOR_DISPLAY = 58
 
 class LookupTable:
-    MAXW = [
-     1700.0, 1660.0, 1590.0, 1510.0, 1420.0, 1300.0, 1170.0, 1030.0, 860.0, 640.0, 400.0]
-    CPMIN = [1650.0, 1580.0, 1500.0, 1410.0, 1320.0, 1220.0, 1110.0, 1000.0, 900.0, 800.0, 700.0]
-    CPMAX = [2050.0, 1950.0, 1850.0, 1750.0, 1650.0, 1570.0, 1490.0, 1400.0, 1320.0, 1240.0, 1180.0]
-    GAMMA = [
-     0.7, 0.64, 0.58, 0.54, 0.5, 0.46, 0.43, 0.4, 0.36, 0.32, 0.25]
-    MINV = [1.0, 1, 1.0, 1.0, 1.0, 1.0, 3.0, 6.0, 12.0, 24.0, 36.0]
-    MAXV = [96.0, 102.0, 116.0, 121.0, 124.0, 127.0, 127.0, 127.0, 127.0, 127.0, 127.0]
-    ALPHA = [
-     90.0, 70.0, 54.0, 40.0, 28.0, 20.0, 10.0, -5.0, -25.0, -55.0, -90.0]
+    MAXW = [1700.0,
+     1660.0,
+     1590.0,
+     1510.0,
+     1420.0,
+     1300.0,
+     1170.0,
+     1030.0,
+     860.0,
+     640.0,
+     400.0]
+    CPMIN = [1650.0,
+     1580.0,
+     1500.0,
+     1410.0,
+     1320.0,
+     1220.0,
+     1110.0,
+     1000.0,
+     900.0,
+     800.0,
+     700.0]
+    CPMAX = [2050.0,
+     1950.0,
+     1850.0,
+     1750.0,
+     1650.0,
+     1570.0,
+     1490.0,
+     1400.0,
+     1320.0,
+     1240.0,
+     1180.0]
+    GAMMA = [0.7,
+     0.64,
+     0.58,
+     0.54,
+     0.5,
+     0.46,
+     0.43,
+     0.4,
+     0.36,
+     0.32,
+     0.25]
+    MINV = [1.0,
+     1,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     3.0,
+     6.0,
+     12.0,
+     24.0,
+     36.0]
+    MAXV = [96.0,
+     102.0,
+     116.0,
+     121.0,
+     124.0,
+     127.0,
+     127.0,
+     127.0,
+     127.0,
+     127.0,
+     127.0]
+    ALPHA = [90.0,
+     70.0,
+     54.0,
+     40.0,
+     28.0,
+     20.0,
+     10.0,
+     -5.0,
+     -25.0,
+     -55.0,
+     -90.0]
 
 
 def gamma_func(x, gamma):
@@ -36,8 +98,10 @@ def calculate_points(alpha):
     p1y = 0.5 + r * math.sin(a1)
     p2x = 0.5 + r * math.cos(a2)
     p2y = 0.5 + r * math.sin(a2)
-    return (
-     p1x, p1y, p2x, p2y)
+    return (p1x,
+     p1y,
+     p2x,
+     p2y)
 
 
 def bezier(x, t, p1x, p1y, p2x, p2y):
@@ -92,8 +156,10 @@ def generate_thresholds(sensitivity, gain, dynamics):
     cpmax = LookupTable.CPMAX[sensitivity]
     threshold0 = 33
     threshold1 = 31
-    return (
-     threshold0, threshold1, int(cpmin), int(cpmax))
+    return (threshold0,
+     threshold1,
+     int(cpmin),
+     int(cpmax))
 
 
 class PadVelocityCurveSettings(SerializableListenableProperties):
@@ -112,7 +178,7 @@ class PadVelocityCurveSender(Component):
     SEND_RATE = 0.5
     curve_points = listenable_property.managed([])
 
-    def __init__(self, curve_sysex_element=None, threshold_sysex_element=None, settings=None, chunk_size=None, *a, **k):
+    def __init__(self, curve_sysex_element = None, threshold_sysex_element = None, settings = None, chunk_size = None, *a, **k):
         assert curve_sysex_element is not None
         assert threshold_sysex_element is not None
         assert settings is not None
@@ -124,11 +190,10 @@ class PadVelocityCurveSender(Component):
         self._chunk_size = chunk_size
         self._send_task = self._tasks.add(task.sequence(task.wait(self.SEND_RATE), task.run(self._on_send_task_finished))).kill()
         self._settings_changed = False
-        self.register_slot(settings, self._on_setting_changed, 'sensitivity')
-        self.register_slot(settings, self._on_setting_changed, 'gain')
-        self.register_slot(settings, self._on_setting_changed, 'dynamics')
+        self.register_slot(settings, self._on_setting_changed, u'sensitivity')
+        self.register_slot(settings, self._on_setting_changed, u'gain')
+        self.register_slot(settings, self._on_setting_changed, u'dynamics')
         self._update_curve_model()
-        return
 
     def send(self):
         self._send_velocity_curve()

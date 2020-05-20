@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/drum_group_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/drum_group_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import find_if, nop, listens, liveobj_valid, listenable_property, NamedTuple
@@ -18,19 +13,17 @@ from .slideable_touch_strip_component import SlideableTouchStripComponent
 
 class DrumPadCopyHandler(object):
 
-    def __init__(self, show_notification=None, *a, **k):
+    def __init__(self, show_notification = None, *a, **k):
         super(DrumPadCopyHandler, self).__init__(*a, **k)
         self.is_copying = False
         self._source_pad = None
         self._show_notification = show_notification
-        return
 
     def _start_copying(self, source_pad):
         if len(source_pad.chains) > 0:
             self._source_pad = source_pad
             self.is_copying = True
-            message = (
-             MessageBoxText.COPIED_DRUM_PAD, source_pad.name)
+            message = (MessageBoxText.COPIED_DRUM_PAD, source_pad.name)
         else:
             message = MessageBoxText.CANNOT_COPY_EMPTY_DRUM_PAD
         return self._show_notification(message)
@@ -42,10 +35,7 @@ class DrumPadCopyHandler(object):
                 destination_pad.delete_all_chains()
             drum_group_device.copy_pad(self._source_pad.note, destination_pad.note)
             self.is_copying = False
-            message = (
-             MessageBoxText.PASTED_DRUM_PAD,
-             self._source_pad.name,
-             destination_pad_name)
+            message = (MessageBoxText.PASTED_DRUM_PAD, self._source_pad.name, destination_pad_name)
         else:
             message = MessageBoxText.CANNOT_PASTE_TO_SOURCE_DRUM_PAD
         return self._show_notification(message)
@@ -66,14 +56,13 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
     matrix = control_matrix(PadControl)
     duplicate_button = ButtonControl()
 
-    def __init__(self, quantizer=None, *a, **k):
+    def __init__(self, quantizer = None, *a, **k):
         super(DrumGroupComponent, self).__init__(touch_slideable=self, translation_channel=PAD_FEEDBACK_CHANNEL, dragging_enabled=True, *a, **k)
         self._copy_handler = self._make_copy_handler()
         self._notification_reference = partial(nop, None)
         self._quantizer = quantizer
         self.selected_notes_provider = self.register_disconnectable(SelectedNotesProvider())
         self._update_selected_drum_pad()
-        return
 
     position_count = 32
     page_length = 4
@@ -90,13 +79,12 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
         self.notify_contents()
 
     def quantize_pitch(self, note):
-        self._quantizer.quantize_pitch(note, 'pad')
+        self._quantizer.quantize_pitch(note, u'pad')
 
     def _update_selected_drum_pad(self):
         super(DrumGroupComponent, self)._update_selected_drum_pad()
         if liveobj_valid(self._selected_drum_pad):
-            self.selected_notes_provider.selected_notes = [
-             self._selected_drum_pad.note]
+            self.selected_notes_provider.selected_notes = [self._selected_drum_pad.note]
         self.notify_selected_target_note()
 
     def _update_assigned_drum_pads(self):
@@ -142,11 +130,9 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
             self._copy_handler.stop_copying()
         if self._notification_reference() is not None:
             self._notification_reference().hide()
-        return
 
-    @listens('chains')
+    @listens(u'chains')
     def _on_chains_changed(self):
-        self._update_led_feedback()
         self.notify_contents()
 
     def delete_pitch(self, drum_pad):
@@ -175,7 +161,7 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
         self._update_sensitivity_profile()
 
     def _update_sensitivity_profile(self):
-        profile = 'default' if self._takeover_pads or self.pressed_pads else 'drums'
+        profile = u'default' if self._takeover_pads or self.pressed_pads else u'drums'
         for button in self.matrix:
             button.sensitivity_profile = profile
 
@@ -187,10 +173,7 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
                 predicate = lambda b: self._pad_for_button(b) == self._selected_drum_pad
                 button = find_if(predicate, self.matrix)
                 if button != None and None not in (button.identifier, button.channel):
-                    note_and_channel = (
-                     button.identifier, button.channel)
+                    note_and_channel = (button.identifier, button.channel)
             else:
-                note_and_channel = (
-                 self._selected_drum_pad.note,
-                 NON_FEEDBACK_CHANNEL)
+                note_and_channel = (self._selected_drum_pad.note, NON_FEEDBACK_CHANNEL)
         return NamedTuple(note=note_and_channel[0], channel=note_and_channel[1])

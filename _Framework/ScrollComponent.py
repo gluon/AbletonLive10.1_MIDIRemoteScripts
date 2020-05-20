@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ScrollComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/ScrollComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from . import Defaults
 from . import Task
@@ -40,17 +35,16 @@ class ScrollComponent(ControlSurfaceComponent, Scrollable):
     default_scrollable = Scrollable()
     default_pager = Scrollable()
     _scrollable = default_scrollable
-    default_scroll_skin = dict(color='Enabled', pressed_color='Pressed', disabled_color=False)
+    default_scroll_skin = dict(color=u'Enabled', pressed_color=u'Pressed', disabled_color=False)
     scroll_up_button = ButtonControl(**default_scroll_skin)
     scroll_down_button = ButtonControl(**default_scroll_skin)
 
-    def __init__(self, scrollable=None, *a, **k):
+    def __init__(self, scrollable = None, *a, **k):
         super(ScrollComponent, self).__init__(*a, **k)
         self._scroll_task_up = self._make_scroll_task(self._do_scroll_up)
         self._scroll_task_down = self._make_scroll_task(self._do_scroll_down)
         if scrollable != None:
             self.scrollable = scrollable
-        return
 
     def _make_scroll_task(self, scroll_step):
         task = self._tasks.add(Task.sequence(Task.wait(self.scrolling_delay), Task.loop(Task.wait(self.scrolling_step_delay), Task.run(scroll_step))))

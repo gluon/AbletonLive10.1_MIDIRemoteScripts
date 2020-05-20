@@ -1,19 +1,13 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxTransportController.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/FaderfoxTransportController.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from .FaderfoxComponent import FaderfoxComponent
 from .consts import *
 
 class FaderfoxTransportController(FaderfoxComponent):
-    u"""Class representing the transport section of faderfox controllers"""
     __module__ = __name__
-    __filter_funcs__ = [
-     'update_display', 'log']
+    __doc__ = u'Class representing the transport section of faderfox controllers'
+    __filter_funcs__ = [u'update_display', u'log']
 
     def __init__(self, parent):
         FaderfoxTransportController.realinit(self, parent)
@@ -59,22 +53,22 @@ class FaderfoxTransportController(FaderfoxComponent):
                     self.parent.song().stop_playing()
                 elif note_no == SESSION_ARRANGE_SWITCH_NOTE:
                     view = self.parent.application().view
-                    if view.is_view_visible('Session'):
-                        view.show_view('Arranger')
+                    if view.is_view_visible(u'Session'):
+                        view.show_view(u'Arranger')
                     else:
-                        view.show_view('Session')
+                        view.show_view(u'Session')
                 elif note_no == CLIP_TRACK_SWITCH_NOTE:
                     view = self.parent.application().view
-                    if view.is_view_visible('Detail/Clip'):
-                        view.show_view('Detail/DeviceChain')
+                    if view.is_view_visible(u'Detail/Clip'):
+                        view.show_view(u'Detail/DeviceChain')
                     else:
-                        view.show_view('Detail/Clip')
+                        view.show_view(u'Detail/Clip')
                 elif note_no == CLIP_SELECT_NOTE:
                     view = self.parent.application().view
-                    if view.is_view_visible('Detail'):
-                        view.hide_view('Detail')
+                    if view.is_view_visible(u'Detail'):
+                        view.hide_view(u'Detail')
                     else:
-                        view.show_view('Detail')
+                        view.show_view(u'Detail')
                 elif note_no in SCENE_LAUNCH_NOTES:
                     scene_idx = index_of(SCENE_LAUNCH_NOTES, note_no)
                     if scene_idx < len(self.parent.song().scenes):
@@ -136,8 +130,11 @@ class FaderfoxTransportController(FaderfoxComponent):
 
         forward_note(CHANNEL_SETUP2, SCENE_LAUNCH_NOTE)
         forward_note(CHANNEL_SETUP2, SCENE_STOP_NOTE)
-        for note in [CLIP_SELECT_NOTE, GLOBAL_STOP_NOTE, GLOBAL_PLAY_NOTE,
-         SESSION_ARRANGE_SWITCH_NOTE, CLIP_TRACK_SWITCH_NOTE]:
+        for note in [CLIP_SELECT_NOTE,
+         GLOBAL_STOP_NOTE,
+         GLOBAL_PLAY_NOTE,
+         SESSION_ARRANGE_SWITCH_NOTE,
+         CLIP_TRACK_SWITCH_NOTE]:
             forward_note(CHANNEL_SETUP2, note)
 
         for note in SCENE_LAUNCH_NOTES:

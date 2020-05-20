@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_decoration.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_decoration.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject, const, inject, listenable_property, listens, liveobj_valid
 from ableton.v2.control_surface import InternalParameter, LiveObjectDecorator, get_parameter_by_name
@@ -11,7 +6,7 @@ from .device_options import DeviceSwitchOption, DeviceOnOffOption
 from .timeline_navigation import Region, SimplerWaveformNavigation
 
 class IndexProvider(EventObject):
-    __events__ = (u'index', )
+    __events__ = (u'index',)
 
     def __init__(self, *a, **k):
         super(IndexProvider, self).__init__(*a, **k)
@@ -31,17 +26,16 @@ class WaveformNavigationParameter(InternalParameter):
     u""" Class for connecting a Simpler with a WaveformNavigation. It will create a new
         instance of WaveformNavigation for every sample. It also still acts as a
         parameter, for the current zooming implemenation.
-
+    
         It also provides the "zoom" method interface, so it works with the
         pushbase.mapped_control.MappedControl class.
     """
 
-    def __init__(self, simpler=None, *a, **k):
+    def __init__(self, simpler = None, *a, **k):
         super(WaveformNavigationParameter, self).__init__(*a, **k)
         self._simpler = simpler
         self._waveform_navigation = None
         self.post_sample_changed()
-        return
 
     @listenable_property
     def waveform_navigation(self):
@@ -100,7 +94,6 @@ class WaveformNavigationParameter(InternalParameter):
         else:
             self._waveform_navigation = None
         self.notify_waveform_navigation()
-        return
 
 
 class SlicePoint(object):
@@ -135,7 +128,7 @@ class SimplerPositions(EventObject):
     selected_slice = listenable_property.managed(SlicePoint(0, 0.0))
     use_beat_time = listenable_property.managed(False)
 
-    def __init__(self, simpler=None, *a, **k):
+    def __init__(self, simpler = None, *a, **k):
         assert simpler is not None
         super(SimplerPositions, self).__init__(*a, **k)
         self._simpler = simpler
@@ -148,7 +141,6 @@ class SimplerPositions(EventObject):
         self.__on_env_fade_out_changed.subject = simpler.view
         self.__on_selected_slice_changed.subject = simpler.view
         self.post_sample_changed()
-        return
 
     def post_sample_changed(self):
         self.__on_start_marker_changed.subject = self._simpler.sample
@@ -167,67 +159,66 @@ class SimplerPositions(EventObject):
             return sample.sample_to_beat_time(sample_time)
         return sample_time
 
-    @listens('start_marker')
+    @listens(u'start_marker')
     def __on_start_marker_changed(self):
         if liveobj_valid(self._simpler.sample):
             self.start_marker = self._convert_sample_time(self._simpler.sample.start_marker)
 
-    @listens('end_marker')
+    @listens(u'end_marker')
     def __on_end_marker_changed(self):
         if liveobj_valid(self._simpler.sample):
             self.end_marker = self._convert_sample_time(self._simpler.sample.end_marker)
 
-    @listens('sample_start')
+    @listens(u'sample_start')
     def __on_active_start_changed(self):
         self.active_start = self._convert_sample_time(self._simpler.view.sample_start)
 
-    @listens('sample_end')
+    @listens(u'sample_end')
     def __on_active_end_changed(self):
         self.active_end = self._convert_sample_time(self._simpler.view.sample_end)
 
-    @listens('sample_loop_start')
+    @listens(u'sample_loop_start')
     def __on_loop_start_changed(self):
         self.loop_start = self._convert_sample_time(self._simpler.view.sample_loop_start)
 
-    @listens('sample_loop_end')
+    @listens(u'sample_loop_end')
     def __on_loop_end_changed(self):
         self.loop_end = self._convert_sample_time(self._simpler.view.sample_loop_end)
 
-    @listens('sample_loop_fade')
+    @listens(u'sample_loop_fade')
     def __on_loop_fade_changed(self):
         self.loop_fade_in_samples = self._simpler.view.sample_loop_fade
 
-    @listens('sample_env_fade_in')
+    @listens(u'sample_env_fade_in')
     def __on_env_fade_in_changed(self):
         if liveobj_valid(self._simpler.sample):
             start_marker = self._simpler.sample.start_marker
             fade_in_end = start_marker + self._simpler.view.sample_env_fade_in
             self.env_fade_in = self._convert_sample_time(fade_in_end) - self._convert_sample_time(start_marker)
 
-    @listens('sample_env_fade_out')
+    @listens(u'sample_env_fade_out')
     def __on_env_fade_out_changed(self):
         if liveobj_valid(self._simpler.sample):
             end_marker = self._simpler.sample.end_marker
             fade_out_start = end_marker - self._simpler.view.sample_env_fade_out
             self.env_fade_out = self._convert_sample_time(end_marker) - self._convert_sample_time(fade_out_start)
 
-    @listens('slices')
+    @listens(u'slices')
     def __on_slices_changed(self):
         if liveobj_valid(self._simpler.sample):
-            self.slices = [ SlicePoint(s, self._convert_sample_time(s)) for s in self._simpler.sample.slices
-                          ]
+            self.slices = [ SlicePoint(s, self._convert_sample_time(s)) for s in self._simpler.sample.slices ]
 
-    @listens('selected_slice')
+    @listens(u'selected_slice')
     def __on_selected_slice_changed(self):
         if liveobj_valid(self._simpler.sample):
             t = self._convert_sample_time(self._simpler.view.selected_slice)
             self.selected_slice = SlicePoint(t, t)
 
-    @listens('warping')
+    @listens(u'warping')
     def __on_warping_changed(self):
         self.update_all()
 
-    @listens('warp_markers')
+    @listens(u'warp_markers')
     def __on_warp_markers_changed(self):
         self.update_all()
         self.notify_warp_markers()
@@ -257,48 +248,45 @@ class SamplerDeviceDecorator(EventObject, LiveObjectDecorator):
     def __init__(self, *a, **k):
         super(SamplerDeviceDecorator, self).__init__(*a, **k)
         self.__on_parameters_changed.subject = self._live_object
-        self.filter_slope_option = DeviceSwitchOption(name='Filter Slope', parameter=get_parameter_by_name(self, 'Filter Slope'))
+        self.filter_slope_option = DeviceSwitchOption(name=u'Filter Slope', parameter=get_parameter_by_name(self, u'Filter Slope'))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (
-         self.filter_slope_option,)
+        return (self.filter_slope_option,)
 
-    @listens('parameters')
+    @listens(u'parameters')
     def __on_parameters_changed(self):
-        self.filter_slope_option.set_parameter(get_parameter_by_name(self, 'Filter Slope'))
+        self.filter_slope_option.set_parameter(get_parameter_by_name(self, u'Filter Slope'))
 
 
 class PedalDeviceDecorator(LiveObjectDecorator):
 
     def __init__(self, *a, **k):
         super(PedalDeviceDecorator, self).__init__(*a, **k)
-        self.mid_freq_option = DeviceSwitchOption(name='Mid Freq', parameter=get_parameter_by_name(self, 'Mid Freq'))
+        self.mid_freq_option = DeviceSwitchOption(name=u'Mid Freq', parameter=get_parameter_by_name(self, u'Mid Freq'))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (
-         self.mid_freq_option,)
+        return (self.mid_freq_option,)
 
 
 class DrumBussDeviceDecorator(LiveObjectDecorator):
 
     def __init__(self, *a, **k):
         super(DrumBussDeviceDecorator, self).__init__(*a, **k)
-        self.compressor_option = DeviceOnOffOption(name='Compressor', property_host=get_parameter_by_name(self, 'Compressor On'))
+        self.compressor_option = DeviceOnOffOption(name=u'Compressor', property_host=get_parameter_by_name(self, u'Compressor On'))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (
-         self.compressor_option,)
+        return (self.compressor_option,)
 
 
 class ModMatrixParameter(InternalParameter):
     u""" Observe the modulation value for a given source index
-
+    
         This object has a static source index and a dynamic target
         index, i.e. the user can change which modulation target is
         being observed. This object also has a modulation value host
@@ -306,7 +294,7 @@ class ModMatrixParameter(InternalParameter):
         _modulation_value_host indicates the modulation_matrix_changed
     """
 
-    def __init__(self, modulation_value_host=None, modulation_target_index_host=None, modulation_source=None, *a, **k):
+    def __init__(self, modulation_value_host = None, modulation_target_index_host = None, modulation_source = None, *a, **k):
         super(ModMatrixParameter, self).__init__(*a, **k)
         self._modulation_value_host = modulation_value_host
         self._target_index_host = modulation_target_index_host
@@ -319,17 +307,17 @@ class ModMatrixParameter(InternalParameter):
     def _target_index(self):
         return self._target_index_host.index
 
-    def _update_value(self, force_update=False):
+    def _update_value(self, force_update = False):
         old_value = self._modulation_value
         self._modulation_value = self._modulation_value_host.get_modulation_value(self._target_index(), self._source)
         if old_value != self._modulation_value or force_update:
             self.notify_value()
 
-    @listens('index')
+    @listens(u'index')
     def _on_target_index_changed(self):
         self._update_value(force_update=True)
 
-    @listens('modulation_matrix_changed')
+    @listens(u'modulation_matrix_changed')
     def _on_modulation_matrix_changed(self):
         self._update_value()
 
@@ -354,7 +342,7 @@ class ModMatrixParameter(InternalParameter):
     def display_value(self):
         percentage = 100.0 * self._modulation_value
         precision = 1 if abs(percentage) < 10.0 else 0
-        format_str = '%.' + str(precision) + 'f'
+        format_str = u'%.' + str(precision) + u'f'
         return unicode(format_str % percentage)
 
     @property
@@ -367,30 +355,25 @@ class UtilityDeviceDecorator(LiveObjectDecorator, EventObject):
     def __init__(self, *a, **k):
         super(UtilityDeviceDecorator, self).__init__(*a, **k)
         self.__on_parameters_changed.subject = self._live_object
-        self.mono_option = DeviceOnOffOption(name='Mono', property_host=get_parameter_by_name(self, 'Mono'))
-        self.bass_mono_option = DeviceOnOffOption(name='Bass Mono', property_host=get_parameter_by_name(self, 'Bass Mono'))
-        self.dc_filter_option = DeviceOnOffOption(name='DC Filter', property_host=get_parameter_by_name(self, 'DC Filter'))
+        self.mono_option = DeviceOnOffOption(name=u'Mono', property_host=get_parameter_by_name(self, u'Mono'))
+        self.bass_mono_option = DeviceOnOffOption(name=u'Bass Mono', property_host=get_parameter_by_name(self, u'Bass Mono'))
+        self.dc_filter_option = DeviceOnOffOption(name=u'DC Filter', property_host=get_parameter_by_name(self, u'DC Filter'))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (
-         self.mono_option,
-         self.bass_mono_option,
-         self.dc_filter_option)
+        return (self.mono_option, self.bass_mono_option, self.dc_filter_option)
 
-    @listens('parameters')
+    @listens(u'parameters')
     def __on_parameters_changed(self):
-        self.mono_option.set_property_host(get_parameter_by_name(self, 'Mono'))
-        self.bass_mono_option.set_property_host(get_parameter_by_name(self, 'Bass Mono'))
+        self.mono_option.set_property_host(get_parameter_by_name(self, u'Mono'))
+        self.bass_mono_option.set_property_host(get_parameter_by_name(self, u'Bass Mono'))
 
 
 class SimplerDecoratedPropertiesCopier(object):
-    ADDITIONAL_PROPERTIES = [
-     'playhead_real_time_channel_id',
-     'waveform_real_time_channel_id']
+    ADDITIONAL_PROPERTIES = [u'playhead_real_time_channel_id', u'waveform_real_time_channel_id']
 
-    def __init__(self, decorated_object=None, factory=None, *a, **k):
+    def __init__(self, decorated_object = None, factory = None, *a, **k):
         assert liveobj_valid(decorated_object)
         assert factory is not None
         assert decorated_object in factory.decorated_objects
@@ -399,9 +382,8 @@ class SimplerDecoratedPropertiesCopier(object):
         self._factory = factory
         self._copied_additional_properties = {}
         self._nested_properties = {}
-        self.copy_properties({self.ADDITIONAL_PROPERTIES[0]: None, 
-           self.ADDITIONAL_PROPERTIES[1]: None})
-        return
+        self.copy_properties({self.ADDITIONAL_PROPERTIES[0]: None,
+         self.ADDITIONAL_PROPERTIES[1]: None})
 
     def copy_properties(self, properties):
         for prop, getter in properties.iteritems():
@@ -420,4 +402,3 @@ class SimplerDecoratedPropertiesCopier(object):
     def _apply_nested_properties(self, decorated_object):
         if decorated_object.zoom.waveform_navigation is not None and self._decorated_object.zoom.waveform_navigation is not None:
             decorated_object.zoom.waveform_navigation.copy_state(self._decorated_object.zoom.waveform_navigation)
-        return

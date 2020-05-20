@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/slideable_touch_strip_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/slideable_touch_strip_component.py
 u"""
 Component that navigates a series of pages.
 """
@@ -16,7 +11,7 @@ from .touch_strip_element import DraggingBehaviour, MAX_PITCHBEND, SelectingBeha
 
 class SlideableTouchStripComponent(Component):
 
-    def __init__(self, touch_slideable=None, dragging_enabled=False, *a, **k):
+    def __init__(self, touch_slideable = None, dragging_enabled = False, *a, **k):
         super(SlideableTouchStripComponent, self).__init__(*a, **k)
         self._behaviour = DraggingBehaviour() if dragging_enabled else SelectingBehaviour()
         self._touch_strip_array = []
@@ -77,11 +72,9 @@ class SlideableTouchStripComponent(Component):
             strip_pos = self._scroll_to_touch_strip_position(model_pos)
             array = list(self._touch_strip_array)
             led_page_length = self._touch_strip_led_page_length(strip.state_count)
-            array[led_pos:(led_pos + led_page_length)] = [
-             TouchStripStates.STATE_FULL] * led_page_length
+            array[led_pos:led_pos + led_page_length] = [TouchStripStates.STATE_FULL] * led_page_length
             led_size = MAX_PITCHBEND / strip.state_count
-            self._behaviour.handle = TouchStripHandle(range=(
-             -led_size, led_size * led_page_length), position=strip_pos)
+            self._behaviour.handle = TouchStripHandle(range=(-led_size, led_size * led_page_length), position=strip_pos)
             strip.send_state(array[:strip.state_count])
 
     def _update_touch_strip_array(self, num_leds):
@@ -93,31 +86,30 @@ class SlideableTouchStripComponent(Component):
                 pmax = pmin + float(model.position_count) / num_leds
                 return any(imap(model.contents, model.contents_range(pmin, pmax)))
 
-            array = [ TouchStripStates.STATE_HALF if led_contents(i) else TouchStripStates.STATE_OFF for i in xrange(num_leds)
-                    ]
+            array = [ (TouchStripStates.STATE_HALF if led_contents(i) else TouchStripStates.STATE_OFF) for i in xrange(num_leds) ]
             self._touch_strip_array = array
 
-    @listens('value')
+    @listens(u'value')
     def _on_touch_strip_value(self, value):
         if self.is_enabled():
             position = self._touch_strip_to_scroll_position(value)
             self._slideable.position = position
 
-    @listens('value')
+    @listens(u'value')
     def _on_page_touch_strip_value(self, value):
         if self.is_enabled():
             position = self._touch_strip_to_page_position(value)
             self._slideable.position = position
 
-    @listens('page_length')
+    @listens(u'page_length')
     def _on_page_length_changed(self):
         self._update_touch_strips()
 
-    @listens('position')
+    @listens(u'position')
     def _on_position_changed(self):
         self._update_touch_strips()
 
-    @listens('contents')
+    @listens(u'contents')
     def _on_contents_changed(self):
         self._touch_strip_array = []
         self._update_touch_strips()

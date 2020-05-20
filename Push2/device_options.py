@@ -1,21 +1,16 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_options.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/device_options.py
 from __future__ import absolute_import, print_function, unicode_literals
 from Live import DeviceParameter
 from ableton.v2.base import clamp, liveobj_valid, listenable_property, listens, const, EventObject, Slot
 
 class DeviceTriggerOption(EventObject):
-    __events__ = (u'default_label', )
+    __events__ = (u'default_label',)
 
-    def __init__(self, name=None, default_label=None, callback=None, is_active=None, *a, **k):
+    def __init__(self, name = None, default_label = None, callback = None, is_active = None, *a, **k):
         assert callback
         super(DeviceTriggerOption, self).__init__(*a, **k)
         self.trigger = callback
-        self._name = name or 'Option'
+        self._name = name or u'Option'
         self._default_label = default_label or self._name
         self._is_active_callback = is_active or const(True)
 
@@ -42,7 +37,7 @@ class DeviceTriggerOption(EventObject):
 
 class DeviceSwitchOption(DeviceTriggerOption):
 
-    def __init__(self, labels=None, parameter=None, *a, **k):
+    def __init__(self, labels = None, parameter = None, *a, **k):
         super(DeviceSwitchOption, self).__init__(callback=self.cycle_index, *a, **k)
         self._custom_labels = labels
         self.set_parameter(parameter)
@@ -53,7 +48,7 @@ class DeviceSwitchOption(DeviceTriggerOption):
         self._parameter_labels = []
         self._num_items = 2
         if liveobj_valid(parameter) and parameter.is_quantized:
-            self._parameter_labels = [ item.replace(' ', '') for item in parameter.value_items ]
+            self._parameter_labels = [ item.replace(u' ', u'') for item in parameter.value_items ]
             self._num_items = max(len(parameter.value_items), 1)
         self.notify_active_index()
         self.notify_active()
@@ -67,7 +62,7 @@ class DeviceSwitchOption(DeviceTriggerOption):
             return clamp(int(self._parameter.value), 0, self._num_items - 1)
         return 0
 
-    @listens('value')
+    @listens(u'value')
     def __on_value_changed(self):
         self.notify_active_index()
 
@@ -75,8 +70,7 @@ class DeviceSwitchOption(DeviceTriggerOption):
     def labels(self):
         if self._custom_labels is not None:
             return self._custom_labels
-        else:
-            return self._parameter_labels
+        return self._parameter_labels
 
     def cycle_index(self):
         if liveobj_valid(self._parameter):
@@ -84,10 +78,10 @@ class DeviceSwitchOption(DeviceTriggerOption):
 
 
 class DeviceOnOffOption(DeviceTriggerOption):
-    ON_LABEL = 'On'
-    OFF_LABEL = 'Off'
+    ON_LABEL = u'On'
+    OFF_LABEL = u'Off'
 
-    def __init__(self, name=None, property_host=None, value_property_name='value', state_property_name='state', *a, **k):
+    def __init__(self, name = None, property_host = None, value_property_name = u'value', state_property_name = u'state', *a, **k):
         super(DeviceOnOffOption, self).__init__(callback=self.cycle_index, name=name, *a, **k)
         self._value_property_name = value_property_name
         self._state_property_name = state_property_name
@@ -122,6 +116,4 @@ class DeviceOnOffOption(DeviceTriggerOption):
 
     @property
     def default_label(self):
-        return '%s %s' % (
-         self._default_label,
-         self.ON_LABEL if self._property_value() else self.OFF_LABEL)
+        return u'%s %s' % (self._default_label, self.ON_LABEL if self._property_value() else self.OFF_LABEL)

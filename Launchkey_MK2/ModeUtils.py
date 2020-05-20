@@ -1,22 +1,17 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey_MK2/ModeUtils.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchkey_MK2/ModeUtils.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Dependency import depends
 from _Framework.ModesComponent import ModesComponent, ModeButtonBehaviour
 from . import consts
 
 def to_class_name(mode_name):
-    return ('').join(map(lambda s: s.capitalize(), mode_name.replace('_', ' ').split()))
+    return u''.join(map(lambda s: s.capitalize(), mode_name.replace(u'_', u' ').split()))
 
 
 class MomentaryBehaviour(ModeButtonBehaviour):
 
     @depends(send_midi=None)
-    def __init__(self, send_midi=None, *a, **k):
+    def __init__(self, send_midi = None, *a, **k):
         super(MomentaryBehaviour, self).__init__(*a, **k)
         self._send_midi = send_midi
 
@@ -41,7 +36,7 @@ class SkinableBehaviourMixin(ModeButtonBehaviour):
         selected_groups = component.get_mode_groups(selected_mode)
         mode_color = to_class_name(mode)
         is_selected = mode == selected_mode or bool(groups & selected_groups)
-        button.set_light('Mode.%s%s' % (mode_color, 'On' if is_selected else ''))
+        button.set_light(u'Mode.%s%s' % (mode_color, u'On' if is_selected else u''))
 
 
 class DisablingModesComponent(ModesComponent):
@@ -55,7 +50,7 @@ class DisablingModesComponent(ModesComponent):
         super(DisablingModesComponent, self).__init__(*a, **k)
         self._enabled_modes = {}
 
-    def add_mode(self, name, mode_or_component, is_enabled=True, **k):
+    def add_mode(self, name, mode_or_component, is_enabled = True, **k):
         super(DisablingModesComponent, self).add_mode(name, mode_or_component, **k)
         self._enabled_modes[name] = is_enabled
 
@@ -71,13 +66,12 @@ class DisablingModesComponent(ModesComponent):
                         self._get_mode_behaviour(name).update_button(self, name, selected)
                     else:
                         button = self.get_mode_button(name)
-                        button.set_light('Mode.Disabled')
+                        button.set_light(u'Mode.Disabled')
 
             if self._mode_toggle:
                 entry = self._mode_map.get(selected)
                 value = entry and entry.toggle_value
                 self._mode_toggle.set_light(value)
-        return
 
     def _on_mode_button_value(self, name, value, sender):
         if self._enabled_modes[name]:

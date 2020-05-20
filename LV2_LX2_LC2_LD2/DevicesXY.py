@@ -1,38 +1,13 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/DevicesXY.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/LV2_LX2_LC2_LD2/DevicesXY.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-XY_DEVICE_DICT = {'AutoFilter': [
-                [
-                 'Frequency', 'Resonance']], 
-   'BeatRepeat': [
-                [
-                 'Filter Freq', 'Filter Width']], 
-   'Chorus': [
-            [
-             'LFO Rate', 'LFO Amount']], 
-   'Erosion': [
-             [
-              'Frequency', 'Width']], 
-   'FilterDelay': [
-                 [
-                  '2 Filter Freq', '2 Filter Width']], 
-   'Flanger': [
-             [
-              'Delay Time', 'Feedback']], 
-   'GrainDelay': [
-                [
-                 'Pitch', 'Frequency']], 
-   'Phaser': [
-            [
-             'Frequency', 'Feedback']], 
-   'Reverb': [
-            [
-             'In Filter Freq', 'In Filter Width'], ['ER Spin Rate', 'ER Spin Amount']], 
-   'Vinyl': [
-           [
-            'Tracing Freq.', 'Tracing Drive'], ['Pinch Freq.', 'Pinch Drive']]}
+XY_DEVICE_DICT = {u'AutoFilter': [[u'Frequency', u'Resonance']],
+ u'BeatRepeat': [[u'Filter Freq', u'Filter Width']],
+ u'Chorus': [[u'LFO Rate', u'LFO Amount']],
+ u'Erosion': [[u'Frequency', u'Width']],
+ u'FilterDelay': [[u'2 Filter Freq', u'2 Filter Width']],
+ u'Flanger': [[u'Delay Time', u'Feedback']],
+ u'GrainDelay': [[u'Pitch', u'Frequency']],
+ u'Phaser': [[u'Frequency', u'Feedback']],
+ u'Reverb': [[u'In Filter Freq', u'In Filter Width'], [u'ER Spin Rate', u'ER Spin Amount']],
+ u'Vinyl': [[u'Tracing Freq.', u'Tracing Drive'], [u'Pinch Freq.', u'Pinch Drive']]}

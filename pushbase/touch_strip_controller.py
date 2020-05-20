@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_strip_controller.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/touch_strip_controller.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ToggleButtonControl
@@ -18,7 +13,6 @@ class TouchStripControllerComponent(Component):
         super(TouchStripControllerComponent, self).__init__(*a, **k)
         self._touch_strip = None
         self._parameter = None
-        return
 
     def set_parameter(self, parameter):
         self._parameter = parameter
@@ -35,7 +29,6 @@ class TouchStripControllerComponent(Component):
                 self._touch_strip.connect_to(self._parameter)
             else:
                 self._touch_strip.release_parameter()
-        return
 
     def _calculate_strip_mode(self):
         if self._parameter.min == -1 * self._parameter.max:
@@ -52,12 +45,10 @@ class TouchStripEncoderConnection(Component, TouchEncoderObserver):
         self._strip_controller = strip_controller
         self._touch_button = touch_button
         self._encoder = None
-        return
 
     def disconnect(self):
         self._set_touched_encoder(None)
         super(TouchStripEncoderConnection, self).disconnect()
-        return
 
     def on_encoder_touch(self, encoder):
         self._on_encoder_change(encoder)
@@ -68,7 +59,6 @@ class TouchStripEncoderConnection(Component, TouchEncoderObserver):
     def _on_encoder_change(self, encoder):
         if consts.PROTO_TOUCH_ENCODER_TO_STRIP and self._encoder in (encoder, None):
             self._set_touched_encoder(encoder if self._can_use_touch_encoder(encoder) else None)
-        return
 
     def _can_use_touch_encoder(self, encoder):
         is_useable = encoder.is_pressed() and encoder.mapped_parameter() != None
@@ -81,7 +71,6 @@ class TouchStripEncoderConnection(Component, TouchEncoderObserver):
         parameter = encoder.mapped_parameter() if encoder != None else None
         self._strip_controller.set_parameter(parameter)
         self._strip_controller.set_enabled(parameter != None)
-        return
 
 
 class TouchStripPitchModComponent(Component, Messenger):
@@ -91,7 +80,6 @@ class TouchStripPitchModComponent(Component, Messenger):
         super(TouchStripPitchModComponent, self).__init__(*a, **k)
         self._touch_strip = None
         self._touch_strip_indication = None
-        return
 
     def set_touch_strip(self, control):
         self._touch_strip = control
@@ -114,8 +102,7 @@ class TouchStripPitchModComponent(Component, Messenger):
     def _update_touch_strip_indication(self):
         if self._touch_strip_indication:
             self._touch_strip_indication.set_mode(TouchStripModes.CUSTOM_FREE)
-            self._touch_strip_indication.send_state([ TouchStripStates.STATE_FULL if self.touch_strip_toggle.is_toggled else TouchStripStates.STATE_HALF for _ in xrange(self._touch_strip_indication.state_count)
-                                                    ])
+            self._touch_strip_indication.send_state([ (TouchStripStates.STATE_FULL if self.touch_strip_toggle.is_toggled else TouchStripStates.STATE_HALF) for _ in xrange(self._touch_strip_indication.state_count) ])
 
     def update(self):
         super(TouchStripPitchModComponent, self).update()

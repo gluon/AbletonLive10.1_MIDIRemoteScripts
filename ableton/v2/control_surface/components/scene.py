@@ -1,10 +1,6 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/scene.py
-# Compiled at: 2019-04-29 19:37:39
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/scene.py
 from __future__ import absolute_import, print_function, unicode_literals
+import Live
 from itertools import izip
 from ...base import listens, liveobj_valid, liveobj_changed
 from ..component import Component
@@ -18,9 +14,10 @@ class SceneComponent(Component):
     clip_slot_component_type = ClipSlotComponent
     launch_button = ButtonControl()
 
-    def __init__(self, session_ring=None, *a, **k):
+    def __init__(self, session_ring = None, *a, **k):
         assert session_ring is not None
         assert session_ring.num_tracks >= 0
+        self._controlled_tracks = []
         super(SceneComponent, self).__init__(*a, **k)
         self._session_ring = session_ring
         self._scene = None
@@ -31,18 +28,18 @@ class SceneComponent(Component):
             new_slot = self._create_clip_slot()
             self._clip_slots.append(new_slot)
 
-        self._triggered_color = 'Session.SceneTriggered'
-        self._scene_color = 'Session.Scene'
-        self._no_scene_color = 'Session.NoScene'
+        self._triggered_color = u'Session.SceneTriggered'
+        self._scene_color = u'Session.Scene'
+        self._no_scene_color = u'Session.NoScene'
         self._track_offset = 0
         self._select_button = None
         self._delete_button = None
+        self._duplicate_button = None
         self.__on_track_list_changed.subject = session_ring
-        return
 
-    @listens('tracks')
+    @listens(u'tracks')
     def __on_track_list_changed(self):
-        self.update()
+        self._update_controlled_tracks()
 
     def set_scene(self, scene):
         if liveobj_changed(scene, self._scene):
@@ -61,11 +58,14 @@ class SceneComponent(Component):
     def set_delete_button(self, button):
         self._delete_button = button
 
+    def set_duplicate_button(self, button):
+        self._duplicate_button = button
+
     def set_track_offset(self, offset):
         assert offset >= 0
         if offset != self._track_offset:
             self._track_offset = offset
-            self.update()
+            self._update_controlled_tracks()
 
     def set_color_palette(self, palette):
         self._color_palette = palette
@@ -88,7 +88,12 @@ class SceneComponent(Component):
                 slot.set_clip_slot(None)
 
         self._update_launch_button()
-        return
+
+    def _update_controlled_tracks(self):
+        controlled_tracks = self._session_ring.controlled_tracks()
+        if controlled_tracks != self._controlled_tracks:
+            self.update()
+            self._controlled_tracks = controlled_tracks
 
     def _determine_actual_track_offset(self, tracks):
         actual_track_offset = self._track_offset
@@ -108,7 +113,7 @@ class SceneComponent(Component):
         tracks = self.song.tracks
         track_offset = self._determine_actual_track_offset(tracks)
         clip_slots = self._scene.clip_slots
-        for slot in self._clip_slots:
+        for _ in self._clip_slots:
             while len(tracks) > track_offset and not tracks[track_offset].is_visible:
                 track_offset += 1
 
@@ -125,10 +130,12 @@ class SceneComponent(Component):
         self._on_launch_button_pressed()
 
     def _on_launch_button_pressed(self):
-        if self._select_button and self._select_button.is_pressed():
+        if is_button_pressed(self._select_button):
             self._do_select_scene(self._scene)
         elif liveobj_valid(self._scene):
-            if self._delete_button and self._delete_button.is_pressed():
+            if is_button_pressed(self._duplicate_button):
+                self._do_duplicate_scene(self._scene)
+            elif is_button_pressed(self._delete_button):
                 self._do_delete_scene(self._scene)
             else:
                 self._do_launch_scene(True)
@@ -138,7 +145,7 @@ class SceneComponent(Component):
         self._on_launch_button_released()
 
     def _on_launch_button_released(self):
-        if not is_button_pressed(self._select_button) and liveobj_valid(self._scene) and not is_button_pressed(self._delete_button):
+        if not is_button_pressed(self._select_button) and liveobj_valid(self._scene) and not is_button_pressed(self._duplicate_button) and not is_button_pressed(self._delete_button):
             self._do_launch_scene(False)
 
     def _do_select_scene(self, scene_for_overrides):
@@ -146,14 +153,33 @@ class SceneComponent(Component):
             view = self.song.view
             if view.selected_scene != self._scene:
                 view.selected_scene = self._scene
+                self._on_scene_selected()
+
+    def _on_scene_selected(self):
+        pass
 
     def _do_delete_scene(self, scene_for_overrides):
         try:
             if liveobj_valid(self._scene):
                 song = self.song
                 song.delete_scene(list(song.scenes).index(self._scene))
+                self._on_scene_deleted()
         except RuntimeError:
             pass
+
+    def _on_scene_deleted(self):
+        pass
+
+    def _do_duplicate_scene(self, scene_for_overrides):
+        try:
+            song = self.song
+            song.duplicate_scene(list(song.scenes).index(self._scene))
+            self._on_scene_duplicated()
+        except (Live.Base.LimitationError, IndexError, RuntimeError):
+            pass
+
+    def _on_scene_duplicated(self):
+        pass
 
     def _do_launch_scene(self, value):
         launched = False
@@ -166,12 +192,12 @@ class SceneComponent(Component):
         if launched and self.song.select_on_launch:
             self.song.view.selected_scene = self._scene
 
-    @listens('is_triggered')
+    @listens(u'is_triggered')
     def __on_is_triggered_changed(self):
         assert liveobj_valid(self._scene)
         self._update_launch_button()
 
-    @listens('color')
+    @listens(u'color')
     def __on_scene_color_changed(self):
         assert liveobj_valid(self._scene)
         self._update_launch_button()

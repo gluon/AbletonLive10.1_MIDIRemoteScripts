@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/bank_selection_component.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/bank_selection_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import has_event, NamedTuple, listenable_property, listens, listens_group, liveobj_valid, nop
 from ableton.v2.control_surface import BANK_MAIN_KEY, Component
@@ -13,7 +8,7 @@ from .item_lister import ItemListerComponent
 
 class BankProvider(ItemProvider):
 
-    def __init__(self, bank_registry=None, banking_info=None, *a, **k):
+    def __init__(self, bank_registry = None, banking_info = None, *a, **k):
         assert bank_registry is not None
         assert banking_info is not None
         super(BankProvider, self).__init__(*a, **k)
@@ -22,17 +17,15 @@ class BankProvider(ItemProvider):
         self._device = None
         self._items = []
         self._on_device_bank_changed.subject = bank_registry
-        return
 
     def set_device(self, device):
         if self._device != device:
             self._device = device
             self._on_device_parameters_changed.subject = self._device
-            self._on_bank_names_changed.subject = self._device if has_event(self._device, 'bank_parameters_changed') else None
+            self._on_bank_names_changed.subject = self._device if has_event(self._device, u'bank_parameters_changed') else None
             self._items = self._create_items()
             self.notify_items()
             self.notify_selected_item()
-        return
 
     def _create_items(self):
         bank_names = self.internal_bank_names(self._banking_info.device_bank_names(self._device))
@@ -59,16 +52,16 @@ class BankProvider(ItemProvider):
         bank_index = self.items.index((item, nesting_level))
         self._bank_registry.set_device_bank(self._device, bank_index)
 
-    @listens('device_bank')
+    @listens(u'device_bank')
     def _on_device_bank_changed(self, device, _):
         if device == self._device:
             self.notify_selected_item()
 
-    @listens('bank_parameters_changed')
+    @listens(u'bank_parameters_changed')
     def _on_bank_names_changed(self):
         self._update_and_notify_items()
 
-    @listens('parameters')
+    @listens(u'parameters')
     def _on_device_parameters_changed(self):
         self._update_and_notify_items()
 
@@ -76,7 +69,7 @@ class BankProvider(ItemProvider):
         items = self._create_items()
         if self._items != items:
             self._items = items
-            self.select_item(items[(-1)][0] if items else 0)
+            self.select_item(items[-1][0] if items else 0)
             self.notify_items()
 
     def internal_bank_names(self, original_bank_names):
@@ -87,10 +80,10 @@ class BankProvider(ItemProvider):
 
 
 class EditModeOptionsComponent(Component):
-    color_class_name = 'EditModeOptions'
-    option_buttons = control_list(ButtonControl, color=color_class_name + '.ItemSelected', control_count=8)
+    color_class_name = u'EditModeOptions'
+    option_buttons = control_list(ButtonControl, color=color_class_name + u'.ItemSelected', control_count=8)
 
-    def __init__(self, back_callback=nop, device_options_provider=None, *a, **k):
+    def __init__(self, back_callback = nop, device_options_provider = None, *a, **k):
         super(EditModeOptionsComponent, self).__init__(*a, **k)
         self._device = None
         self._device_options_provider = device_options_provider
@@ -98,14 +91,11 @@ class EditModeOptionsComponent(Component):
         self.__on_device_changed.subject = device_options_provider
         self.__on_options_changed.subject = device_options_provider
         self._update_button_feedback()
-        return
 
     def _option_for_button(self, button):
         options = self.options
         if len(options) > button.index - 1:
-            return options[(button.index - 1)]
-        else:
-            return
+            return options[button.index - 1]
 
     @option_buttons.pressed
     def option_buttons(self, button):
@@ -133,17 +123,17 @@ class EditModeOptionsComponent(Component):
             return self._device_options_provider.options
         return []
 
-    @listens('device')
+    @listens(u'device')
     def __on_device_changed(self):
         self._update_device()
 
-    @listens('options')
+    @listens(u'options')
     def __on_options_changed(self):
         self.__on_active_options_changed.replace_subjects(self.options)
         self._update_button_feedback()
         self.notify_options()
 
-    @listens_group('active')
+    @listens_group(u'active')
     def __on_active_options_changed(self, _):
         self._update_button_feedback()
 
@@ -152,7 +142,7 @@ class EditModeOptionsComponent(Component):
             if button.index > 0:
                 option = self._option_for_button(button)
                 has_active_option = option and option.active
-                button.color = self.color_class_name + '.' + ('ItemNotSelected' if has_active_option else 'NoItem')
+                button.color = self.color_class_name + u'.' + (u'ItemNotSelected' if has_active_option else u'NoItem')
 
     def _update_device(self):
         self._set_device(self._device_options_provider.device())
@@ -164,10 +154,10 @@ class EditModeOptionsComponent(Component):
 
 
 class BankSelectionComponent(ItemListerComponent):
-    color_class_name = 'BankSelection'
-    __events__ = (u'back', )
+    color_class_name = u'BankSelection'
+    __events__ = (u'back',)
 
-    def __init__(self, bank_registry=None, banking_info=None, device_options_provider=None, *a, **k):
+    def __init__(self, bank_registry = None, banking_info = None, device_options_provider = None, *a, **k):
         self._bank_provider = BankProvider(bank_registry=bank_registry, banking_info=banking_info)
         super(BankSelectionComponent, self).__init__(item_provider=self._bank_provider, *a, **k)
         self._options = EditModeOptionsComponent(back_callback=self.notify_back, device_options_provider=device_options_provider, parent=self)
@@ -182,7 +172,6 @@ class BankSelectionComponent(ItemListerComponent):
     def set_device(self, item):
         device = item if item != self._bank_provider.device else None
         self._bank_provider.set_device(device)
-        return
 
     @property
     def options(self):

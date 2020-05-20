@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/mixer.py
-# Compiled at: 2019-05-15 02:17:17
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/components/mixer.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip, izip_longest
 from ...base import clamp, listens, liveobj_valid
@@ -33,7 +28,7 @@ class RightAlignTracksTrackAssigner(TrackAssigner):
     e.g. right-aligning return tracks.
     """
 
-    def __init__(self, song=None, include_master_track=False, *a, **k):
+    def __init__(self, song = None, include_master_track = False, *a, **k):
         super(RightAlignTracksTrackAssigner, self).__init__(*a, **k)
         self._song = song
         self._include_master_track = include_master_track
@@ -58,7 +53,7 @@ class RightAlignTracksTrackAssigner(TrackAssigner):
 class MixerComponent(Component):
     u""" Class encompassing several channel strips to form a mixer """
 
-    def __init__(self, tracks_provider=None, track_assigner=None, auto_name=False, invert_mute_feedback=False, channel_strip_component_type=None, *a, **k):
+    def __init__(self, tracks_provider = None, track_assigner = None, auto_name = False, invert_mute_feedback = False, channel_strip_component_type = None, *a, **k):
         assert tracks_provider is not None
         super(MixerComponent, self).__init__(*a, **k)
         self._channel_strip_component_type = channel_strip_component_type or ChannelStripComponent
@@ -71,7 +66,7 @@ class MixerComponent(Component):
         self._send_controls = None
         self._channel_strips = []
         self._offset_can_start_after_tracks = False
-        for index in range(self._provider.num_tracks):
+        for _ in range(self._provider.num_tracks):
             strip = self._channel_strip_component_type(parent=self)
             self._channel_strips.append(strip)
             if invert_mute_feedback:
@@ -88,7 +83,6 @@ class MixerComponent(Component):
         self.__on_track_list_changed.subject = self.song
         self.__on_return_tracks_changed.subject = self.song
         self.__on_return_tracks_changed()
-        return
 
     def disconnect(self):
         super(MixerComponent, self).disconnect()
@@ -96,7 +90,6 @@ class MixerComponent(Component):
         release_control(self._crossfader_control)
         self._prehear_volume_control = None
         self._crossfader_control = None
-        return
 
     @property
     def send_index(self):
@@ -111,7 +104,6 @@ class MixerComponent(Component):
                 self.on_send_index_changed()
         else:
             raise IndexError
-        return
 
     def on_send_index_changed(self):
         pass
@@ -154,9 +146,7 @@ class MixerComponent(Component):
             if self._send_index is None:
                 strip.set_send_controls(None)
             else:
-                strip.set_send_controls((None, ) * self._send_index + (control,))
-
-        return
+                strip.set_send_controls((None,) * self._send_index + (control,))
 
     def set_arm_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
@@ -178,17 +168,18 @@ class MixerComponent(Component):
         for strip in self._channel_strips or []:
             strip.set_shift_button(button)
 
-    @listens('offset')
+    @listens(u'offset')
     def __on_offset_changed(self, *a):
         self._reassign_tracks()
 
-    @listens('visible_tracks')
+    @listens(u'visible_tracks')
     def __on_track_list_changed(self):
         self._reassign_tracks()
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self._update_selected_strip()
+        self._on_selected_track_changed()
 
     def _update_selected_strip(self):
         selected_track = self.song.view.selected_track
@@ -197,11 +188,14 @@ class MixerComponent(Component):
                 self._selected_strip.set_track(selected_track)
             else:
                 self._selected_strip.set_track(None)
-        return
 
-    @listens('return_tracks')
+    def _on_selected_track_changed(self):
+        pass
+
+    @listens(u'return_tracks')
     def __on_return_tracks_changed(self):
         self._update_send_index()
+        self.on_num_sends_changed()
 
     def _update_send_index(self):
         num_sends = self.num_sends
@@ -209,8 +203,6 @@ class MixerComponent(Component):
             self.send_index = clamp(self._send_index, 0, num_sends - 1) if num_sends > 0 else None
         else:
             self.send_index = 0 if num_sends > 0 else None
-        self.on_num_sends_changed()
-        return
 
     def on_num_sends_changed(self):
         pass
@@ -226,7 +218,6 @@ class MixerComponent(Component):
         else:
             release_control(self._prehear_volume_control)
             release_control(self._crossfader_control)
-        return
 
     def _reassign_tracks(self):
         tracks = self._track_assigner.tracks(self._provider)
@@ -234,8 +225,8 @@ class MixerComponent(Component):
             channel_strip.set_track(track)
 
     def _auto_name(self):
-        self.name = 'Mixer'
-        self.master_strip().name = 'Master_Channel_Strip'
-        self.selected_strip().name = 'Selected_Channel_Strip'
+        self.name = u'Mixer'
+        self.master_strip().name = u'Master_Channel_Strip'
+        self.selected_strip().name = u'Selected_Channel_Strip'
         for index, strip in enumerate(self._channel_strips):
-            strip.name = 'Channel_Strip_%d' % index
+            strip.name = u'Channel_Strip_%d' % index

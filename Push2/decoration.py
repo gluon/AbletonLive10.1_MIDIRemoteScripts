@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/decoration.py
-# Compiled at: 2019-04-23 14:43:03
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/decoration.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import find_if, liveobj_changed, liveobj_valid
@@ -35,11 +30,11 @@ class TrackDecoratorFactory(DecoratorFactory):
 
     def _get_chain_nesting_level(self, chain):
         parent_chain_or_track = chain.canonical_parent.canonical_parent
-        if hasattr(parent_chain_or_track, 'group_track'):
+        if hasattr(parent_chain_or_track, u'group_track'):
             return self._get_nesting_level(parent_chain_or_track) + 1
+        elif hasattr(parent_chain_or_track, u'canonical_parent') and hasattr(parent_chain_or_track.canonical_parent, u'canonical_parent'):
+            return self._get_chain_nesting_level(parent_chain_or_track) + 1
         else:
-            if hasattr(parent_chain_or_track, 'canonical_parent') and hasattr(parent_chain_or_track.canonical_parent, 'canonical_parent'):
-                return self._get_chain_nesting_level(parent_chain_or_track) + 1
             return 0
 
     def _get_track_for_chain(self, mixable):
@@ -51,7 +46,7 @@ class TrackDecoratorFactory(DecoratorFactory):
 
     def _get_decorated_track(self, track):
         decorated = self.decorate(track)
-        if getattr(track, 'group_track', None):
+        if getattr(track, u'group_track', None):
             decorated.parent_track = self.decorate(track.group_track)
             decorated.nesting_level = self._get_nesting_level(track)
         elif isinstance(track, Live.Chain.Chain):

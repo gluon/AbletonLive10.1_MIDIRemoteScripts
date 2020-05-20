@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/sysex.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/sysex.py
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import chunks
 from ableton.v2.control_surface import midi
@@ -18,7 +13,7 @@ def make_mono_aftertouch_enabled_message(scene, track, is_enabled):
 
 def make_aftertouch_mode_message(mode_id):
     assert mode_id in (u'polyphonic', u'mono')
-    mode_byte = 0 if mode_id == 'mono' else 1
+    mode_byte = 0 if mode_id == u'mono' else 1
     return make_message(30, (mode_byte,))
 
 
@@ -29,16 +24,14 @@ def make_mode_switch_messsage(mode_id):
 
 def make_rgb_palette_entry_message(index, hex_color, white_balance):
     r, g, b = _make_rgb_from_hex(hex_color)
-    return make_message(3, (
-     index,) + to_7L1M(r) + to_7L1M(g) + to_7L1M(b) + to_7L1M(white_balance))
+    return make_message(3, (index,) + to_7L1M(r) + to_7L1M(g) + to_7L1M(b) + to_7L1M(white_balance))
 
 
 def _make_rgb_from_hex(hex_value):
     r = hex_value >> 16
     g = hex_value >> 8 & 255
     b = hex_value & 255
-    return (
-     r, g, b)
+    return (r, g, b)
 
 
 def make_reapply_palette_message():
@@ -49,7 +42,7 @@ def make_touch_strip_mode_message(mode):
     u"""
     The behavior of the touch strip is defined by a number of flags
     put together into a 7 bit touch strip configuration setting.
-
+    
         -----------------------------
     bit | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
         ----------------------------- value              |   0         |  1
@@ -64,27 +57,27 @@ def make_touch_strip_mode_message(mode):
     """
     mode_bytes = ()
     if mode == TouchStripModes.CUSTOM_PITCHBEND:
-        mode_bytes = int('1111001', 2)
+        mode_bytes = int(u'1111001', 2)
     elif mode == TouchStripModes.CUSTOM_VOLUME:
-        mode_bytes = int('0000001', 2)
+        mode_bytes = int(u'0000001', 2)
     elif mode == TouchStripModes.CUSTOM_PAN:
-        mode_bytes = int('0010001', 2)
+        mode_bytes = int(u'0010001', 2)
     elif mode == TouchStripModes.CUSTOM_DISCRETE:
-        mode_bytes = int('0011001', 2)
+        mode_bytes = int(u'0011001', 2)
     elif mode == TouchStripModes.CUSTOM_FREE:
-        mode_bytes = int('0001011', 2)
+        mode_bytes = int(u'0001011', 2)
     elif mode == TouchStripModes.MODWHEEL:
-        mode_bytes = int('0000100', 2)
+        mode_bytes = int(u'0000100', 2)
     elif mode == TouchStripModes.PITCHBEND:
-        mode_bytes = int('1111000', 2)
+        mode_bytes = int(u'1111000', 2)
     else:
-        raise RuntimeError('Touch strip mode %i not supported' % mode)
+        raise RuntimeError(u'Touch strip mode %i not supported' % mode)
     return make_message(23, (mode_bytes,))
 
 
-TOUCHSTRIP_STATE_TO_BRIGHTNESS = {TouchStripStates.STATE_OFF: 0, 
-   TouchStripStates.STATE_HALF: 1, 
-   TouchStripStates.STATE_FULL: 6}
+TOUCHSTRIP_STATE_TO_BRIGHTNESS = {TouchStripStates.STATE_OFF: 0,
+ TouchStripStates.STATE_HALF: 1,
+ TouchStripStates.STATE_FULL: 6}
 
 def _make_touch_strip_light(state):
     if len(state) == 2:
@@ -138,7 +131,7 @@ def make_display_brightness_message(brightness):
     The display brightness is influenced by various parameters like
     absolute maximum backlight LED current, relative backlight LED
     brightness, VCOM default level and the gamma curve.
-
+    
     Only the relative backlight LED brightness can be configured
     via MIDI, the remaining values are set by the firmware, depending
     on the power source.
@@ -161,17 +154,20 @@ def extract_identity_response_info(data):
     build = from_7L7M(data[14], data[15])
     sn = from_7L7777M(data[16:21])
     board_revision = data[21] if len(data) > 22 else 0
-    return (
-     major, minor, build, sn, board_revision)
+    return (major,
+     minor,
+     build,
+     sn,
+     board_revision)
 
 
 def make_pad_setting_message(scene_index, track_index, setting):
     u"""
     This command allows to select one of N available sets of pad
     parameter values called settings.
-
+    
     If scene_index and track_index are 0, the settings for all pads are selected.
-
+    
     scene_index - 1 (top) ... 8(bottom), or 0 for all pads
     track_index - 1 (left) ... 8(right), or 0 for all pads
     setting     - (0-regular, 1-less sensitive)
@@ -183,14 +179,13 @@ def make_pad_setting_message(scene_index, track_index, setting):
 
 
 MANUFACTURER_ID = (0, 33, 29)
-MESSAGE_START = (
- midi.SYSEX_START,) + MANUFACTURER_ID + (1, 1)
+MESSAGE_START = (midi.SYSEX_START,) + MANUFACTURER_ID + (1, 1)
 IDENTITY_RESPONSE_PRODUCT_ID_BYTES = MANUFACTURER_ID + (103, 50, 2, 0)
 
-def make_message(command_id, arguments=tuple()):
+def make_message(command_id, arguments = tuple()):
     u"""
     Create a sysex message from a command id and the optional arguments
-
+    
     command_id - command or reply id (in the future, for 16 bit values, prepend zero)
     arguments  - a number of 7 bit values depending on command or reply id
                  the maximum number of arguments is 16 (except for the printf reply)
@@ -209,15 +204,13 @@ def make_message_identifier(command_id):
 def to_7L1M(value):
     u""" Returns a list with the 7 lower bits of the value followed by the 1 higher bit
     """
-    return (
-     value & 127, value >> 7 & 1)
+    return (value & 127, value >> 7 & 1)
 
 
 def to_7L5M(value):
     u""" Returns a list with the 7 lower bits of the value followed by the 5 higher bits
     """
-    return (
-     value & 127, value >> 7 & 31)
+    return (value & 127, value >> 7 & 31)
 
 
 def from_7L7M(lsb, msb):

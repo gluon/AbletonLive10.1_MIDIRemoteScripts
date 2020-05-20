@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/session_recording_component.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/session_recording_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 import Live
@@ -26,16 +21,14 @@ def get_clip_slot_from_index(song, track, clip_slot_index):
     clip_slots = track.clip_slots
     if clip_slot_index < len(clip_slots):
         return clip_slots[clip_slot_index]
-    else:
-        return
 
 
 def have_other_recording_clips(tracks, recording_clip):
     for track in ifilter(lambda t: t.can_be_armed and (t.arm or t.implicit_arm), tracks):
         index = track.playing_slot_index
         slot = track.clip_slots[index] if 0 <= index < len(track.clip_slots) else None
-        clip = getattr(slot, 'clip', None)
-        if getattr(clip, 'is_recording', False) and clip is not recording_clip:
+        clip = getattr(slot, u'clip', None)
+        if getattr(clip, u'is_recording', False) and clip is not recording_clip:
             return True
 
     return False
@@ -43,7 +36,7 @@ def have_other_recording_clips(tracks, recording_clip):
 
 class FixedLengthRecording(EventObject):
 
-    def __init__(self, song=None, clip_creator=None, fixed_length_setting=None, *a, **k):
+    def __init__(self, song = None, clip_creator = None, fixed_length_setting = None, *a, **k):
         assert song is not None
         assert clip_creator is not None
         assert fixed_length_setting is not None
@@ -54,7 +47,6 @@ class FixedLengthRecording(EventObject):
         self._clip_creator.legato_launch = self._fixed_length_setting.legato_launch
         self.__on_setting_selected_index_changes.subject = self._fixed_length_setting
         self.__on_setting_legato_launch_changes.subject = self._fixed_length_setting
-        return
 
     def should_start_fixed_length_recording(self, clip_slot):
         return track_can_record(clip_slot.canonical_parent) and not clip_slot.is_recording and not clip_slot.has_clip and self._fixed_length_setting.enabled
@@ -94,12 +86,12 @@ class FixedLengthRecording(EventObject):
             else:
                 clip_slot.fire()
 
-    @listens('selected_index')
+    @listens(u'selected_index')
     def __on_setting_selected_index_changes(self, _):
         length, _ = self._fixed_length_setting.get_selected_length(self._song)
         self._clip_creator.fixed_length = length
 
-    @listens('legato_launch')
+    @listens(u'legato_launch')
     def __on_setting_legato_launch_changes(self, value):
         self._clip_creator.legato_launch = value
 
@@ -109,7 +101,7 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
     arrangement_record_button = ButtonControl()
     capture_midi_button = ButtonControl()
 
-    def __init__(self, clip_creator=None, fixed_length_setting=None, *a, **k):
+    def __init__(self, clip_creator = None, fixed_length_setting = None, *a, **k):
         assert clip_creator is not None
         assert fixed_length_setting is not None
         super(FixedLengthSessionRecordingComponent, self).__init__(*a, **k)
@@ -117,10 +109,7 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
         self.footswitch_toggles_arrangement_recording = False
         self.__on_record_mode_changed.subject = self.song
         self.__on_record_mode_changed()
-        self.set_trigger_recording_on_release(not any((
-         self._record_button.is_pressed,
-         self.arrangement_record_button.is_pressed)))
-        return
+        self.set_trigger_recording_on_release(not any((self.record_button.is_pressed, self.arrangement_record_button.is_pressed)))
 
     def set_trigger_recording_on_release(self, trigger_recording):
         self._should_trigger_recording = trigger_recording
@@ -136,9 +125,7 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
     def capture_midi_button(self, button):
         try:
             self.song.capture_midi()
-            self.set_trigger_recording_on_release(not any((
-             self._record_button.is_pressed,
-             self.arrangement_record_button.is_pressed)))
+            self.set_trigger_recording_on_release(not any((self.record_button.is_pressed, self.arrangement_record_button.is_pressed)))
         except RuntimeError:
             pass
 
@@ -180,14 +167,14 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
             song = self.song
             clip_slot = get_clip_slot_from_index(song, song.view.selected_track, self._clip_slot_index_to_record_into())
             if liveobj_valid(clip_slot) and clip_slot.is_triggered and song.overdub and not clip_slot.is_recording:
-                self._record_button.color = 'Recording.Transition'
+                self.record_button.color = u'Recording.Transition'
             elif song.record_mode:
-                self._record_button.color = 'Recording.ArrangementRecordingOn'
+                self.record_button.color = u'Recording.ArrangementRecordingOn'
             else:
                 super(FixedLengthSessionRecordingComponent, self)._update_record_button()
-            self.arrangement_record_button.color = self._record_button.color
+            self.arrangement_record_button.color = self.record_button.color
 
-    @listens('record_mode')
+    @listens(u'record_mode')
     def __on_record_mode_changed(self):
         self._update_record_button()
 

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/user_settings_component.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push/user_settings_component.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count
 from ableton.v2.base import forward_property, listens_group
@@ -56,7 +51,7 @@ class UserSettingsComponent(Component):
     def set_info_text(self, info_text):
         self._info_source.set_display_string(info_text)
 
-    @listens_group('normalized_value')
+    @listens_group(u'normalized_value')
     def _on_encoder_value(self, value, index):
         if index >= 0 and index < len(self._settings) and self._settings[index].change_relative(value):
             self._update_display()
@@ -74,8 +69,8 @@ class UserSettingsComponent(Component):
 
 class UserComponent(UserComponentBase):
     action_button = ButtonControl(**consts.SIDE_BUTTON_COLORS)
-    settings_layer = forward_property('_settings')('layer')
-    settings = forward_property('_settings')('settings')
+    settings_layer = forward_property(u'_settings')(u'layer')
+    settings = forward_property(u'_settings')(u'settings')
 
     def __init__(self, *a, **k):
         super(UserComponent, self).__init__(*a, **k)

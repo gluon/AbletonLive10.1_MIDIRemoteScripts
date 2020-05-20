@@ -1,26 +1,19 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SliderElement.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SliderElement.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.SliderElement import SliderElement as SliderElementBase
 from _Framework.Skin import Skin, SkinColorMissingError
 from . import consts
-FADER_TYPES = (
- consts.FADER_TYPE_STANDARD, consts.FADER_TYPE_BIPOLAR)
+FADER_TYPES = (consts.FADER_TYPE_STANDARD, consts.FADER_TYPE_BIPOLAR)
 
 class SliderElement(SliderElementBase):
 
-    def __init__(self, msg_type, channel, identifier, skin=Skin(), *a, **k):
+    def __init__(self, msg_type, channel, identifier, skin = Skin(), *a, **k):
         self._skin = skin
         self._header = None
         self._type = consts.FADER_TYPE_STANDARD
         self._color = 0
         super(SliderElement, self).__init__(msg_type, channel, identifier, *a, **k)
         self.set_needs_takeover(False)
-        return
 
     def set_index(self, index):
         self._header = consts.SYSEX_STANDARD_PREFIX + consts.SYSEX_PARAM_BYTE_FADER_SETUP + (index,)
@@ -54,7 +47,6 @@ class SliderElement(SliderElementBase):
                 color_value = 0
             msg = self._header + (self._type, color_value, value) + consts.SYSEX_STANDARD_SUFFIX
             self._send_midi(msg)
-        return
 
     def update(self):
         if len(self.resource.owners) > 0:

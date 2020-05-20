@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/midi.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/midi.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap
 NOTE_ON_STATUS = 144
@@ -16,8 +11,7 @@ SYSEX_GENERAL_INFO = 6
 SYSEX_NON_REALTIME = 126
 SYSEX_IDENTITY_REQUEST_ID = 1
 SYSEX_IDENTITY_RESPONSE_ID = 2
-SYSEX_IDENTITY_REQUEST_MESSAGE = (
- SYSEX_START,
+SYSEX_IDENTITY_REQUEST_MESSAGE = (SYSEX_START,
  SYSEX_NON_REALTIME,
  127,
  SYSEX_GENERAL_INFO,
@@ -41,7 +35,7 @@ def is_sysex(midi_bytes):
 
 
 def is_valid_sysex(midi_bytes):
-    return is_sysex(midi_bytes) and midi_bytes[0] == SYSEX_START and midi_bytes[(-1)] == SYSEX_END
+    return is_sysex(midi_bytes) and midi_bytes[0] == SYSEX_START and midi_bytes[-1] == SYSEX_END
 
 
 def is_pitchbend(midi_bytes):
@@ -56,4 +50,4 @@ def extract_value(midi_bytes):
 
 def pretty_print_bytes(midi_bytes):
     hex_values = imap(hex, midi_bytes)
-    return (' ').join(hex_values)
+    return u' '.join(hex_values)

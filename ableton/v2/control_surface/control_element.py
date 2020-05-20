@@ -1,11 +1,8 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control_element.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/ableton/v2/control_surface/control_element.py
 from __future__ import absolute_import, print_function, unicode_literals
-import logging, traceback, re
+import logging
+import traceback
+import re
 from ..base import const, depends, Disconnectable, lazy_attribute, nop, second, EventObject, Event, task
 from .resource import StackingResource
 logger = logging.getLogger(__name__)
@@ -29,7 +26,7 @@ class ElementOwnershipHandler(object):
 class OptimizedOwnershipHandler(ElementOwnershipHandler):
     u"""
     Control element ownership handler that delays notification of
-    ownership changes and minimizes the number of actual owernship
+    ownership changes and minimizes the number of actual ownership
     changes that are delivered.
     """
 
@@ -39,15 +36,14 @@ class OptimizedOwnershipHandler(ElementOwnershipHandler):
         self._sequence_number = 0
 
     def handle_ownership_change(self, control, client, status):
-        if (
-         control, client, not status) in self._ownership_changes:
-            del self._ownership_changes[(control, client, not status)]
+        if (control, client, not status) in self._ownership_changes:
+            del self._ownership_changes[control, client, not status]
         else:
-            self._ownership_changes[(control, client, status)] = self._sequence_number
+            self._ownership_changes[control, client, status] = self._sequence_number
         self._sequence_number += 1
 
     @depends(traceback=const(traceback))
-    def commit_ownership_changes(self, traceback=None):
+    def commit_ownership_changes(self, traceback = None):
         notify = super(OptimizedOwnershipHandler, self).handle_ownership_change
         while self._ownership_changes:
             notifications = sorted(self._ownership_changes.iteritems(), key=second)
@@ -56,21 +52,21 @@ class OptimizedOwnershipHandler(ElementOwnershipHandler):
                 try:
                     notify(control, client, status)
                 except Exception:
-                    logger.error('Error when trying to give control: %s', control.name)
+                    logger.error(u'Error when trying to give control: %s', control.name)
                     traceback.print_exc()
 
         self._ownership_changes.clear()
         self._sequence_number = 0
 
 
-_element_list_access_expr = re.compile('(\\w+)\\[([+-]?\\d+)\\]')
+_element_list_access_expr = re.compile(u'(\\w+)\\[([+-]?\\d+)\\]')
 
 @depends(element_container=const(None))
-def get_element(obj, element_container=None):
+def get_element(obj, element_container = None):
     u"""
-    Function for receiving a control element by name. Use this function for adressing
+    Function for receiving a control element by name. Use this function for addressing
     elements consistently by name.
-    If an element_container is injected, control elements can be adressed by string in
+    If an element_container is injected, control elements can be addressed by string in
     that scope.
     Lists of elements can be accessed by index. Example:
         get_element('buttons[0]')
@@ -78,7 +74,7 @@ def get_element(obj, element_container=None):
     """
     if isinstance(obj, basestring):
         if element_container is None:
-            raise RuntimeError('Control elements can only be accessed by name, if an element container is available')
+            raise RuntimeError(u'Control elements can only be accessed by name, if an element container is available')
         match = _element_list_access_expr.match(obj)
         if match:
             name = match.group(1)
@@ -103,7 +99,7 @@ class ControlElement(Disconnectable):
         send_midi = nop
         reset_state = nop
 
-        def __init__(self, outer=None, *a, **k):
+        def __init__(self, outer = None, *a, **k):
             super(ControlElement.ProxiedInterface, self).__init__(*a, **k)
             self._outer = outer
 
@@ -116,14 +112,14 @@ class ControlElement(Disconnectable):
         return self.ProxiedInterface(outer=self)
 
     canonical_parent = None
-    name = ''
+    name = u''
     optimized_send_midi = True
     _has_resource = False
     _resource_type = StackingResource
     _has_task_group = False
 
     @depends(send_midi=None, register_control=None)
-    def __init__(self, name='', resource_type=None, optimized_send_midi=None, send_midi=None, register_control=None, *a, **k):
+    def __init__(self, name = u'', resource_type = None, optimized_send_midi = None, send_midi = None, register_control = None, *a, **k):
         super(ControlElement, self).__init__(*a, **k)
         self._send_midi = send_midi
         self.name = name
@@ -132,7 +128,6 @@ class ControlElement(Disconnectable):
         if optimized_send_midi is not None:
             self.optimized_send_midi = optimized_send_midi
         register_control(self)
-        return
 
     def disconnect(self):
         self.reset()
@@ -162,7 +157,7 @@ class ControlElement(Disconnectable):
 
     @lazy_attribute
     @depends(parent_task_group=task.TaskGroup)
-    def _tasks(self, parent_task_group=None):
+    def _tasks(self, parent_task_group = None):
         tasks = parent_task_group.add(task.TaskGroup())
         self._has_task_group = True
         return tasks
@@ -174,7 +169,7 @@ class ControlElement(Disconnectable):
         self.notify_ownership_change(client, False)
 
     @depends(element_ownership_handler=const(ElementOwnershipHandler()))
-    def notify_ownership_change(self, client, grabbed, element_ownership_handler=None):
+    def notify_ownership_change(self, client, grabbed, element_ownership_handler = None):
         element_ownership_handler.handle_ownership_change(self, client, grabbed)
 
 
@@ -182,5 +177,4 @@ class NotifyingControlElement(EventObject, ControlElement):
     u"""
     Class representing control elements that can send values
     """
-    __events__ = (
-     Event(name='value', doc=' Called when the control element receives a MIDI value\n                             from the hardware '),)
+    __events__ = (Event(name=u'value', doc=u' Called when the control element receives a MIDI value\n                             from the hardware '),)

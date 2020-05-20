@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialSessionRecordingComponent.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Launchpad_Pro/SpecialSessionRecordingComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.ClipCreator import ClipCreator
@@ -20,7 +15,6 @@ class SpecialSessionRecordingComponent(SessionRecordingComponent):
         self._modes_component = None
         self._note_mode_name = None
         super(SpecialSessionRecordingComponent, self).__init__(ClipCreator(), True, *a, **k)
-        return
 
     def set_modes_component(self, modes_component):
         self._modes_component = modes_component
@@ -28,7 +22,7 @@ class SpecialSessionRecordingComponent(SessionRecordingComponent):
     def set_note_mode_name(self, name):
         self._note_mode_name = name
 
-    @subject_slot('value')
+    @subject_slot(u'value')
     def _on_record_button_value(self, value):
         if self.is_enabled() and value:
             if self._modes_component.selected_mode == self._note_mode_name:
@@ -50,7 +44,6 @@ class SpecialSessionRecordingComponent(SessionRecordingComponent):
                 self._start_recording()
         elif not self._stop_recording():
             self._start_recording()
-        return
 
     def _prepare_new_slot(self, track):
         song = self.song()

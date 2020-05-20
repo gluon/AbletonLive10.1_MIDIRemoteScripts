@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/track_list.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Push2/track_list.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from itertools import izip
@@ -28,21 +23,21 @@ def track_color_with_pending_stop(track):
     return make_blinking_track_color(track, UNLIT_COLOR)
 
 
-def mixable_button_color(mixer_track, song, selected_track=None):
-    color = 'Mixer.NoTrack'
+def mixable_button_color(mixer_track, song, selected_track = None):
+    color = u'Mixer.NoTrack'
     if mixer_track:
         mixer_track_parent_track = find_parent_track(mixer_track.proxied_object)
         is_frozen_chain = mixer_track_parent_track.is_frozen and not isinstance(mixer_track.proxied_object, Live.Track.Track)
         if can_play_clips(mixer_track) and is_clip_stop_pending(mixer_track):
             color = track_color_with_pending_stop(mixer_track)
         elif mixer_track.solo:
-            color = 'Mixer.SoloOn'
+            color = u'Mixer.SoloOn'
         elif mixer_track == selected_track and not mixer_track.mute:
-            color = 'Mixer.TrackSelected'
+            color = u'Mixer.TrackSelected'
         elif mixer_track.mute or mixer_track.muted_via_solo:
-            color = 'Mixer.MutedTrack'
+            color = u'Mixer.MutedTrack'
         elif is_frozen_chain:
-            color = 'Mixer.FrozenChain'
+            color = u'Mixer.FrozenChain'
         else:
             color = IndexedColor.from_live_index(mixer_track.color_index, DISPLAY_BUTTON_SHADE_LEVEL)
     return color
@@ -52,21 +47,20 @@ def stop_clip_button_color(track, song, _):
     if liveobj_valid(track) and not is_chain(track) and bool(track.clip_slots):
         if is_clip_stop_pending(track):
             return track_color_with_pending_stop(track)
+        elif track.playing_slot_index >= 0:
+            if track.solo:
+                return u'StopClips.SoloedTrack'
+            if track.mute:
+                return u'StopClips.MutedTrack'
+            if track.clip_slots[track.playing_slot_index].is_recording:
+                pulse_to = RECORDING_COLOR
+            else:
+                pulse_to = UNLIT_COLOR
+            return make_pulsing_track_color(track, pulse_to)
         else:
-            if track.playing_slot_index >= 0:
-                if track.solo:
-                    return 'StopClips.SoloedTrack'
-                if track.mute:
-                    return 'StopClips.MutedTrack'
-                if track.clip_slots[track.playing_slot_index].is_recording:
-                    pulse_to = RECORDING_COLOR
-                else:
-                    pulse_to = UNLIT_COLOR
-                return make_pulsing_track_color(track, pulse_to)
-            return 'Session.StoppedClip'
-
+            return u'Session.StoppedClip'
     else:
-        return 'Mixer.NoTrack'
+        return u'Mixer.NoTrack'
 
 
 def toggle_mixable_mute(mixable, song):
@@ -86,17 +80,15 @@ def toggle_mixable_solo(mixable, song):
 
 
 def playing_clip(track):
-    if hasattr(track, 'playing_slot_index'):
+    if hasattr(track, u'playing_slot_index'):
         try:
             if track.playing_slot_index >= 0:
                 playing_clip_slot = track.clip_slots[track.playing_slot_index]
                 if liveobj_valid(playing_clip_slot):
                     return playing_clip_slot.clip
-                return
+                return None
         except RuntimeError:
             pass
-
-    return
 
 
 class TrackListBehaviour(ModeButtonBehaviour):
@@ -116,10 +108,10 @@ class TrackListComponent(ModesComponent, Messenger):
     Notifies whenever a track action is executed, e.g. deleting or duplicating. But
     selection does *not* count as an action.
     """
-    __events__ = (u'mute_solo_stop_cancel_action_performed', )
+    __events__ = (u'mute_solo_stop_cancel_action_performed',)
     track_action_buttons = control_list(ButtonControl, control_count=8)
 
-    def __init__(self, tracks_provider=None, trigger_recording_on_release_callback=nop, color_chooser=None, clip_phase_enabler=None, *a, **k):
+    def __init__(self, tracks_provider = None, trigger_recording_on_release_callback = nop, color_chooser = None, clip_phase_enabler = None, *a, **k):
         assert tracks_provider is not None
         super(TrackListComponent, self).__init__(*a, **k)
         self.locked_mode = None
@@ -127,20 +119,19 @@ class TrackListComponent(ModesComponent, Messenger):
         self._button_feedback_provider = mixable_button_color
         self._color_chooser = color_chooser
         self._track_selected_when_pressed = [False] * self.track_action_buttons.control_count
-        self._playheads_real_time_data = [ RealTimeDataComponent(parent=self, channel_type='playhead', is_enabled=False) for _ in xrange(8)
-                                         ]
+        self._playheads_real_time_data = [ RealTimeDataComponent(parent=self, channel_type=u'playhead', is_enabled=False) for _ in xrange(8) ]
         self.clip_phase_enabler = Component(parent=self)
         self.__on_clip_phase_enabler_changed.subject = self.clip_phase_enabler
-        self._setup_action_mode('select', handler=self._select_mixable)
-        self._setup_action_mode('lock_override', handler=self._select_mixable)
-        self._setup_action_mode('delete', handler=self._delete_mixable)
-        self._setup_action_mode('duplicate', handler=self._duplicate_mixable)
-        self._setup_action_mode('arm', handler=self._arm_track)
-        self._setup_action_mode('mute', handler=partial(toggle_mixable_mute, song=self.song))
-        self._setup_action_mode('solo', handler=partial(toggle_mixable_solo, song=self.song))
-        self._setup_action_mode('stop', handler=self._stop_track_clip, feedback_provider=stop_clip_button_color)
-        self._setup_action_mode('select_color', handler=self._select_mixable_color, exit_handler=partial(self._select_mixable_color, None))
-        self.selected_mode = 'select'
+        self._setup_action_mode(u'select', handler=self._select_mixable)
+        self._setup_action_mode(u'lock_override', handler=self._select_mixable)
+        self._setup_action_mode(u'delete', handler=self._delete_mixable)
+        self._setup_action_mode(u'duplicate', handler=self._duplicate_mixable)
+        self._setup_action_mode(u'arm', handler=self._arm_track)
+        self._setup_action_mode(u'mute', handler=partial(toggle_mixable_mute, song=self.song))
+        self._setup_action_mode(u'solo', handler=partial(toggle_mixable_solo, song=self.song))
+        self._setup_action_mode(u'stop', handler=self._stop_track_clip, feedback_provider=stop_clip_button_color)
+        self._setup_action_mode(u'select_color', handler=self._select_mixable_color, exit_handler=partial(self._select_mixable_color, None))
+        self.selected_mode = u'select'
         self._can_trigger_recording_callback = trigger_recording_on_release_callback
         self._track_provider = tracks_provider
         self._selected_track = self.register_disconnectable(SelectedMixerTrackProvider())
@@ -152,7 +143,6 @@ class TrackListComponent(ModesComponent, Messenger):
         self._update_track_and_chain_listeners()
         self._update_playheads_real_time_data()
         self._update_realtime_channels_ability()
-        return
 
     @listenable_property
     def playhead_real_time_channels(self):
@@ -173,13 +163,10 @@ class TrackListComponent(ModesComponent, Messenger):
         selected_track = song.view.selected_track
         return list(tracks).index(selected_track)
 
-    def _setup_action_mode(self, name, handler, exit_handler=nop, feedback_provider=mixable_button_color):
-        self.add_mode(name, [
-         (
-          partial(self._enter_action_mode, handler=handler, feedback_provider=feedback_provider),
-          exit_handler)], behaviour=TrackListBehaviour())
-        self.get_mode_button(name).mode_selected_color = 'DefaultButton.Transparent'
-        self.get_mode_button(name).mode_unselected_color = 'DefaultButton.Transparent'
+    def _setup_action_mode(self, name, handler, exit_handler = nop, feedback_provider = mixable_button_color):
+        self.add_mode(name, [(partial(self._enter_action_mode, handler=handler, feedback_provider=feedback_provider), exit_handler)], behaviour=TrackListBehaviour())
+        self.get_mode_button(name).mode_selected_color = u'DefaultButton.Transparent'
+        self.get_mode_button(name).mode_unselected_color = u'DefaultButton.Transparent'
 
     def _enter_action_mode(self, handler, feedback_provider):
         self._button_handler = handler
@@ -187,38 +174,38 @@ class TrackListComponent(ModesComponent, Messenger):
             self._button_feedback_provider = feedback_provider
             self._update_all_button_colors()
 
-    @listens('tracks')
+    @listens(u'tracks')
     def __on_tracks_changed(self):
         self._update_track_and_chain_listeners()
         self._update_playheads_real_time_data()
 
-    @listens_group('mute')
+    @listens_group(u'mute')
     def __on_track_mute_state_changed(self, mixable):
         self._update_mixable_color(self.tracks.index(mixable), mixable)
 
-    @listens_group('solo')
+    @listens_group(u'solo')
     def __on_track_solo_state_changed(self, mixable):
         self._update_mixable_color(self.tracks.index(mixable), mixable)
 
-    @listens_group('fired_slot_index')
+    @listens_group(u'fired_slot_index')
     def __on_track_fired_slot_changed(self, track):
         self._update_all_button_colors()
 
-    @listens_group('playing_slot_index')
+    @listens_group(u'playing_slot_index')
     def __on_track_playing_slot_changed(self, _):
         self._update_all_button_colors()
         self._update_playheads_real_time_data()
 
-    @listens('items')
+    @listens(u'items')
     def __on_items_changed(self):
         self._update_track_and_chain_listeners()
         self._update_playheads_real_time_data()
 
-    @listens('is_playing')
+    @listens(u'is_playing')
     def __on_is_playing_changed(self):
         self._update_playheads_real_time_data()
 
-    @listens_group('is_frozen')
+    @listens_group(u'is_frozen')
     def __on_track_is_frozen_state_changed(self, track):
         self._update_all_button_colors()
 
@@ -232,7 +219,6 @@ class TrackListComponent(ModesComponent, Messenger):
                 real_time_data.set_data(None)
 
         self.notify_playhead_real_time_channels()
-        return
 
     def _update_track_and_chain_listeners(self):
         self.notify_tracks()
@@ -253,20 +239,20 @@ class TrackListComponent(ModesComponent, Messenger):
         for track, control in izip(tracks, self.track_action_buttons):
             control.enabled = liveobj_valid(track)
 
-    @listens_group('color_index')
+    @listens_group(u'color_index')
     def __on_track_color_index_changed(self, mixable):
         self._update_mixable_color(self.tracks.index(mixable), mixable)
 
-    @listens('selected_item')
+    @listens(u'selected_item')
     def __on_selected_item_changed(self):
         self.notify_selected_track()
         self._update_all_button_colors()
 
-    @listens('selected_track')
+    @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self.notify_absolute_selected_track_index()
 
-    @listens_group('muted_via_solo')
+    @listens_group(u'muted_via_solo')
     def __on_track_muted_via_solo_changed(self, mixable):
         self._update_mixable_color(self.tracks.index(mixable), mixable)
 
@@ -281,30 +267,29 @@ class TrackListComponent(ModesComponent, Messenger):
     def track_action_buttons(self, button):
         self._track_selected_when_pressed[button.index] = self._track_provider.selected_item == self.tracks[button.index]
         self._button_handler(self.tracks[button.index])
-        if self.selected_mode != 'select':
+        if self.selected_mode != u'select':
             self.notify_mute_solo_stop_cancel_action_performed()
 
     @track_action_buttons.pressed_delayed
     def track_action_buttons(self, button):
-        if self.selected_mode == 'select':
-            (
-             self._arm_track(self.tracks[button.index]),)
+        if self.selected_mode == u'select':
+            (self._arm_track(self.tracks[button.index]),)
 
     @track_action_buttons.released_immediately
     def track_action_buttons(self, button):
-        if self.selected_mode == 'select' and self._track_selected_when_pressed[button.index]:
+        if self.selected_mode == u'select' and self._track_selected_when_pressed[button.index]:
             self._toggle_track_fold(self.tracks[button.index])
 
     def _toggle_track_fold(self, track):
-        if hasattr(track, 'is_foldable') and track.is_foldable:
+        if hasattr(track, u'is_foldable') and track.is_foldable:
             track.fold_state = not track.fold_state
-        elif hasattr(track, 'is_showing_chains') and track.can_show_chains:
+        elif hasattr(track, u'is_showing_chains') and track.can_show_chains:
             track.is_showing_chains = not track.is_showing_chains
         else:
             instruments = list(find_instrument_devices(track))
             if instruments:
                 instrument = instruments[0]
-                if hasattr(instrument, 'is_showing_chains') and instrument.can_show_chains:
+                if hasattr(instrument, u'is_showing_chains') and instrument.can_show_chains:
                     instrument.is_showing_chains = not instrument.is_showing_chains
 
     def _select_mixable(self, track):
@@ -350,9 +335,8 @@ class TrackListComponent(ModesComponent, Messenger):
     def _select_mixable_color(self, mixable):
         if self._color_chooser is not None:
             self._color_chooser.object = mixable
-        return
 
-    @listens('enabled')
+    @listens(u'enabled')
     def __on_clip_phase_enabler_changed(self, _):
         self._update_realtime_channels_ability()
 
@@ -364,8 +348,7 @@ class TrackListComponent(ModesComponent, Messenger):
         super(TrackListComponent, self).on_enabled_changed()
         self._update_realtime_channels_ability()
         if not self.is_enabled():
-            self.selected_mode = 'select'
+            self.selected_mode = u'select'
             self.pop_unselected_modes()
         elif self.locked_mode is not None:
             self.push_mode(self.locked_mode)
-        return

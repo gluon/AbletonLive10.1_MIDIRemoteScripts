@@ -1,11 +1,7 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/InputControlElement.py
-# Compiled at: 2019-05-08 17:06:57
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/InputControlElement.py
 from __future__ import absolute_import, print_function, unicode_literals
-import contextlib, logging
+import contextlib
+import logging
 from . import Task
 from .Dependency import depends
 from .Disconnectable import Disconnectable
@@ -19,8 +15,10 @@ MIDI_CC_TYPE = 1
 MIDI_PB_TYPE = 2
 MIDI_SYSEX_TYPE = 3
 MIDI_INVALID_TYPE = 4
-MIDI_MSG_TYPES = (MIDI_NOTE_TYPE, MIDI_CC_TYPE,
- MIDI_PB_TYPE, MIDI_SYSEX_TYPE,
+MIDI_MSG_TYPES = (MIDI_NOTE_TYPE,
+ MIDI_CC_TYPE,
+ MIDI_PB_TYPE,
+ MIDI_SYSEX_TYPE,
  MIDI_INVALID_TYPE)
 MIDI_NOTE_ON_STATUS = 144
 MIDI_NOTE_OFF_STATUS = 128
@@ -39,7 +37,7 @@ class ParameterSlot(Disconnectable):
     _parameter = None
     _control = None
 
-    def __init__(self, parameter=None, control=None, *a, **k):
+    def __init__(self, parameter = None, control = None, *a, **k):
         super(ParameterSlot, self).__init__(*a, **k)
         self.parameter = parameter
         self.control = control
@@ -69,18 +67,15 @@ class ParameterSlot(Disconnectable):
     def connect(self):
         if self._control != None and self._parameter != None:
             self._control.connect_to(self._parameter)
-        return
 
     def soft_disconnect(self):
         if self._control != None and self._parameter != None:
             self._control.release_parameter()
-        return
 
     def disconnect(self):
         self.parameter = None
         self.control = None
         super(ParameterSlot, self).disconnect()
-        return
 
 
 class InputSignal(Signal):
@@ -90,7 +85,7 @@ class InputSignal(Signal):
     value-dependent properties should use this kind of signal.
     """
 
-    def __init__(self, sender=None, *a, **k):
+    def __init__(self, sender = None, *a, **k):
         super(InputSignal, self).__init__(sender=sender, *a, **k)
         self._input_control = sender
 
@@ -135,14 +130,13 @@ class InputControlElement(NotifyingControlElement):
         mapping_sensitivity = const(None)
         reset_state = nop
 
-    __subject_events__ = (
-     SubjectEvent(name='value', signal=InputSignal, override=True),)
+    __subject_events__ = (SubjectEvent(name=u'value', signal=InputSignal, override=True),)
     _input_signal_listener_count = 0
     num_delayed_messages = 1
     send_depends_on_forwarding = True
 
     @depends(request_rebuild_midi_map=const(nop))
-    def __init__(self, msg_type=None, channel=None, identifier=None, sysex_identifier=None, request_rebuild_midi_map=None, *a, **k):
+    def __init__(self, msg_type = None, channel = None, identifier = None, sysex_identifier = None, request_rebuild_midi_map = None, *a, **k):
         assert msg_type in MIDI_MSG_TYPES
         assert in_range(channel, 0, 16) or channel is None
         assert in_range(identifier, 0, 128) or identifier is None
@@ -172,7 +166,6 @@ class InputControlElement(NotifyingControlElement):
         self._last_sent_message = None
         self._report_input = False
         self._report_output = False
-        return
 
     def message_type(self):
         return self._msg_type
@@ -227,7 +220,6 @@ class InputControlElement(NotifyingControlElement):
         if self._msg_channel != channel:
             self._msg_channel = channel
             self._request_rebuild()
-        return
 
     def set_identifier(self, identifier):
         assert self._msg_type != MIDI_SYSEX_TYPE
@@ -235,7 +227,6 @@ class InputControlElement(NotifyingControlElement):
         if self._msg_identifier != identifier:
             self._msg_identifier = identifier
             self._request_rebuild()
-        return
 
     def set_needs_takeover(self, needs_takeover):
         assert self.message_type() != MIDI_NOTE_TYPE
@@ -250,9 +241,7 @@ class InputControlElement(NotifyingControlElement):
         return self._needs_takeover
 
     def use_default_message(self):
-        if (
-         self._msg_channel, self._msg_identifier) != (
-         self._original_channel, self._original_identifier):
+        if (self._msg_channel, self._msg_identifier) != (self._original_channel, self._original_identifier):
             self._msg_channel = self._original_channel
             self._msg_identifier = self._original_identifier
             self._request_rebuild()
@@ -265,8 +254,7 @@ class InputControlElement(NotifyingControlElement):
             else:
                 value_pairs = []
                 for value in xrange(16384):
-                    value_pairs.append((value >> 7 & 127,
-                     value & 127))
+                    value_pairs.append((value >> 7 & 127, value & 127))
 
                 value_map = tuple(value_pairs)
         return value_map
@@ -283,13 +271,12 @@ class InputControlElement(NotifyingControlElement):
             self._is_being_forwarded = install_forwarding(self)
             if self._is_being_forwarded and self.send_depends_on_forwarding:
                 self._send_delayed_messages_task.restart()
-        return
 
     def script_wants_forwarding(self):
         u"""
         Returns wether the script wants to receive receive the values,
         otherwise, the control will be mapped to the track.
-
+        
         Subclasses that overload this should _request_rebuild()
         whenever the property changes.
         """
@@ -322,14 +309,12 @@ class InputControlElement(NotifyingControlElement):
             else:
                 self._parameter_to_map_to = parameter
                 self._request_rebuild()
-        return
 
     def release_parameter(self):
         if self._parameter_to_map_to != None:
             self.end_gesture()
             self._parameter_to_map_to = None
             self._request_rebuild()
-        return
 
     def mapped_parameter(self):
         return self._parameter_to_map_to
@@ -353,20 +338,12 @@ class InputControlElement(NotifyingControlElement):
         """
         if self._msg_type == MIDI_PB_TYPE:
             return ((self._status_byte(self._msg_channel),),)
+        elif self._msg_type == MIDI_SYSEX_TYPE:
+            return (self.message_sysex_identifier(),)
+        elif self._msg_type == MIDI_NOTE_TYPE:
+            return ((self._status_byte(self._msg_channel), self.message_identifier()), (self._status_byte(self._msg_channel) - 16, self.message_identifier()))
         else:
-            if self._msg_type == MIDI_SYSEX_TYPE:
-                return (self.message_sysex_identifier(),)
-            if self._msg_type == MIDI_NOTE_TYPE:
-                return (
-                 (self._status_byte(self._msg_channel),
-                  self.message_identifier()),
-                 (
-                  self._status_byte(self._msg_channel) - 16,
-                  self.message_identifier()))
-            return (
-             (
-              self._status_byte(self._msg_channel),
-              self.message_identifier()),)
+            return ((self._status_byte(self._msg_channel), self.message_identifier()),)
 
     def _send_delayed_messages(self):
         self.clear_send_cache()
@@ -375,38 +352,33 @@ class InputControlElement(NotifyingControlElement):
 
         self._delayed_messages[:] = []
 
-    def send_value(self, value, force=False, channel=None):
+    def send_value(self, value, force = False, channel = None):
         value = int(value)
         self._verify_value(value)
         if force or self._force_next_send:
             self._do_send_value(value, channel)
         elif self.send_depends_on_forwarding and not self._is_being_forwarded or self._send_delayed_messages_task.is_running:
             first = 1 - self.num_delayed_messages
-            self._delayed_messages = self._delayed_messages[first:] + [
-             (
-              value, channel)]
-        elif (
-         value, channel) != self._last_sent_message:
+            self._delayed_messages = self._delayed_messages[first:] + [(value, channel)]
+        elif (value, channel) != self._last_sent_message:
             self._do_send_value(value, channel)
         self._force_next_send = False
 
-    def _do_send_value(self, value, channel=None):
+    def _do_send_value(self, value, channel = None):
         data_byte1 = self._original_identifier
         data_byte2 = value
-        status_byte = self._status_byte(channel or self._original_channel)
+        status_byte = self._status_byte(self._original_channel if channel is None else channel)
         if self._msg_type == MIDI_PB_TYPE:
             data_byte1 = value & 127
             data_byte2 = value >> 7 & 127
         if self.send_midi((status_byte, data_byte1, data_byte2)):
-            self._last_sent_message = (
-             value, channel)
+            self._last_sent_message = (value, channel)
             if self._report_output:
                 is_input = True
                 self._report_value(value, not is_input)
 
     def clear_send_cache(self):
         self._last_sent_message = None
-        return
 
     def reset(self):
         u""" Send 0 to reset motorized faders and turn off LEDs """
@@ -418,14 +390,13 @@ class InputControlElement(NotifyingControlElement):
         self.release_parameter()
 
     def receive_value(self, value):
-        value = getattr(value, 'midi_value', value)
+        value = getattr(value, u'midi_value', value)
         self._verify_value(value)
         self._last_sent_message = None
         self.notify_value(value)
         if self._report_input:
             is_input = True
             self._report_value(value, is_input)
-        return
 
     def set_report_values(self, report_input, report_output):
         u"""
@@ -442,16 +413,16 @@ class InputControlElement(NotifyingControlElement):
 
     def _report_value(self, value, is_input):
         self._verify_value(value)
-        message = str(self.__class__.__name__) + ' ('
+        message = str(self.__class__.__name__) + u' ('
         if self._msg_type == MIDI_NOTE_TYPE:
-            message += 'Note ' + str(self._msg_identifier) + ', '
+            message += u'Note ' + str(self._msg_identifier) + u', '
         elif self._msg_type == MIDI_CC_TYPE:
-            message += 'CC ' + str(self._msg_identifier) + ', '
+            message += u'CC ' + str(self._msg_identifier) + u', '
         else:
-            message += 'PB '
-        message += 'Chan. ' + str(self._msg_channel)
-        message += ') '
-        message += 'received value ' if is_input else 'sent value '
+            message += u'PB '
+        message += u'Chan. ' + str(self._msg_channel)
+        message += u') '
+        message += u'received value ' if is_input else u'sent value '
         message += str(value)
         logger.debug(message)
 

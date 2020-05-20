@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/DrumGroupComponent.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/_Framework/DrumGroupComponent.py
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap
 from .Control import PlayableControl, ButtonControl, control_matrix
@@ -14,7 +9,7 @@ from .Util import find_if, first, clamp
 BASE_DRUM_RACK_NOTE = 36
 
 class DrumGroupComponent(SlideComponent, Slideable):
-    __subject_events__ = (u'pressed_pads', )
+    __subject_events__ = (u'pressed_pads',)
     mute_button = ButtonControl()
     solo_button = ButtonControl()
     delete_button = ButtonControl()
@@ -23,7 +18,7 @@ class DrumGroupComponent(SlideComponent, Slideable):
     drum_matrix = control_matrix(PlayableControl)
 
     @depends(set_pad_translations=None)
-    def __init__(self, translation_channel=None, set_pad_translations=None, *a, **k):
+    def __init__(self, translation_channel = None, set_pad_translations = None, *a, **k):
         self._takeover_drums = False
         self._drum_group_device = None
         self._selected_drum_pad = None
@@ -34,7 +29,6 @@ class DrumGroupComponent(SlideComponent, Slideable):
         self._coordinate_to_pad_map = {}
         super(DrumGroupComponent, self).__init__(*a, **k)
         self._set_pad_translations = set_pad_translations
-        return
 
     position_count = 32
     page_length = 4
@@ -124,7 +118,6 @@ class DrumGroupComponent(SlideComponent, Slideable):
             self._on_selected_drum_pad_changed()
             self._update_identifier_translations()
             super(DrumGroupComponent, self).update()
-        return
 
     def _update_drum_pad_listeners(self):
         u"""
@@ -138,11 +131,11 @@ class DrumGroupComponent(SlideComponent, Slideable):
             self._on_mute_changed.replace_subjects(self._visible_drum_pads)
             self._update_identifier_translations()
 
-    @subject_slot_group('solo')
+    @subject_slot_group(u'solo')
     def _on_solo_changed(self, pad):
         self._update_led_feedback()
 
-    @subject_slot_group('mute')
+    @subject_slot_group(u'mute')
     def _on_mute_changed(self, pad):
         self._update_led_feedback()
 
@@ -154,33 +147,31 @@ class DrumGroupComponent(SlideComponent, Slideable):
                 if pad:
                     self._update_pad_led(pad, button, soloed_pads)
 
-        return
-
     def _update_pad_led(self, pad, button, soloed_pads):
-        button_color = 'DrumGroup.PadEmpty'
+        button_color = u'DrumGroup.PadEmpty'
         if pad == self._selected_drum_pad:
             if soloed_pads and not pad.solo and not pad.mute:
-                button_color = 'DrumGroup.PadSelectedNotSoloed'
+                button_color = u'DrumGroup.PadSelectedNotSoloed'
             elif pad.mute and not pad.solo:
-                button_color = 'DrumGroup.PadMutedSelected'
+                button_color = u'DrumGroup.PadMutedSelected'
             elif soloed_pads and pad.solo:
-                button_color = 'DrumGroup.PadSoloedSelected'
+                button_color = u'DrumGroup.PadSoloedSelected'
             else:
-                button_color = 'DrumGroup.PadSelected'
+                button_color = u'DrumGroup.PadSelected'
         elif pad.chains:
             if soloed_pads and not pad.solo:
                 if not pad.mute:
-                    button_color = 'DrumGroup.PadFilled'
+                    button_color = u'DrumGroup.PadFilled'
                 else:
-                    button_color = 'DrumGroup.PadMuted'
+                    button_color = u'DrumGroup.PadMuted'
             elif not soloed_pads and pad.mute:
-                button_color = 'DrumGroup.PadMuted'
+                button_color = u'DrumGroup.PadMuted'
             elif soloed_pads and pad.solo:
-                button_color = 'DrumGroup.PadSoloed'
+                button_color = u'DrumGroup.PadSoloed'
             else:
-                button_color = 'DrumGroup.PadFilled'
+                button_color = u'DrumGroup.PadFilled'
         else:
-            button_color = 'DrumGroup.PadEmpty'
+            button_color = u'DrumGroup.PadEmpty'
         button.color = button_color
 
     def _button_coordinates_to_pad_index(self, first_note, coordinates):
@@ -219,10 +210,10 @@ class DrumGroupComponent(SlideComponent, Slideable):
         if self.solo_button.is_pressed:
             selected_drum_pad.solo = not selected_drum_pad.solo
         if self.quantize_button.is_pressed:
-            pad.color = 'DrumGroup.PadAction'
+            pad.color = u'DrumGroup.PadAction'
             self.quantize_pitch(selected_drum_pad.note)
         if self.delete_button.is_pressed:
-            pad.color = 'DrumGroup.PadAction'
+            pad.color = u'DrumGroup.PadAction'
             self.delete_pitch(selected_drum_pad)
         if self.select_button.is_pressed:
             self._drum_group_device.view.selected_drum_pad = selected_drum_pad
@@ -234,22 +225,21 @@ class DrumGroupComponent(SlideComponent, Slideable):
         if self.mute_button.is_pressed or self.solo_button.is_pressed:
             self._update_led_feedback()
 
-    @subject_slot('visible_drum_pads')
+    @subject_slot(u'visible_drum_pads')
     def _on_visible_drum_pads_changed(self):
         self._update_drum_pad_listeners()
         self._update_led_feedback()
 
-    @subject_slot('drum_pads_scroll_position')
+    @subject_slot(u'drum_pads_scroll_position')
     def _on_drum_pads_scroll_position_changed(self):
         self._update_identifier_translations()
         self._update_led_feedback()
         self.notify_position()
 
-    @subject_slot('selected_drum_pad')
+    @subject_slot(u'selected_drum_pad')
     def _on_selected_drum_pad_changed(self):
         self._selected_drum_pad = self._drum_group_device.view.selected_drum_pad if self._drum_group_device else None
         self._update_led_feedback()
-        return
 
     @mute_button.value
     def mute_button(self, value, button):
@@ -311,7 +301,7 @@ class DrumGroupComponent(SlideComponent, Slideable):
         if visible_drum_pads:
             for index, button in enumerate(self.drum_matrix):
                 row, col = button.coordinate
-                self._coordinate_to_pad_map[(self.width - 1 - row, col)] = visible_drum_pads[index]
+                self._coordinate_to_pad_map[self.width - 1 - row, col] = visible_drum_pads[index]
 
     def _can_set_pad_translations(self):
         return self.width <= 4 and self.height <= 4
@@ -321,8 +311,10 @@ class DrumGroupComponent(SlideComponent, Slideable):
         def create_translation_entry(button):
             row, col = button.coordinate
             button.identifier = self._button_coordinates_to_pad_index(BASE_DRUM_RACK_NOTE, button.coordinate)
-            return (
-             col, row, button.identifier, button.channel)
+            return (col,
+             row,
+             button.identifier,
+             button.channel)
 
         if self._can_set_pad_translations():
             translations = tuple(map(create_translation_entry, self.drum_matrix))
@@ -331,7 +323,6 @@ class DrumGroupComponent(SlideComponent, Slideable):
             translations = None
             self._set_non_pad_translated_identifiers()
         self._set_pad_translations(translations)
-        return
 
     def select_drum_pad(self, drum_pad):
         u""" Override when you give it a select button """

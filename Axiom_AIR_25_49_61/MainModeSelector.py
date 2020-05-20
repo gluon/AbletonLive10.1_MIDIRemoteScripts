@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/MainModeSelector.py
-# Compiled at: 2019-04-09 19:23:44
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/Axiom_AIR_25_49_61/MainModeSelector.py
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from .consts import *
@@ -37,7 +32,6 @@ class MainModeSelector(ModeSelectorComponent):
         self._right_button = None
         self._up_button = None
         self._down_button = None
-        return
 
     def number_of_modes(self):
         return 2
@@ -67,4 +61,3 @@ class MainModeSelector(ModeSelectorComponent):
                 self._device_0.set_bank_nav_buttons(self._left_button, self._right_button)
                 self._device_1.set_bank_nav_buttons(self._left_button, self._right_button)
                 self._device_nav.set_device_nav_buttons(self._up_button, self._down_button)
-        return

@@ -1,9 +1,4 @@
-# uncompyle6 version 3.4.1
-# Python bytecode 2.7 (62211)
-# Decompiled from: Python 2.7.16 (v2.7.16:413a49145e, Mar  2 2019, 14:32:10) 
-# [GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)]
-# Embedded file name: /Users/versonator/Jenkins/live/output/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/fixed_length.py
-# Compiled at: 2019-04-09 19:23:45
+#Embedded file name: /Users/versonator/Jenkins/live/output/Live/mac_64_static/Release/python-bundle/MIDI Remote Scripts/pushbase/fixed_length.py
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
@@ -13,8 +8,7 @@ from ableton.v2.control_surface.control import RadioButtonControl, TextDisplayCo
 from . import consts
 from .message_box_component import Messenger
 Quantization = Live.Song.Quantization
-LENGTH_OPTIONS = (
- Quantization.q_quarter,
+LENGTH_OPTIONS = (Quantization.q_quarter,
  Quantization.q_half,
  Quantization.q_bar,
  Quantization.q_2_bars,
@@ -22,8 +16,7 @@ LENGTH_OPTIONS = (
  Quantization.q_8_bars,
  Quantization.q_8_bars,
  Quantization.q_8_bars)
-LENGTH_OPTION_NAMES = (u'1 Beat', u'2 Beats', u'1 Bar', u'2 Bars', u'4 Bars', u'8 Bars',
-                       u'16 Bars', u'32 Bars')
+LENGTH_OPTION_NAMES = (u'1 Beat', u'2 Beats', u'1 Bar', u'2 Bars', u'4 Bars', u'8 Bars', u'16 Bars', u'32 Bars')
 LENGTH_LABELS = (u'Recording length:', u'', u'', u'')
 DEFAULT_LENGTH_OPTION_INDEX = list(LENGTH_OPTIONS).index(Quantization.q_2_bars)
 
@@ -43,37 +36,36 @@ class FixedLengthSetting(EventObject):
 
 
 class FixedLengthSettingComponent(Component):
-    length_option_buttons = control_list(RadioButtonControl, checked_color='Option.Selected', unchecked_color='Option.Unselected', control_count=len(LENGTH_OPTIONS))
-    fixed_length_toggle_button = ToggleButtonControl(toggled_color='Option.On', untoggled_color='Option.Off')
-    legato_launch_toggle_button = ToggleButtonControl(toggled_color='FixedLength.PhraseAlignedOn', untoggled_color='FixedLength.PhraseAlignedOff')
+    length_option_buttons = control_list(RadioButtonControl, checked_color=u'Option.Selected', unchecked_color=u'Option.Unselected', control_count=len(LENGTH_OPTIONS))
+    fixed_length_toggle_button = ToggleButtonControl(toggled_color=u'Option.On', untoggled_color=u'Option.Off')
+    legato_launch_toggle_button = ToggleButtonControl(toggled_color=u'FixedLength.PhraseAlignedOn', untoggled_color=u'FixedLength.PhraseAlignedOff')
     label_display_line = TextDisplayControl(LENGTH_LABELS)
     option_display_line = TextDisplayControl(LENGTH_OPTION_NAMES)
 
-    def __init__(self, fixed_length_setting=None, *a, **k):
+    def __init__(self, fixed_length_setting = None, *a, **k):
         assert fixed_length_setting is not None
         super(FixedLengthSettingComponent, self).__init__(*a, **k)
         self._fixed_length_setting = fixed_length_setting
-        self.length_option_buttons.connect_property(fixed_length_setting, 'selected_index')
-        self.fixed_length_toggle_button.connect_property(fixed_length_setting, 'enabled')
-        self.legato_launch_toggle_button.connect_property(fixed_length_setting, 'legato_launch')
+        self.length_option_buttons.connect_property(fixed_length_setting, u'selected_index')
+        self.fixed_length_toggle_button.connect_property(fixed_length_setting, u'enabled')
+        self.legato_launch_toggle_button.connect_property(fixed_length_setting, u'legato_launch')
         self.__on_setting_selected_index_changes.subject = fixed_length_setting
         self.__on_setting_selected_index_changes(fixed_length_setting.selected_index)
-        return
 
-    @listens('selected_index')
+    @listens(u'selected_index')
     def __on_setting_selected_index_changes(self, index):
         self._update_option_display()
 
     def _update_option_display(self):
         for index, option_name in enumerate(LENGTH_OPTION_NAMES):
-            prefix = consts.CHAR_SELECT if index == self._fixed_length_setting.selected_index else ' '
+            prefix = consts.CHAR_SELECT if index == self._fixed_length_setting.selected_index else u' '
             self.option_display_line[index] = prefix + option_name
 
 
 class FixedLengthComponent(Component, Messenger):
     fixed_length_toggle_button = ButtonControl()
 
-    def __init__(self, fixed_length_setting=None, *a, **k):
+    def __init__(self, fixed_length_setting = None, *a, **k):
         assert fixed_length_setting is not None
         super(FixedLengthComponent, self).__init__(*a, **k)
         self._fixed_length_setting = fixed_length_setting
@@ -81,7 +73,6 @@ class FixedLengthComponent(Component, Messenger):
         self._length_press_state = None
         self.__on_setting_enabled_changes.subject = fixed_length_setting
         self.__on_setting_enabled_changes(fixed_length_setting.enabled)
-        return
 
     @fixed_length_toggle_button.released_immediately
     def fixed_length_toggle_button(self, button):
@@ -89,7 +80,7 @@ class FixedLengthComponent(Component, Messenger):
         if not loop_set:
             enabled = not self._fixed_length_setting.enabled
             self._fixed_length_setting.enabled = enabled
-            self.show_notification(consts.MessageBoxText.FIXED_LENGTH % ('On' if enabled else 'Off'))
+            self.show_notification(consts.MessageBoxText.FIXED_LENGTH % (u'On' if enabled else u'Off'))
 
     @fixed_length_toggle_button.pressed_delayed
     def fixed_length_toggle_button(self, button):
@@ -106,39 +97,50 @@ class FixedLengthComponent(Component, Messenger):
         slot = song.view.highlighted_clip_slot
         if slot is None:
             return
-        else:
-            clip = slot.clip
-            if slot.is_recording and not clip.is_overdubbing:
-                self._length_press_state = (
-                 slot, clip.playing_position)
-            return
+        clip = slot.clip
+        if slot.is_recording and not clip.is_overdubbing:
+            self._length_press_state = (slot, clip.playing_position)
 
     def _set_loop(self):
         song = self.song
         slot = song.view.highlighted_clip_slot
         if slot is None:
             return
-        else:
-            clip = slot.clip
-            loop_set = False
-            if self._length_press_state is not None:
-                press_slot, press_position = self._length_press_state
-                if press_slot == slot and slot.is_recording and not clip.is_overdubbing:
-                    length, _ = self._fixed_length_setting.get_selected_length(song)
-                    one_bar = 4.0 * song.signature_numerator / song.signature_denominator
-                    loop_end = int(press_position / one_bar) * one_bar
-                    loop_start = loop_end - length
-                    if loop_start >= 0.0:
-                        clip.loop_end = loop_end
-                        clip.end_marker = loop_end
-                        clip.loop_start = loop_start
-                        clip.start_marker = loop_start
-                        self._tasks.add(task.sequence(task.delay(0), task.run(partial(slot.fire, force_legato=True, launch_quantization=Quantization.q_no_q))))
-                        self.song.overdub = False
-                    loop_set = True
-            self._length_press_state = None
-            return loop_set
+        clip = slot.clip
+        loop_set = False
+        if self._length_press_state is not None:
+            press_slot, press_position = self._length_press_state
+            if press_slot == slot and slot.is_recording and not clip.is_overdubbing:
+                length, _ = self._fixed_length_setting.get_selected_length(song)
+                one_bar = 4.0 * song.signature_numerator / song.signature_denominator
+                loop_start = int(press_position / length) * length
+                loop_end = loop_start + length
+                clip.loop_end = loop_end
+                clip.end_marker = loop_end
+                clip.loop_start = loop_start
+                clip.start_marker = loop_start
+                progress = (press_position - loop_start) / (loop_end - loop_start)
+                if progress < 0.5 and loop_start - length >= 0:
+                    launch_quantization = Quantization.q_no_q
+                    self.song.overdub = False
+                else:
+                    duration_needed_to_finish_recording_bar = (loop_end - press_position) / one_bar
+                    launch_quantization = Quantization.q_no_q
+                    if duration_needed_to_finish_recording_bar < 0.5:
+                        launch_quantization = Quantization.q_half
+                    elif duration_needed_to_finish_recording_bar < 1:
+                        launch_quantization = Quantization.q_bar
+                    elif duration_needed_to_finish_recording_bar < 2:
+                        launch_quantization = Quantization.q_2_bars
+                    elif duration_needed_to_finish_recording_bar < 4:
+                        launch_quantization = Quantization.q_4_bars
+                    elif duration_needed_to_finish_recording_bar < 8:
+                        launch_quantization = Quantization.q_8_bars
+                self._tasks.add(task.sequence(task.delay(0), task.run(partial(slot.fire, force_legato=True, launch_quantization=launch_quantization))))
+                loop_set = True
+        self._length_press_state = None
+        return loop_set
 
-    @listens('enabled')
+    @listens(u'enabled')
     def __on_setting_enabled_changes(self, enabled):
-        self.fixed_length_toggle_button.color = 'FixedLength.On' if enabled else 'FixedLength.Off'
+        self.fixed_length_toggle_button.color = u'FixedLength.On' if enabled else u'FixedLength.Off'
